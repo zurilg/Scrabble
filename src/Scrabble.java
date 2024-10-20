@@ -4,6 +4,7 @@ public class Scrabble {
         ScrabbleController cont = new ScrabbleController();
         cont.addPlayers();
         cont.determinePlayerOrder();
+        cont.distributeTiles();
 
     }
 }

@@ -37,12 +37,23 @@ public class Player {
     }
 
     public Tile popLastTile(){
-        Tile t = tileHolder.getLast();
-        tileHolder.remove(t);
-        return t;
+        Tile t;
+        if(!tileHolder.isEmpty()){
+            t = tileHolder.getLast();
+            tileHolder.remove(t);
+            return t;
+        }
+       return null;
     }
 
     public Tile showLastTile(){
         return tileHolder.getLast();
     }
+
+    public int numTiles(){
+        return tileHolder.size();
+    }
+
 }
+
+

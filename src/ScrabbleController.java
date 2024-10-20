@@ -41,14 +41,21 @@ public class ScrabbleController {
                 }
             }
         }
-
-        /*
         for(Player p : players){
-            System.out.println(p.getName());
-            System.out.println(p.showLastTile().getChar());
-        }
-        */
+            Tile t = p.popLastTile();
+            while(t!=null){
+                tiles.returnTile(t);
+                t = p.popLastTile();
 
+            }
+        }
     }
 
+    public void distributeTiles(){
+        for(Player p : players){
+            for(int i = 7 - p.numTiles();i>0;i--){
+                p.getTile(tiles.popTile());
+            }
+        }
+    }
 }
