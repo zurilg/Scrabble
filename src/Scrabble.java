@@ -1,11 +1,7 @@
 public class Scrabble {
     public static void main(String[] args) {
-        // Initialize Controller
+        // Initialize controller then start a new game.
         ScrabbleController cont = new ScrabbleController();
-        cont.addPlayers();
-        cont.determinePlayerOrder();
-        cont.distributeTiles();
         cont.startGame();
-
     }
 }

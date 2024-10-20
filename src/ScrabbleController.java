@@ -3,10 +3,14 @@ import java.util.HashSet;
 import java.io.*;
 
 public class ScrabbleController {
+    // View
     private ScrabbleView view;
+    // Models
     private TileBag tiles;
     private ArrayList<Player> players;
     private Board board;
+
+    // 10,000 Acceptable Words
     private HashSet<String> dictionary;
 
     /**
@@ -25,24 +29,54 @@ public class ScrabbleController {
             getWordsFromFile();
         }
         catch(Exception e){
-            System.out.println(e);
+            System.out.println(e); // TEMPORARY
+        }
+    }
+
+    /**
+     * Game setup has finished, ready to start.
+     */
+    public void startGame(){
+        addPlayers(); // Get all players for game and their names.
+        determinePlayerOrder(); // Determine order or play.
+        distributeTiles(); // Give each player 7 tiles to start.
+
+        boolean gameStatus = true;
+        while(gameStatus){
+            // Iterate through player order to constitute turns.
+            for(Player p : players){
+                view.printBoard(board);
+                view.printPlayerTiles(p);
+                int c = view.getCharToInt("\nPlayer choices\n\t(P) Place Word\n\t(S) Skip Turn\n\t(Q) Quit Game\nEnter choice: ", "PSQ", 0);
+                if(c == 80){
+                    playWord(view.getString("Enter word to play: "));
+                }
+                else if(c == 83){
+                    // TEMPORARY
+                    System.out.println(p.getName() + "decided to skip their turn.");
+                }
+                else{
+                    System.exit(0);
+                }
+            }
+            gameStatus = false; // Only does one round. NEEDS REMOVED...
         }
     }
 
     /**
      * Add all players according to how many players the user would like to play with. Get each player's name.
      */
-    public void addPlayers(){
-        int numPlayers = view.getNumPlayers(); // Get number of players to initialize players
+    private void addPlayers(){
+        int numPlayers = view.getInt("\nEnter number of players (2-4): ", 2, 4); // Get number of players to initialize players
         for(int i = 1; i<= numPlayers; i++){
-            players.add(new Player(view.getPlayerName(i)));
+            players.add(new Player(view.getString("\nEnter player " + i + "'s name: ")));
         }
     }
 
     /**
      * Have each player draw a tile and determine who goes first.
      */
-    public void determinePlayerOrder(){
+    private void determinePlayerOrder(){
         // Used to determine whether players ties
         boolean redraw = false;
         // Have each player draw a tile
@@ -75,36 +109,11 @@ public class ScrabbleController {
     /**
      * When a player needs tiles, append the appropriate amount of new tiles.
      */
-    public void distributeTiles(){
+    private void distributeTiles(){
         for(Player p : players){
             for(int i = 7 - p.numTiles();i>0;i--){
                 p.addTileToHolder(tiles.popTile());
             }
-        }
-    }
-
-    /**
-     * Game setup has finished, ready to start.
-     */
-    public void startGame(){
-        boolean gameStatus = true;
-        while(gameStatus){
-            for(Player p : players){
-                view.printBoard(board);
-                view.printPlayerTiles(p);
-                String c = view.playerTurnChoice();
-                if(c.equals("P")){
-                    playWord(view.getWord());
-                }
-                else if(c.equals("S")){
-                    // TEMPORARY
-                    System.out.println(p.getName() + "decided to skip their turn.");
-                }
-                else{
-                    System.exit(0);
-                }
-            }
-            gameStatus = false; // Only does one round. NEEDS REMOVED...
         }
     }
 

@@ -1,38 +1,25 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+
 public class ScrabbleView {
+    private final Scanner scan;
     public ScrabbleView(){
-        System.out.println("Welcome to Scrabble!");
-    }
-
-    public int getNumPlayers(){
-        Scanner scan = new Scanner(System.in);
-        int input = 0;
-        while(input < 2 || input > 4){
-            System.out.print("Enter the number of players (between 2-4): ");
-            try{
-                input = scan.nextInt();
-            }
-            catch(Exception e){
-                System.out.print("Enter an integer value between 2 and 4. ");
-                scan.nextLine();
-            }
-            if(input < 2 || input > 4){System.out.print("Invalid input.\n");}
-        }
-        return input;
-    }
-
-    public String getPlayerName(int playerNum){
-        Scanner scan = new Scanner(System.in);
-        System.out.printf("\nEnter player %d's name: ", playerNum);
-        String name = scan.nextLine();
-        return name;
+        // Initialize Scanner
+        scan = new Scanner(System.in);
+        // Show fancy title
+        System.out.println("  _____                _     _     _ \n" +
+                " / ____|              | |   | |   | |\n" +
+                "| (___   ___ _ __ __ _| |__ | |__ | | ___ \n" +
+                " \\___ \\ / __| '__/ _` | '_ \\| '_ \\| |/ _ \\ \n" +
+                " ____) | (__| | | (_| | |_) | |_) | |  __/\n" +
+                "|_____/ \\___|_|  \\__,_|_.__/|_.__/|_|\\___|\n");
     }
 
     public void printBoard(Board b){
         System.out.println(b.toString());
     }
 
+    // Want to redo print player tiles to print player stats...
     public void printPlayerTiles(Player p){
         ArrayList<Tile> tiles = p.getTiles();
         String tileCharacters = p.getName() + ": ";
@@ -43,28 +30,64 @@ public class ScrabbleView {
         System.out.println(tileCharacters);
     }
 
-    public String playerTurnChoice(){
-        Scanner scan = new Scanner(System.in);
-        System.out.print("\nPlayer choices\n\t(P) Place Word\n\t(S) Skip Turn\n\t(Q) Quit Game\nEnter choice: ");
-        String playerChoice = scan.nextLine();
-        return playerChoice;
+    /**
+     * @param message The message to display to user to prompt input.
+     * @return String input provided by the user.
+     */
+    public String getString(String message){
+        String str = "";
+        System.out.print(message);
+        str = scan.nextLine();
+        while(str.isEmpty()){
+            System.out.print("Invalid input.");
+            System.out.print(message);
+            str = scan.nextLine();
+        }
+        return str;
     }
 
-    public String getWord(){
-        Scanner scan = new Scanner(System.in);
-        System.out.print("Enter word to place: ");
-        return scan.nextLine();
+    /**
+     * Retreives an integer value from the user with a constrained lower and upper bound.
+     *
+     * @param message The message to display to the user when getting a integer input.
+     * @param lowerBound The lower bound of the integer input.
+     * @param upperBound The upper bound of the integer input.
+     * @return Appropriate integer input from user.
+     */
+    public int getInt(String message, int lowerBound, int upperBound){
+        int input = -5;
+        while(input < lowerBound || input > upperBound){
+            System.out.print(message);
+            try{ input = scan.nextInt(); }
+            catch(Exception e){ System.out.print("Enter an integer value between " + lowerBound + " and " + upperBound + ". "); }
+            finally { scan.nextLine(); }
+            if(input < lowerBound || input > upperBound){System.out.print("Invalid input.\n");}
+        }
+        return input;
     }
-    public int[] getCoordinates(){
 
-        Scanner scan = new Scanner(System.in);
-        System.out.print("\nEnter Column (A-O): ");
-        int x = scan.nextInt();
-        scan.nextLine();
+    /**
+     * @param message Message which prompts user for a character input.
+     * @param allowedCharacters A string that contains all allowed characters.
+     * @param shift Integer value to subtract from char ASCII value for appropriate representation for use.
+     * @return Integer to handle state of user character input.
+     */
+    public int getCharToInt(String message, String allowedCharacters, int shift){
+        boolean valid = false;
+        String str = ""; // Take input as a string
+        do{
+            System.out.print(message); // Show user message
+            str = scan.nextLine().toUpperCase(); // Get users input
+            for(int i = 0; i < allowedCharacters.length(); i++){
+                if(allowedCharacters.charAt(i) == str.charAt(0)){
+                    valid = true;
+                    break;
+                }
+            }
+            if(!valid){ System.out.println("Invalid input. Try again."); }
+        }while(!valid);
 
-        System.out.print("\nEnter Row (1-15): ");
-        String y = scan.nextLine();
-        int[] coords = {x-1,y.charAt(0)-65};
-        return coords;
+        // Return appropriate integer representation of the character
+        return str.charAt(0) - shift;
     }
 }
