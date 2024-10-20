@@ -44,23 +44,96 @@ public class ScrabbleController {
         boolean gameStatus = true;
         while(gameStatus){
             // Iterate through player order to constitute turns.
-            for(Player p : players){
-                view.printBoard(board);
-                view.printPlayerTiles(p);
-                int c = view.getCharToInt("\nPlayer choices\n\t(P) Place Word\n\t(S) Skip Turn\n\t(Q) Quit Game\nEnter choice: ", "PSQ", 0);
-                if(c == 80){
-                    playWord(view.getString("Enter word to play: "));
-                }
-                else if(c == 83){
-                    // TEMPORARY
-                    System.out.println(p.getName() + "decided to skip their turn.");
-                }
-                else{
-                    System.exit(0);
-                }
-            }
+            for(Player p : players){ playerTurn(p); }
             gameStatus = false; // Only does one round. NEEDS REMOVED...
         }
+    }
+
+    private void playerTurn(Player p){
+        view.printBoard(board);
+        view.printPlayerTiles(p);
+        boolean validTurn = false;
+        while(!validTurn){
+            int c = view.getCharToInt("\nPlayer choices\n\t(P) Place Word\n\t(S) Skip Turn\n\t(Q) Quit Game\nEnter choice: ", "PSQ", 0);
+            // Player decides to play a word
+            if(c == 80){
+                // Get word that player wants to try to play
+                String word = view.getString("Enter word to play: ").toUpperCase();
+
+                // Get coordinates on board for player to play the word
+                int[] coordinates = {view.getCharToInt("\nEnter X Coordinate (A-O): ", "ABCDEFGHIJKLMNO", 65), view.getInt("\nEnter Y Coordinate (1-15): ", 1, 15)-1};
+                int direction = view.getCharToInt("\nEnter word direction up-to-down (D) or left-to-right (R)", "DR", 68);
+
+                // All tiles in players hand that are playable
+                ArrayList<Tile> playable = new ArrayList<>();
+
+                // Check that word is in dictionary
+                if(dictionary.contains(word.toLowerCase())) {
+
+                    // ------------------ FIGURE OUT WHAT TILES THE PLAYER HAS FOR WORD -----------------------------
+                    String lettersNotFound = "";
+                    for(int i = 0; i < word.length(); i++){
+                        boolean found = false;
+                        for(Tile t : p.getTiles()){
+                            if(word.charAt(i) == t.getChar().charAt(0)){
+                                playable.add(t);
+                                p.removeTile(t);
+                                found = true;
+                                break;
+                            }
+                        }
+                        if(!found){
+                            lettersNotFound += word.charAt(0);
+                        }
+                    }
+
+                    // -------------- Figure out letters that user doesn't have (are they on board in correct spot?)----------------------
+                    if(board.isEmpty() && lettersNotFound.isEmpty()){
+                        // THIS CASE IS EMPTY BOARD & NEED TO PLAY IN CENTER
+                        boolean isCentered = false;
+                        for(int i = 0; i < word.length(); i++){
+                            if(direction == 0){
+                                if (coordinates[0] + i == 7 && coordinates[1] == 7) {
+                                    isCentered = true;
+                                    break;
+                                }
+                            }
+                            else{
+                                if (coordinates[0] == 7 && coordinates[1] + i == 7) {
+                                    isCentered = true;
+                                    break;
+                                }
+                            }
+                        }
+                        // Word is centered and played correctly
+                        if(isCentered){
+                            validTurn = true;
+                            for(int i = 0; i < word.length(); i++){
+                                board.placeTile(playable.get(i), coordinates);
+                                if(direction != 0){ coordinates[1]+=1; }
+                                else{ coordinates[0]+=1; }
+                            }
+                            p.getTiles();
+                        }
+                    }
+                    /*
+                    // Look for letters on board
+                    for(int i = 0; i < lettersNotFound.length(); i++){
+
+                    }
+
+                     */
+                }
+            }
+            else if(c == 83){
+                // TEMPORARY
+                System.out.println(p.getName() + "decided to skip their turn.");
+            }
+            else{
+                System.exit(0);
+            }
+        }
+
     }
 
     /**
@@ -114,17 +187,6 @@ public class ScrabbleController {
             for(int i = 7 - p.numTiles();i>0;i--){
                 p.addTileToHolder(tiles.popTile());
             }
-        }
-    }
-
-    private void playWord(String word){
-        if(dictionary.contains(word.toLowerCase())){
-            // TEMPORARY
-            System.out.println("Worked");
-        }
-        else{
-            // TEMPORARY
-            System.out.println("Didn't work");
         }
     }
 

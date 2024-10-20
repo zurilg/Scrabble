@@ -1,10 +1,12 @@
 public class Board {
     private BoardSquare[][] board = new BoardSquare[15][15];
+    private boolean empty;
 
     /**
      * This is the board constructor. It initializes every board square to
      */
     public Board(){
+        empty = true;
         // Initialize all squares as empty
         for(int i = 0; i < 15; i+=1){
             for(int j = 0; j < 15; j+=1){
@@ -23,7 +25,12 @@ public class Board {
     }
 
     public void placeTile(Tile t, int[] coordinates){
+        empty = false;
         board[coordinates[0]][coordinates[1]].placeTile(t);
+    }
+
+    public boolean isEmpty(){
+        return empty;
     }
 
     /**

@@ -62,6 +62,10 @@ public class Player {
         return tileHolder.size();
     }
 
+    public void removeTile(Tile t){
+        tileHolder.remove(t);
+    }
+
 
 
 }
