@@ -5,6 +5,7 @@ public class Scrabble {
         cont.addPlayers();
         cont.determinePlayerOrder();
         cont.distributeTiles();
+        cont.startGame();
 
     }
 }

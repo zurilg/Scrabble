@@ -32,8 +32,16 @@ public class Player {
         return this.score;
     }
 
-    public void getTile(Tile tile){
+    public ArrayList<Tile> getTiles(){
+        return tileHolder;
+    }
+
+    public void addTileToHolder(Tile tile){
         tileHolder.add(tile);
+    }
+
+    public void removeTileFromHolder(Tile tile){
+        tileHolder.remove(tile);
     }
 
     public Tile popLastTile(){
@@ -53,6 +61,8 @@ public class Player {
     public int numTiles(){
         return tileHolder.size();
     }
+
+
 
 }
 

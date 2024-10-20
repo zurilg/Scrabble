@@ -3,6 +3,7 @@ public class ScrabbleController {
     private ScrabbleView view;
     private TileBag tiles;
     private ArrayList<Player> players;
+    private Board board;
 
     public ScrabbleController(){
         // Initialize view
@@ -10,6 +11,7 @@ public class ScrabbleController {
         // Initialize Models
         tiles = new TileBag();
         players = new ArrayList<>();
+        board = new Board();
     }
 
     public void addPlayers(){
@@ -22,7 +24,7 @@ public class ScrabbleController {
     public void determinePlayerOrder(){
         // Have each player draw a tile
         for(Player p : players){
-            p.getTile(tiles.popTile());
+            p.addTileToHolder(tiles.popTile());
             //System.out.println(p.getName());
             //System.out.println(p.showLastTile().getChar());
         }
@@ -54,8 +56,20 @@ public class ScrabbleController {
     public void distributeTiles(){
         for(Player p : players){
             for(int i = 7 - p.numTiles();i>0;i--){
-                p.getTile(tiles.popTile());
+                p.addTileToHolder(tiles.popTile());
             }
         }
     }
+
+    public void startGame(){
+        boolean gameStatus = true;
+        while(gameStatus){
+            for(Player p : players){
+                view.printBoard(board);
+                view.printPlayerTiles(p);
+            }
+            gameStatus = false;
+        }
+    }
+
 }

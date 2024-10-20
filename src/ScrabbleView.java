@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 public class ScrabbleView {
     public ScrabbleView(){
@@ -26,5 +27,19 @@ public class ScrabbleView {
         System.out.printf("\nEnter player %d's name: ", playerNum);
         String name = scan.nextLine();
         return name;
+    }
+
+    public void printBoard(Board b){
+        System.out.println(b.toString());
+    }
+
+    public void printPlayerTiles(Player p){
+        ArrayList<Tile> tiles = p.getTiles();
+        String tileCharacters = p.getName() + ": ";
+        for(Tile t : tiles){
+            tileCharacters += t.getChar() + "  ";
+        }
+        tileCharacters += "\n";
+        System.out.println(tileCharacters);
     }
 }
