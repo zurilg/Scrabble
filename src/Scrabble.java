@@ -1,6 +1,9 @@
 public class Scrabble {
     public static void main(String[] args) {
-        System.out.println("Scrabble Game");
-        // Initialize
+        // Initialize Controller
+        ScrabbleController cont = new ScrabbleController();
+        cont.addPlayers();
+        cont.determinePlayerOrder();
+
     }
 }
