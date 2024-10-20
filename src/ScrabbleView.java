@@ -7,7 +7,8 @@ public class ScrabbleView {
         // Initialize Scanner
         scan = new Scanner(System.in);
         // Show fancy title
-        System.out.println("  _____                _     _     _ \n" +
+        System.out.println(
+                "  _____                _     _     _ \n" +
                 " / ____|              | |   | |   | |\n" +
                 "| (___   ___ _ __ __ _| |__ | |__ | | ___ \n" +
                 " \\___ \\ / __| '__/ _` | '_ \\| '_ \\| |/ _ \\ \n" +
@@ -15,6 +16,11 @@ public class ScrabbleView {
                 "|_____/ \\___|_|  \\__,_|_.__/|_.__/|_|\\___|\n");
     }
 
+    /**
+     * Prints a string representation of the board.
+     *
+     * @param b Board object so the board's toString method can be instantiated.
+     */
     public void printBoard(Board b){
         System.out.println(b.toString());
     }
@@ -31,6 +37,8 @@ public class ScrabbleView {
     }
 
     /**
+     * Retrieve a string from the user.
+     *
      * @param message The message to display to user to prompt input.
      * @return String input provided by the user.
      */
@@ -47,9 +55,9 @@ public class ScrabbleView {
     }
 
     /**
-     * Retreives an integer value from the user with a constrained lower and upper bound.
+     * Retrieves an integer value from the user with a constrained lower and upper bound.
      *
-     * @param message The message to display to the user when getting a integer input.
+     * @param message The message to display to the user when getting an integer input.
      * @param lowerBound The lower bound of the integer input.
      * @param upperBound The upper bound of the integer input.
      * @return Appropriate integer input from user.
@@ -67,6 +75,8 @@ public class ScrabbleView {
     }
 
     /**
+     * Retrieve a character value from user and convert it to desired integer value.
+     *
      * @param message Message which prompts user for a character input.
      * @param allowedCharacters A string that contains all allowed characters.
      * @param shift Integer value to subtract from char ASCII value for appropriate representation for use.

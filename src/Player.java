@@ -6,9 +6,9 @@ public class Player {
     private ArrayList<Tile> tileHolder;
 
     /**
-     * Cosntructor method for player
-     * initializes name, score, and tiles
-     * @param name
+     * Constructor method for player. Initializes name, score, and tiles.
+     *
+     * @param name The player's chosen name.
      */
     public Player(String name){
         this.name = name;
@@ -17,24 +17,24 @@ public class Player {
     }
 
     /**
-     * Getter method for player score
-     * @return score
+     * Getter method for player name.
+     *
+     * @return name
      */
     public String getName(){
         return this.name;
     }
 
     /**
-     * Getter method for player score
+     * Getter method for player score.
+     *
      * @return score
      */
     public int getScore(){
         return this.score;
     }
 
-    public ArrayList<Tile> getTiles(){
-        return tileHolder;
-    }
+    public ArrayList<Tile> getTiles(){ return tileHolder; }
 
     public void addTileToHolder(Tile tile){
         tileHolder.add(tile);
