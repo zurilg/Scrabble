@@ -42,4 +42,29 @@ public class ScrabbleView {
         tileCharacters += "\n";
         System.out.println(tileCharacters);
     }
+
+    public String playerTurnChoice(){
+        Scanner scan = new Scanner(System.in);
+        System.out.print("\nPlayer choices\n\t(P) Place Word\n\t(S) Skip Turn\n\t(Q) Quit Game\nEnter choice: ");
+        String playerChoice = scan.nextLine();
+        return playerChoice;
+    }
+
+    public String getWord(){
+        Scanner scan = new Scanner(System.in);
+        System.out.print("Enter word to place: ");
+        return scan.nextLine();
+    }
+    public int[] getCoordinates(){
+
+        Scanner scan = new Scanner(System.in);
+        System.out.print("\nEnter Column (A-O): ");
+        int x = scan.nextInt();
+        scan.nextLine();
+
+        System.out.print("\nEnter Row (1-15): ");
+        String y = scan.nextLine();
+        int[] coords = {x-1,y.charAt(0)-65};
+        return coords;
+    }
 }

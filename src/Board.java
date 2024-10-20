@@ -1,6 +1,9 @@
 public class Board {
     private BoardSquare[][] board = new BoardSquare[15][15];
 
+    /**
+     * This is the board constructor. It initializes every board square to
+     */
     public Board(){
         // Initialize all squares as empty
         for(int i = 0; i < 15; i+=1){
@@ -19,6 +22,15 @@ public class Board {
 
     }
 
+    public void placeTile(Tile t, int[] coordinates){
+        board[coordinates[0]][coordinates[1]].placeTile(t);
+    }
+
+    /**
+     * This method returns a string representation of the board for the view to use and update with.
+     *
+     * @return A string representation of the board.
+     */
     public String toString(){
         String strBoard = "";
         for(int i = 0; i < 15; i++){
