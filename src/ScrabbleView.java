@@ -14,10 +14,10 @@ public class ScrabbleView {
                 input = scan.nextInt();
             }
             catch(Exception e){
-                System.out.println("Enter an integer value between 2 and 4.");
+                System.out.print("Enter an integer value between 2 and 4. ");
                 scan.nextLine();
             }
-            if(input < 2 || input > 4){System.out.println("Invalid input.");}
+            if(input < 2 || input > 4){System.out.print("Invalid input.\n");}
         }
         return input;
     }

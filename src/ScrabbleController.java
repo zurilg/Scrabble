@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.io.*;
+
 public class ScrabbleController {
     private ScrabbleView view;
     private TileBag tiles;
@@ -8,6 +9,9 @@ public class ScrabbleController {
     private Board board;
     private HashSet<String> dictionary;
 
+    /**
+     * Constructor for ScrabbleController class. Initializes view and models and gets all words for dictionary.
+     */
     public ScrabbleController(){
         // Initialize view
         view = new ScrabbleView();
@@ -17,18 +21,17 @@ public class ScrabbleController {
         board = new Board();
         // Initialize dictionary
         dictionary = new HashSet<>();
-
         try{
             getWordsFromFile();
         }
         catch(Exception e){
             System.out.println(e);
         }
-
-
-
     }
 
+    /**
+     * Add all players according to how many players the user would like to play with. Get each player's name.
+     */
     public void addPlayers(){
         int numPlayers = view.getNumPlayers(); // Get number of players to initialize players
         for(int i = 1; i<= numPlayers; i++){
@@ -36,6 +39,9 @@ public class ScrabbleController {
         }
     }
 
+    /**
+     * Have each player draw a tile and determine who goes first.
+     */
     public void determinePlayerOrder(){
         // Used to determine whether players ties
         boolean redraw = false;
@@ -66,6 +72,9 @@ public class ScrabbleController {
         }
     }
 
+    /**
+     * When a player needs tiles, append the appropriate amount of new tiles.
+     */
     public void distributeTiles(){
         for(Player p : players){
             for(int i = 7 - p.numTiles();i>0;i--){
@@ -74,6 +83,9 @@ public class ScrabbleController {
         }
     }
 
+    /**
+     * Game setup has finished, ready to start.
+     */
     public void startGame(){
         boolean gameStatus = true;
         while(gameStatus){
@@ -92,12 +104,12 @@ public class ScrabbleController {
                     System.exit(0);
                 }
             }
-            gameStatus = false;
+            gameStatus = false; // Only does one round. NEEDS REMOVED...
         }
     }
 
     private void playWord(String word){
-        if(dictionary.contains(word)){
+        if(dictionary.contains(word.toLowerCase())){
             // TEMPORARY
             System.out.println("Worked");
         }
@@ -123,5 +135,4 @@ public class ScrabbleController {
             System.out.println("IOException: " + e);
         }
     }
-
 }
