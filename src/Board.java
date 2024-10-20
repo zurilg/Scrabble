@@ -22,10 +22,12 @@ public class Board {
     public String toString(){
         String strBoard = "";
         for(int i = 0; i < 15; i++){
-            strBoard += ("-------------------------------------------------------------------------------------------------------------------------\n");
-            String squareSpecs = "";
-            String squareLetters = "";
-            String squarePoints = "";
+            strBoard += ("     -------------------------------------------------------------------------------------------------------------------------\n");
+            String squareSpecs = "     ";
+            String squareLetters;
+            if(i > 8) squareLetters = " " + (i+1) + "  ";
+            else squareLetters = "  " + (i+1) + "  ";
+            String squarePoints = "     ";
             for(int j = 0; j < 15; j++){
                 // Get squareSpecsLine
                 if(board[i][j].getWordScore() != 0){ squareSpecs += "|  " + board[i][j].getWordScore() + " W  "; }
@@ -43,7 +45,7 @@ public class Board {
                 if(j == 14){squareSpecs += "|\n"; squareLetters += "|\n"; squarePoints += "|\n";}
             }
             strBoard += squareSpecs + squareLetters + squarePoints;
-            if(i == 14) { strBoard += ("-------------------------------------------------------------------------------------------------------------------------\n"); }
+            if(i == 14) { strBoard += ("     ----A-------B-------C-------D-------E-------F-------G-------H-------I-------J-------K-------L-------M-------N-------O----\n"); }
         }
         return strBoard;
     }
