@@ -113,7 +113,7 @@ public class ScrabbleController {
 
                     }
 
-                    // Any other play except first
+                    // Any other play except first.
                     else if (!board.isEmpty()) { // board isn't empty and some letters are (hopefully) on board
                         Board b = new Board();
                         b = board; // store current version of board in case you need to revert at end
