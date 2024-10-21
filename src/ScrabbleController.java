@@ -115,8 +115,7 @@ public class ScrabbleController {
 
                     // Any other play except first.
                     else if (!board.isEmpty()) { // board isn't empty and some letters are (hopefully) on board
-                        Board b = new Board();
-                        b = board; // store current version of board in case you need to revert at end
+                        board.setPrevState();
                         int[] coords = coordinates;
                         int letInd = 0;
                         boolean onBoard = false;
@@ -156,7 +155,7 @@ public class ScrabbleController {
                         }
                         else{ // Something went wrong... revert board.
                             System.out.println("Invalid Turn"); // TEMPORARY
-                            board = b;
+                            board.reset();
                             for(Tile t : playable){
                                 p.addTileToHolder(t);
                             }

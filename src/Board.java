@@ -1,5 +1,6 @@
 public class Board {
     private BoardSquare[][] board = new BoardSquare[15][15];
+    private BoardSquare[][] prevState = new BoardSquare[15][15];
     private boolean empty;
 
     /**
@@ -11,6 +12,7 @@ public class Board {
         for(int i = 0; i < 15; i+=1){
             for(int j = 0; j < 15; j+=1){
                 board[i][j] = new BoardSquare(0,0);
+                prevState[i][j] = new BoardSquare(0,0);
             }
         }
         //Triple Words
@@ -22,6 +24,22 @@ public class Board {
             }
         }
 
+    }
+
+    public void reset(){
+        for(int i = 0; i<=14; i+=1){
+            for(int j = 0; j<=14; j+=1){
+                board[i][j].placeTile(prevState[i][j].getTile());
+            }
+        }
+    }
+
+    public void setPrevState(){
+        for(int i = 0; i<=14; i+=1){
+            for(int j = 0; j<=14; j+=1){
+                prevState[i][j].placeTile(board[i][j].getTile());
+            }
+        }
     }
 
     public String getLetterAtIndex(int[] coordinates){

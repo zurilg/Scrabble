@@ -8,7 +8,9 @@ public class BoardSquare {
         this.letterScore = letterScore;
         this.wordScore = wordScore;
     }
-
+    public Tile getTile(){
+        return t;
+    }
     public void placeTile(Tile t){
         this.t = t;
     }
