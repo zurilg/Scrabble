@@ -15,11 +15,9 @@ public class ScrabbleView {
 
     /**
      * Prints a string representation of the board.
-     *
-     * @param b Board object so the board's toString method can be instantiated.
      */
-    public void printBoard(Board b){
-        System.out.println(b.toString());
+    public void printBoard(String board){
+        System.out.println(board);
     }
 
     // Want to redo print player tiles to print player stats...
@@ -27,7 +25,7 @@ public class ScrabbleView {
         ArrayList<Tile> tiles = p.getTiles();
         String tileCharacters = p.getName() + ": ";
         for(Tile t : tiles){
-            tileCharacters += t.getChar() + "  ";
+            tileCharacters += "\"" + t.getChar() + "\"  ";
         }
         tileCharacters += "\n";
         System.out.println(tileCharacters);
