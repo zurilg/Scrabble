@@ -2,10 +2,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ScrabbleView {
-    private final Scanner scan;
     public ScrabbleView(){
-        // Initialize Scanner
-        scan = new Scanner(System.in);
         // Show fancy title
         System.out.println(
                 "  _____                _     _     _ \n" +
@@ -43,6 +40,7 @@ public class ScrabbleView {
      * @return String input provided by the user.
      */
     public String getString(String message){
+        Scanner scan = new Scanner(System.in);
         String str = "";
         System.out.print(message);
         str = scan.nextLine();
@@ -63,6 +61,7 @@ public class ScrabbleView {
      * @return Appropriate integer input from user.
      */
     public int getInt(String message, int lowerBound, int upperBound){
+        Scanner scan = new Scanner(System.in);
         int input = -5;
         while(input < lowerBound || input > upperBound){
             System.out.print(message);
@@ -83,6 +82,7 @@ public class ScrabbleView {
      * @return Integer to handle state of user character input.
      */
     public int getCharToInt(String message, String allowedCharacters, int shift){
+        Scanner scan = new Scanner(System.in);
         boolean valid = false;
         String str = ""; // Take input as a string
         do{
