@@ -69,7 +69,6 @@ public class ScrabbleController {
 
                 // Check that word is in dictionary
                 if(dictionary.contains(word.toLowerCase())) {
-
                     // ------------------ FIGURE OUT WHAT TILES THE PLAYER HAS FOR WORD -----------------------------
                     String lettersNotFound = "";
                     for(int i = 0; i < word.length(); i++){
@@ -87,19 +86,20 @@ public class ScrabbleController {
                         }
                     }
 
-                    // -------------- Figure out letters that user doesn't have (are they on board in correct spot?)----------------------
-                    if(board.isEmpty() && lettersNotFound.isEmpty()){
+                    // Handles first play
+                    if (board.isEmpty() && lettersNotFound.isEmpty()) {
+                        int coords[] = coordinates;
                         // THIS CASE IS EMPTY BOARD & NEED TO PLAY IN CENTER
                         boolean isCentered = false;
                         for(int i = 0; i < word.length(); i++){
                             if(direction == 0){
-                                if (coordinates[0] + i == 7 && coordinates[1] == 7) {
+                                if (coords[0] + i == 7 && coords[1] == 7) {
                                     isCentered = true;
                                     break;
                                 }
                             }
                             else{
-                                if (coordinates[0] == 7 && coordinates[1] + i == 7) {
+                                if (coords[0] == 7 && coords[1] + i == 7) {
                                     isCentered = true;
                                     break;
                                 }
@@ -109,20 +109,95 @@ public class ScrabbleController {
                         if(isCentered){
                             validTurn = true;
                             for(int i = 0; i < word.length(); i++){
-                                board.placeTile(playable.get(i), coordinates);
+                                board.placeTile(playable.get(i), coords);
+                                p.removeTile(playable.get(i));
+                                if(direction != 0){ coords[1]+=1; }
+                                else{ coords[0]+=1; }
+                            }
+
+                        }
+
+                        if(validateBoard()){
+                            validTurn = true;
+                        }
+                        else{
+                            for(int j = 0; j < word.length(); j++){
+                                p.addTileToHolder(board.popTile(coordinates));
                                 if(direction != 0){ coordinates[1]+=1; }
                                 else{ coordinates[0]+=1; }
                             }
-                            p.getTiles();
+                        }
+
+                    }
+
+                    // Any other play except first
+                    else if (!board.isEmpty() && !lettersNotFound.isEmpty()) {
+                        // Check tiles not in hand are in right spot on board
+                        boolean validBoardTiles = true;
+
+
+                        for(int i = lettersNotFound.length()-1; i >= 0; i--){
+                            ArrayList<Integer> indexes = getCharIndexes(word, lettersNotFound.charAt(i));
+                            for(Integer z : indexes){
+                                System.out.println(z);
+                            }
+                            if(indexes.isEmpty()){
+                                validBoardTiles = false;
+                                break;
+                            }
+                            for(int x : indexes.reversed()){
+                                int [] coords = coordinates;
+                                if(direction != 0){ coords[1]+=x; }
+                                else{ coords[0]+=x; }
+                                if(board.getLetterAtIndex(coords) != null){
+                                    if(board.getLetterAtIndex(coords).charAt(0) == lettersNotFound.charAt(i)){
+                                        validBoardTiles = true;
+                                        break;
+                                    }
+                                }
+                                validBoardTiles = false;
+                            }
+                        }
+
+                        int coords[] = coordinates;
+                        int numLetters = 0;
+                        for(int i = 0; i < word.length(); i++){
+                            if(board.getLetterAtIndex(coords)!=null){
+                                numLetters+=1;
+                            }
+                            if(direction != 0){ coords[1]+=1; }
+                            else{ coords[0]+=1; }
+                        }
+                        if(numLetters != lettersNotFound.length()){
+                            validBoardTiles = false;
+                        }
+                        System.out.println("Valid board tiles: " + validBoardTiles);
+                        Board b = board;
+                        if(validBoardTiles){
+                            int letInd = 0;
+                            for(int i = 0; i < word.length()-1; i++){
+                                if(board.getLetterAtIndex(coords) == null){
+                                    board.placeTile(playable.get(letInd), coords);
+                                    p.removeTile(playable.get(letInd));
+                                    letInd+=1;
+                                }
+                                if(direction != 0){ coords[1]+=1; }
+                                else{ coords[0]+=1; }
+                            }
+                        }
+
+                        if(validateBoard()){
+                            System.out.println("Validation complete and true");
+                            validTurn = true;
+                        }
+                        else{
+                            board = b;
+                            for(Tile t : playable){
+                                p.addTileToHolder(t);
+                            }
                         }
                     }
-                    /*
-                    // Look for letters on board
-                    for(int i = 0; i < lettersNotFound.length(); i++){
 
-                    }
-
-                     */
                 }
             }
             else if(c == 83){
@@ -205,5 +280,44 @@ public class ScrabbleController {
             //TEMPORARY
             System.out.println("IOException: " + e);
         }
+    }
+
+    private boolean validateBoard(){
+        // Check all rows and columns for valid data
+        for(int r = 0; r < 15; r ++){
+            String rowWords = "";
+            String columnWords = "";
+            for(int c = 0; c < 15; c ++){
+                int[] rows = {r, c};
+                int[] columns = {c, r};
+
+                if(board.getLetterAtIndex(rows)!=null){ rowWords += board.getLetterAtIndex(rows); }
+                else{ rowWords += " "; }
+
+                if(board.getLetterAtIndex(columns) != null){ columnWords += board.getLetterAtIndex(columns); }
+                else{ columnWords += " "; }
+            }
+            // Validate all row words
+            String[] rowW = rowWords.split(" ");
+            for (String s : rowW) {
+                if (!dictionary.contains(s.strip().toLowerCase())) { return false; }
+            }
+
+            // Validate all column words
+            String[] colW = columnWords.split(" ");
+            for (String s : colW) {
+                if (!dictionary.contains(s.strip().toLowerCase())) { return false; }
+            }
+        }
+
+        return true;
+    }
+
+    private ArrayList<Integer> getCharIndexes(String word, char c){
+        ArrayList<Integer> a = new ArrayList<>();
+        for(int i = 0; i<word.length(); i++){
+            if(word.charAt(i) == c) a.add(i);
+        }
+        return a;
     }
 }

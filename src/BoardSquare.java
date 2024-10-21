@@ -13,6 +13,12 @@ public class BoardSquare {
         this.t = t;
     }
 
+    public Tile popTile(){
+        Tile tile = this.t;
+        this.t = null;
+        return tile;
+    }
+
     public int getLetterScore() {
         return this.letterScore;
     }

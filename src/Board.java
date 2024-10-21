@@ -24,9 +24,16 @@ public class Board {
 
     }
 
+    public String getLetterAtIndex(int[] coordinates){
+        return board[coordinates[0]][coordinates[1]].getLetter();
+    }
     public void placeTile(Tile t, int[] coordinates){
         empty = false;
         board[coordinates[0]][coordinates[1]].placeTile(t);
+    }
+
+    public Tile popTile(int[] coordinates){
+        return board[coordinates[0]][coordinates[1]].popTile();
     }
 
     public boolean isEmpty(){
