@@ -88,7 +88,6 @@ public class ScrabbleController {
 
                     // Handles first play
                     if (board.isEmpty() && lettersNotFound.isEmpty()) {
-                        Board b = board;
                         int coords[];
                         // THIS CASE IS EMPTY BOARD & NEED TO PLAY IN CENTER
                         for(Tile t : playable){
@@ -106,7 +105,7 @@ public class ScrabbleController {
 
                         else{
                             System.out.println("Invalid First Turn"); // TEMPORARY
-                            board = b;
+                            board = new Board();
                             for(Tile t : playable){
                                 p.addTileToHolder(t);
                             }
@@ -115,21 +114,43 @@ public class ScrabbleController {
                     }
 
                     // Any other play except first
-                    else if (!board.isEmpty() && !lettersNotFound.isEmpty()) { // board isn't empty and some letters are (hopefully) on board
-                        Board b = board; // store current version of board in case you need to revert at end
+                    else if (!board.isEmpty()) { // board isn't empty and some letters are (hopefully) on board
+                        Board b = new Board();
+                        b = board; // store current version of board in case you need to revert at end
                         int[] coords = coordinates;
                         int letInd = 0;
-                        for(int i = 0; i < word.length(); i++){
-                            if(board.getLetterAtIndex(coords) == null){
-                                board.placeTile(playable.get(letInd), coords);
-                                p.removeTile(playable.get(letInd));
-                                letInd+=1;
+                        boolean onBoard = false;
+
+                        if(!lettersNotFound.isEmpty()){
+                            for(int i = 0; i < word.length(); i++){
+                                if(board.getLetterAtIndex(coords) == null){
+                                    board.placeTile(playable.get(letInd), coords);
+                                    p.removeTile(playable.get(letInd));
+                                    letInd+=1;
+                                }
+                                if(direction != 0){ coords[1]+=1; }
+                                else{ coords[0]+=1; }
                             }
-                            if(direction != 0){ coords[1]+=1; }
-                            else{ coords[0]+=1; }
+                            onBoard = true;
+                        }
+                        else{
+
+                            for(int i = 0; i < word.length(); i++){
+                                if(board.getLetterAtIndex(coords) == null){
+                                    board.placeTile(playable.get(i), coords);
+                                    p.removeTile(playable.get(i));
+                                    letInd+=1;
+                                }
+                                else{
+                                    onBoard = true;
+                                }
+
+                                if(direction != 0){ coords[1]+=1; }
+                                else{ coords[0]+=1; }
+                            }
                         }
 
-                        if(validateBoard()){
+                        if(validateBoard() && onBoard){
                             System.out.println("Valid Turn"); // TEMPORARY
                             validTurn = true;
                         }
@@ -140,6 +161,13 @@ public class ScrabbleController {
                                 p.addTileToHolder(t);
                             }
                         }
+                    }
+
+
+                    else{
+                        System.out.println("UNHANDLED STATE"); // TEMPORARY
+                        System.out.println("Empty board: " + board.isEmpty());
+                        System.out.println("Letters found empty: " + lettersNotFound.isEmpty());
                     }
                 }
                 else{
