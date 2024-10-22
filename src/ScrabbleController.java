@@ -166,7 +166,7 @@ public class ScrabbleController {
                             if(!lettersNotFound.isEmpty()){
                                 for(int i = 0; i < word.length(); i++){
                                     if(board.getLetterAtIndex(coords) == null){
-                                        // Makes sure correct tile is placed.
+                                        // Try to place a tile in it
                                         for(Tile t : playable){
                                             if(t.getChar().charAt(0) == word.charAt(i)){
                                                 board.placeTile(t, coords);
@@ -179,11 +179,14 @@ public class ScrabbleController {
                                                 }
                                             }
                                         }
+                                        // Still empty?
+                                        if(board.getLetterAtIndex(coords) == null){ onBoard = false; }
                                     }
                                     // Letters aren't on board if they aren't equal to letter at specific index in word.
                                     else if(board.getLetterAtIndex(coords).charAt(0) != word.charAt(i)){
                                         onBoard = false; // Letter that's supposed to be there isn't there.
                                     }
+
                                     if(direction != 0){ coords[1]+=1; }
                                     else{ coords[0]+=1; }
                                 }
