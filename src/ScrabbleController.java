@@ -131,6 +131,7 @@ public class ScrabbleController {
                         // Handles first play
                         if (board.isEmpty() && (lettersNotFound.isEmpty())) {
                             int[] coords;
+
                             // THIS CASE IS EMPTY BOARD & NEED TO PLAY IN CENTER
                             for(Tile t : playable){
                                 coords = coordinates;
@@ -166,10 +167,16 @@ public class ScrabbleController {
                             if(!lettersNotFound.isEmpty()){
                                 for(int i = 0; i < word.length(); i++){
                                     if(board.getLetterAtIndex(coords) == null){
-                                        if(playable.size() == letInd) break; // This means that the word is placed in a spot it doesn't belong.
-                                        board.placeTile(playable.get(letInd), coords);
-                                        p.removeTile(playable.get(letInd));
-                                        letInd+=1;
+                                        if(playable.size() == letInd) { break; // This means that the word is placed in a spot it doesn't belong.
+                                        }
+                                        // Makes sure correct tile is placed.
+                                        for(Tile t : playable){
+                                            if(t.getChar().charAt(0) == word.charAt(i)){
+                                                board.placeTile(t, coords);
+                                                p.removeTile(t);
+                                                letInd+=1;
+                                            }
+                                        }
                                     }
                                     if(direction != 0){ coords[1]+=1; }
                                     else{ coords[0]+=1; }
@@ -321,7 +328,7 @@ public class ScrabbleController {
             String[] rowW = rowWords.toString().split(" ");
             for (String s : rowW) {
                 if(s.length() > 1){
-                    // view.viewPrint(s.strip().toLowerCase()); // TEMPORARY FOR TESTING
+                    view.viewPrint(s.strip().toLowerCase()); // TEMPORARY FOR TESTING
                     if (!(dictionary.contains(s.strip().toLowerCase()))) { return false; } // If the dictionary doesn't contain one of the words then board isn't valid.
                 }
             }
@@ -330,7 +337,7 @@ public class ScrabbleController {
             String[] colW = columnWords.toString().split(" ");
             for (String s : colW) {
                 if(s.length() > 1){
-                    // view.viewPrint(s.strip().toLowerCase()); // TEMPORARY FOR TESTING
+                    view.viewPrint(s.strip().toLowerCase()); // TEMPORARY FOR TESTING
                     if (!(dictionary.contains(s.strip().toLowerCase()))) { return false; } // If the dictionary doesn't contain one of the words then board isn't valid.
                 }
             }
