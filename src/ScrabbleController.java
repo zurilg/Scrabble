@@ -32,9 +32,8 @@ public class ScrabbleController {
             getWordsFromFile();
         }
         catch(Exception e){
-            System.out.println(e); // TEMPORARY
+            view.viewPrint("File read error. Exception: " + e); // TEMPORARY
         }
-
         wordsOnBoard = new HashMap<String, Integer>();
     }
 
@@ -47,20 +46,34 @@ public class ScrabbleController {
         distributeTiles(); // Give each player 7 tiles to start.
 
         boolean gameStatus = true;
-        while(gameStatus){
+        int scorelessTurns = 0;
+        Player winner = null;
+
+        while(gameStatus && scorelessTurns !=6 && winner == null){
             // Iterate through player order to constitute turns.
             for(Player p : players){
+                int initialScore = p.getScore();
                 playerTurn(p);
                 distributeTiles();
                 p.addToScore(scoreBoard());
+
+                // Track number of scoreless turns
+                if(initialScore == p.getScore()) scorelessTurns += 1;
+                else scorelessTurns = 0;
+
+                //
+                if(p.getTiles().isEmpty()){
+                    winner = p;
+                }
+
             }
             //gameStatus = false; // Only does one round. NEEDS REMOVED...
         }
     }
 
     private void playerTurn(Player p){
-        view.printBoard(board.toString()); // print board for player
-        view.printPlayerInfo(p.toString()); // print the player tiles
+        view.viewPrint(board.toString()); // print board for player
+        view.viewPrint(p.toString()); // print the player tiles
         boolean validTurn = false; // player has not yet completed a valid turn
         while(!validTurn){ // while the player has not completed a valid turn
             // Player chooses what to do
@@ -115,12 +128,12 @@ public class ScrabbleController {
                             }
 
                             if(validateBoard() && board.getLetterAtIndex(new int[]{7, 7}) != null){
-                                System.out.println("Valid First Turn"); // TEMPORARY
+                                view.viewPrint("Valid First Turn"); // TEMPORARY
                                 validTurn = true;
                             }
 
                             else{
-                                System.out.println("Invalid First Turn"); // TEMPORARY
+                                view.viewPrint("Invalid First Turn"); // TEMPORARY
                                 board = new Board();
                                 for(Tile t : playable){
                                     p.addTileToHolder(t);
@@ -167,40 +180,34 @@ public class ScrabbleController {
                             }
 
                             if(validateBoard() && onBoard){
-                                System.out.println("Valid Turn"); // TEMPORARY
+                                view.viewPrint("Valid Turn"); // TEMPORARY
                                 validTurn = true;
                             }
                             else{ // Something went wrong... revert board.
-                                System.out.println("Invalid Turn"); // TEMPORARY
+                                view.viewPrint("Invalid Turn"); // TEMPORARY
                                 board.reset();
                                 for(Tile t : playable){
                                     p.addTileToHolder(t);
                                 }
                             }
                         }
-
-
-                        else{
-                            System.out.println("UNHANDLED STATE"); // TEMPORARY
-                            System.out.println("Empty board: " + board.isEmpty());
-                            System.out.println("Letters found empty: " + lettersNotFound.isEmpty());
-                        }
+                        else if (board.isEmpty() && !lettersNotFound.isEmpty())
+                            view.viewPrint("DON'T HAVE ALL TILES");
+                        else
+                            view.viewPrint("UNHANDLED STATE\nEmpty board: " + board.isEmpty() + "Letters found empty: " + lettersNotFound.isEmpty());
                     }
-                    else{
-                        System.out.println("OUT OF BOUNDS"); // TEMPORARY
-                    }
-
+                    else
+                        view.viewPrint("OUT OF BOUNDS");
                 }
-                else{
-                    System.out.println("NOT A WORD"); // TEMPORARY
-                }
+                else
+                    view.viewPrint("NOT A WORD"); // TEMPORARY
             }
             else if(c == 83){ // 83 is the ASCII value for S
-                // TEMPORARY
                 validTurn = true;
-                System.out.println(p.getName() + " decided to skip their turn.");
+                view.viewPrint(p.getName() + " decided to skip their turn.");
             }
             else{ // Player decides to quit game.
+                view.viewPrint("Thanks for playing!");
                 System.exit(0);
             }
         }
@@ -255,7 +262,8 @@ public class ScrabbleController {
     private void distributeTiles(){
         for(Player p : players){
             for(int i = 7 - p.numTiles();i>0;i--){
-                p.addTileToHolder(tiles.popTile());
+                if(tiles.returnSize() != 0)
+                    p.addTileToHolder(tiles.popTile());
             }
         }
     }
@@ -301,7 +309,7 @@ public class ScrabbleController {
     // Nearly identical to the validate board method
     private int scoreBoard(){
         int score = 0;
-        int [] tileValues = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10, 0};
+        int [] tileValues = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10};
         HashMap<String, Integer> allWords = new HashMap<String, Integer>();
         for(int r = 0; r < 15; r ++){
             String rowWords = "";
@@ -356,7 +364,7 @@ public class ScrabbleController {
                 }
                 wordsOnBoard.put(key, allWords.get(key));
             }
-            System.out.println("Word: " + key + " Score: " + wordScore);
+            view.viewPrint("Word: " + key + " Score: " + wordScore);
             score += wordScore;
         }
 
@@ -375,8 +383,7 @@ public class ScrabbleController {
                 word = r.readLine();
             }
         } catch (Exception e) {
-            //TEMPORARY
-            System.out.println("IOException: " + e);
+            view.viewPrint("IOException: " + e);
         }
     }
 }

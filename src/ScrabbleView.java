@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ScrabbleView {
@@ -14,15 +13,10 @@ public class ScrabbleView {
     }
 
     /**
-     * Prints a string representation of the board.
+     * Prints a string provided to it to the view.
      */
-    public void printBoard(String board){
-        System.out.println(board);
-    }
-
-    // Want to redo print player tiles to print player stats.
-    public void printPlayerInfo(String playerInfo){
-        System.out.println(playerInfo);
+    public void viewPrint(String str){
+        System.out.println(str);
     }
 
     /**
