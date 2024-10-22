@@ -76,6 +76,8 @@ public class ScrabbleController {
                 if(p.getTiles().isEmpty()){ tilesRemain = false; }
             }
         }
+
+        determineWinner();
     }
 
     /**
@@ -408,6 +410,91 @@ public class ScrabbleController {
         return score;
     }
 
+    /**
+     * Determines winner(s) and has view display winners.
+     */
+    private void determineWinner(){
+        // Alert user that the game is over
+        view.viewPrint("""
+                \n ____ ____ ____ ____ ____ ____ ____ ____ ____\s
+                ||G |||A |||M |||E |||  |||O |||V |||E |||R ||
+                ||__|||__|||__|||__|||__|||__|||__|||__|||__||
+                |/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|""");
+
+        // Adjust scores for tiles. Deduct remaining tile points from user. Add all remaining tile points to players with no tiles left.
+        sortRemainingTilePoints();
+        // Bubble sort players based on their scores
+        sortPlayersByScore();
+
+        // Print all player scores
+        StringBuilder sortedPlayers = new StringBuilder();
+        view.viewPrint("\nFINAL SCORES: ");
+        for(Player p : players){
+            sortedPlayers.append("Name: ").append(p.getName()).append("\t\tFinal Score: ").append(p.getScore()).append(" pts").append("\t\tNumber of Tiles Remaining: ").append(p.getTiles().size()).append("\n");
+        }
+        view.viewPrint(String.valueOf(sortedPlayers)); // Print the list of sorted players.
+
+        // Check for ties
+        checkForTiedPlayers();
+
+        // Print winner(s)
+        StringBuilder winner = new StringBuilder();
+        if(players.size() == 1){
+            winner.append("Congratulations, ").append(players.getFirst().getName()).append("! You've won with a score of ").append(players.getFirst().getScore()).append(" points!");
+        }
+        else{
+            winner.append("A tie has occurred!");
+            for(Player p : players){ winner.append("\n\tName: ").append(p.getName()).append("\tPoints: ").append(p.getName()); }
+        }
+        view.viewPrint(String.valueOf(winner));
+    }
+
+    /**
+     * Deducts remaining tile points from player scores. Adds all remaining tile points to players with no tiles left.
+     */
+    private void sortRemainingTilePoints(){
+        // Get sum of all remaining tile point values and deduct them from each player.
+        int remainingPoints = 0;
+        for(Player p : players){
+            for(Tile t : p.getTiles()){
+                p.addToScore(-1 * t.getValue());
+                remainingPoints += t.getValue();
+            }
+        }
+
+        /* If a user played all of their tiles, they get the sum of all other players unplaced tiles
+        added to their score.
+         */
+        for(Player p : players){ if(p.getTiles().isEmpty()) { p.addToScore(remainingPoints); } }
+    }
+
+    /**
+     * Sorts players based on their final scores.
+     */
+    private void sortPlayersByScore(){
+        for(int i = 0; i < players.size(); i++){
+            for(int j = 0; j < players.size()-1; j++){
+                if(players.get(j).getScore() < players.get(j+1).getScore()){
+                    Player p = players.get(j);
+                    players.set(j, players.get(j+1));
+                    players.set(j+1, p);
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes all players that don't have the highest score.
+     */
+    private void checkForTiedPlayers(){
+        ArrayList<Player> tiedPlayers = new ArrayList<>();
+        tiedPlayers.add(players.getFirst());
+        for(int i = 1; i < players.size(); i++){
+            if(players.get(i).getScore() == tiedPlayers.getFirst().getScore()) { tiedPlayers.add(players.get(i)); }
+        }
+
+        players = tiedPlayers;
+    }
     /**
      * Attempts to open then read and save the contents of the dictionary text file.
      *
