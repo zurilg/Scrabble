@@ -1,6 +1,8 @@
 # Title
 
-Scrabble *License*: MIT (see bottom of README for full license description)
+## Text-Based Scrabble 
+
+*License*: MIT (see bottom of README for full license description)
 
 # October 22, 2024
 
@@ -43,8 +45,6 @@ ________________________________________________________________________________
 
 # Installation
 
-## Download IntelliJ IDEA Community Edition 2023.3.2 to your computer
-
 ## Download The latest version of Java
 
 ## Check the presence of the different Java libraries on your computer using the terminal. Install it if needed.
@@ -54,7 +54,7 @@ ________________________________________________________________________________
 
 # Usage
 
-Download and decompress zip file containing source and executable file of Scrabble. Run the JAR file.
+Download and extract zip file containing source and executable file of Scrabble. Run the JAR file.
 
 ## Player setup:
 
