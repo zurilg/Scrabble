@@ -160,7 +160,7 @@ public class ScrabbleController {
                         else if (!board.isEmpty()) { // board isn't empty and some letters are (hopefully) on board
                             board.setPrevState();
                             int[] coords = coordinates;
-                            boolean onBoard = false;
+                            boolean onBoard = true;
 
                             // The player is missing some of the tiles for the word (the rest should be on the board).
                             if(!lettersNotFound.isEmpty()){
@@ -177,21 +177,20 @@ public class ScrabbleController {
                                                         break;
                                                     }
                                                 }
-                                                p.removeTile(t);
                                             }
                                         }
                                     }
                                     // Letters aren't on board if they aren't equal to letter at specific index in word.
                                     else if(board.getLetterAtIndex(coords).charAt(0) != word.charAt(i)){
-                                        onBoard = false;
+                                        onBoard = false; // Letter that's supposed to be there isn't there.
                                     }
                                     if(direction != 0){ coords[1]+=1; }
                                     else{ coords[0]+=1; }
                                 }
-                                if(!onBoard) { onBoard = true; }
                             }
                             // The player has all the letters for the word, but some are supposed to be on the board.
                             else{
+                                onBoard = false;
                                 for(int i = 0; i < word.length(); i++){
                                     if(board.getLetterAtIndex(coords) == null){
                                         board.placeTile(playable.get(i), coords);
