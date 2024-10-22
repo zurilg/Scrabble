@@ -21,14 +21,8 @@ public class ScrabbleView {
     }
 
     // Want to redo print player tiles to print player stats...
-    public void printPlayerTiles(Player p){
-        ArrayList<Tile> tiles = p.getTiles();
-        String tileCharacters = p.getName() + ": ";
-        for(Tile t : tiles){
-            tileCharacters += "\"" + t.getChar() + "\"  ";
-        }
-        tileCharacters += "\n";
-        System.out.println(tileCharacters);
+    public void printPlayerInfo(String playerInfo){
+        System.out.println(playerInfo);
     }
 
     /**

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.io.*;
 
@@ -12,6 +13,8 @@ public class ScrabbleController {
 
     // 10,000 Acceptable Words
     private HashSet<String> dictionary;
+    // All words on board
+    private HashMap<String, Integer> wordsOnBoard;
 
     /**
      * Constructor for ScrabbleController class. Initializes view and models and gets all words for dictionary.
@@ -31,6 +34,8 @@ public class ScrabbleController {
         catch(Exception e){
             System.out.println(e); // TEMPORARY
         }
+
+        wordsOnBoard = new HashMap<String, Integer>();
     }
 
     /**
@@ -47,6 +52,7 @@ public class ScrabbleController {
             for(Player p : players){
                 playerTurn(p);
                 distributeTiles();
+                p.addToScore(scoreBoard());
             }
             //gameStatus = false; // Only does one round. NEEDS REMOVED...
         }
@@ -54,7 +60,7 @@ public class ScrabbleController {
 
     private void playerTurn(Player p){
         view.printBoard(board.toString()); // print board for player
-        view.printPlayerTiles(p); // print the player tiles
+        view.printPlayerInfo(p.toString()); // print the player tiles
         boolean validTurn = false; // player has not yet completed a valid turn
         while(!validTurn){ // while the player has not completed a valid turn
             // Player chooses what to do
@@ -66,7 +72,7 @@ public class ScrabbleController {
                 if(dictionary.contains(word.toLowerCase())) {
                     // Get coordinates and direction
                     int[] coordinates = {view.getInt("\nEnter Y Coordinate (1-15): ", 1, 15)-1, view.getCharToInt("\nEnter X Coordinate (A-O): ", "ABCDEFGHIJKLMNO", 65)};
-                    int direction = view.getCharToInt("\nEnter word direction up-to-down (D) or left-to-right (R)", "DR", 68);
+                    int direction = view.getCharToInt("\nEnter word direction up-to-down (D) or left-to-right (R): ", "DR", 68);
                     // Check coordinates and direction. Cant go outside of scrabble board.
                     boolean outOfBounts = false;
                     if(direction == 0){
@@ -197,7 +203,6 @@ public class ScrabbleController {
                 System.exit(0);
             }
         }
-
     }
 
     /**
@@ -289,6 +294,72 @@ public class ScrabbleController {
             }
         }
         return true;
+    }
+
+
+    // Nearly identical to the validate board method
+    private int scoreBoard(){
+        int score = 0;
+        int [] tileValues = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10, 0};
+        HashMap<String, Integer> allWords = new HashMap<String, Integer>();
+        for(int r = 0; r < 15; r ++){
+            String rowWords = "";
+            String columnWords = "";
+            for(int c = 0; c < 15; c ++){
+                int[] rows = {r, c};
+                int[] columns = {c, r};
+
+                if(board.getLetterAtIndex(rows)!=null){ rowWords += board.getLetterAtIndex(rows); }
+                else{ rowWords += " "; }
+
+                if(board.getLetterAtIndex(columns) != null){ columnWords += board.getLetterAtIndex(columns); }
+                else{ columnWords += " "; }
+            }
+
+
+            String[] rowW = rowWords.split(" ");
+            for (String s : rowW) {
+                if(s.length() > 1){
+                    s = s.strip();
+                    if(allWords.containsKey(s)) allWords.put(s, allWords.get(s) + 1);
+                    else allWords.put(s, 1);
+                }
+            }
+            String[] colW = columnWords.split(" ");
+            for (String s : colW) {
+                if(s.length() > 1){
+                    s = s.strip();
+                    if(allWords.containsKey(s)) allWords.put(s, allWords.get(s) + 1);
+                    else allWords.put(s, 1);
+                }
+            }
+        }
+
+        for(String key : allWords.keySet()){
+            int wordScore = 0;
+            if (wordsOnBoard.containsKey(key)) {
+                if(wordsOnBoard.get(key) != allWords.get(key)){
+                    for(int i = 0; i < allWords.get(key) - wordsOnBoard.get(key); i++){
+                        for(int x = 0; x < key.length(); x++){
+                            wordScore += tileValues[key.charAt(x)-65];
+                        }
+                    }
+                    wordsOnBoard.put(key, allWords.get(key));
+                }
+            }
+            else{
+                for(int i = 0; i < allWords.get(key); i++){
+                    for(int x = 0; x < key.length(); x++){
+                        wordScore += tileValues[key.charAt(x)-65];
+                    }
+                }
+                wordsOnBoard.put(key, allWords.get(key));
+            }
+            System.out.println("Word: " + key + " Score: " + wordScore);
+            score += wordScore;
+        }
+
+        return score;
     }
 
     /**

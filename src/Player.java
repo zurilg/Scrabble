@@ -34,6 +34,8 @@ public class Player {
         return this.score;
     }
 
+    public void addToScore(int turn) { score += turn; }
+
     public ArrayList<Tile> getTiles(){ return tileHolder; }
 
     public void addTileToHolder(Tile tile){
@@ -66,7 +68,13 @@ public class Player {
         tileHolder.remove(t);
     }
 
-
+    public String toString(){
+        String tileCharacters = "";
+        for(Tile t : tileHolder){
+            tileCharacters += "\"" + t.getChar() + "\"  ";
+        }
+        return "Player: " + this.name + "\n   - Tiles: " + tileCharacters + "\n   - Score: " + score + " pts";
+    }
 
 }
 
