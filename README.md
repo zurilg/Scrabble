@@ -1,6 +1,6 @@
 # Title
 
-Scrabble *License*: MIT (see bottom of README for full license description)\
+Scrabble *License*: MIT (see bottom of README for full license description)
 
 # October 22, 2024
 
@@ -54,7 +54,7 @@ ________________________________________________________________________________
 
 Download and decompress zip file containing source and executable file of Scrabble. Run the JAR file.
 
-##Player setup:
+## Player setup:
 
 Enter the amount of players you wish to play with. Assign each player a name. The order of turns is decided at the beginning of the game. 
 
@@ -62,14 +62,14 @@ Each player is assigned a tile, the player whose tile letter is closest to A goe
 
 7 random tiles are given to each player from the tile bag. 
 
-##Gameplay:
+## Gameplay:
 
 Each player has three options each turn, play their turn, skip their turn, or quit the game. The game ends when a player quits. Once the player places their tiles, the legality of the move is checked, then the board is updated and the next player goes. The score is 
 updated after each turn.
 
 If the move is illegal a message is displayed and the player is forced to restart their turn.
 
-##End of game: 
+## End of game: 
 
 The game is played until either a player quits, or the bag is empty and all the tiles are placed. The player with the most points 
 accumalted is the winner.
@@ -78,7 +78,7 @@ ________________________________________________________________________________
 
 # Credits
 
-## Mohammad Ahmadi (10167874)
+## Mohammad Ahmadi (101267874)
 
 ## Zuri Lane-Griffore (101241678) 
 
