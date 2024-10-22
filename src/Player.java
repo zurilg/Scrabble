@@ -77,6 +77,11 @@ public class Player {
         tileHolder.remove(t);
     }
 
+    /**
+     * Removes a tile from a specified index of the players tile holder
+     *
+     * @param index Index of tile to remove
+     */
     public void removeTileFromIndex(int index) { tileHolder.remove(index); }
 
     /**
