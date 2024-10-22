@@ -18,6 +18,8 @@ creating a framework for future milestones.
 To execute Scrabble, the following must be installed:
 - [x] Oracle OpenJDK version 22 (or higher)
 
+Must include the dictionary text file in the same directory as the JAR file.
+
 ## Usage
 
 1. Download the zip file containing the source code and executable file of Scrabble.
