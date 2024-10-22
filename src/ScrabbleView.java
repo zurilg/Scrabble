@@ -26,6 +26,19 @@ public class ScrabbleView {
                 .     `MM 8M         MM      ,pm9MM   MM     M8  MM     M8   MM  8M""\"""\"\s
                 Mb     dM YM.    ,   MM     8M   MM   MM.   ,M9  MM.   ,M9   MM  YM.    ,\s
                 P"Ybmmd"   YMbmd'  .JMML.   `Moo9^Yo. P^YbmdP'   P^YbmdP'  .JMML. `Mbmmd'\s""");
+        // Explain how to play
+        System.out.println("""
+                =================================================================================================================================================
+                HOW TO PLAY
+                
+                To play tiles, a player must enter the word they wish to play on the board.
+                The player must ensure they have the required tiles in their hand or available on the board.
+                The placement process follows these steps:
+                   1. The user enters the entire word they want to place.
+                   2. The user specifies the starting coordinates by first entering the x coordinate  of the word's starting point.
+                   3. Then, the user enters the y coordinate of the starting point.
+                   4. Finally, the user specifies the direction in which the word will be placed, choosing either "down" (vertically) or "right" (horizontally).
+                =================================================================================================================================================""");
     }
 
     /**

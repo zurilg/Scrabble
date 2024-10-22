@@ -103,10 +103,10 @@ public class ScrabbleController {
                     // Check coordinates and direction. Cant go outside of scrabble board.
                     boolean outOfBounts = false;
                     if(direction == 0) {
-                        if (coordinates[0] + word.length() > 14){ outOfBounts = true; } // The word is being written down and goes off the board downwards.
+                        if (coordinates[0] + word.length() > 15){ outOfBounts = true; } // The word is being written down and goes off the board downwards.
                     }
                     else {
-                        if (coordinates[1] + word.length() > 14){ outOfBounts = true; } // The word is being written to the right and goes off the board to the right.
+                        if (coordinates[1] + word.length() > 15){ outOfBounts = true; } // The word is being written to the right and goes off the board to the right.
                     }
                     // Still good to keep going, not out of bounds.
                     if(!outOfBounts){
