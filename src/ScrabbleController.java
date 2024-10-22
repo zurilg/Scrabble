@@ -139,6 +139,7 @@ public class ScrabbleController {
                             if(!lettersNotFound.isEmpty()){
                                 for(int i = 0; i < word.length(); i++){
                                     if(board.getLetterAtIndex(coords) == null){
+                                        if(playable.size() == letInd) break; // This means that the word is placed in a spot it doesn't belong.
                                         board.placeTile(playable.get(letInd), coords);
                                         p.removeTile(playable.get(letInd));
                                         letInd+=1;
