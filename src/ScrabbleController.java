@@ -178,10 +178,14 @@ public class ScrabbleController {
                                             }
                                         }
                                     }
+                                    // Letters aren't on board if they aren't equal to letter at specific index in word.
+                                    else if(board.getLetterAtIndex(coords).charAt(0) != word.charAt(i)){
+                                        onBoard = false;
+                                    }
                                     if(direction != 0){ coords[1]+=1; }
                                     else{ coords[0]+=1; }
                                 }
-                                onBoard = true;
+                                if(!onBoard) { onBoard = true; }
                             }
                             // The player has all the letters for the word, but some are supposed to be on the board.
                             else{
