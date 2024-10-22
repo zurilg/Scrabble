@@ -77,6 +77,8 @@ public class Player {
         tileHolder.remove(t);
     }
 
+    public void removeTileFromIndex(int index) { tileHolder.remove(index); }
+
     /**
      * Removes and returns the tile at the end of the tile holder.
      *

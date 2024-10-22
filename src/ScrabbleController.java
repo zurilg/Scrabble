@@ -173,6 +173,13 @@ public class ScrabbleController {
                                         for(Tile t : playable){
                                             if(t.getChar().charAt(0) == word.charAt(i)){
                                                 board.placeTile(t, coords);
+                                                // Make sure only one of those tiles is removed from user.
+                                                for(int x = 0; x < p.getTiles().size(); x+=1){
+                                                    if(p.getTiles().get(x).getChar().charAt(0) == t.getChar().charAt(0)){
+                                                        p.removeTileFromIndex(x);
+                                                        break;
+                                                    }
+                                                }
                                                 p.removeTile(t);
                                                 letInd+=1;
                                             }
