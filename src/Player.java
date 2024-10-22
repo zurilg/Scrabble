@@ -45,18 +45,43 @@ public class Player {
         return this.score;
     }
 
+    /**
+     * Adds turn score to player's total score.
+     *
+     * @param turn The score obtained during the player's turn.
+     */
     public void addToScore(int turn) { score += turn; }
 
+    /**
+     * Return a representation of the entire tile holder.
+     *
+     * @return ArrayList of tiles representing the tile holder.
+     */
     public ArrayList<Tile> getTiles(){ return tileHolder; }
 
+    /**
+     * Adds the provided tile to the tile holder.
+     *
+     * @param tile Tile to add to tile holder.
+     */
     public void addTileToHolder(Tile tile){
         tileHolder.add(tile);
     }
 
+    /**
+     * Removes the specified tile from the player's tile holder.
+     *
+     * @param t Tile to remove.
+     */
     public void removeTile(Tile t){
         tileHolder.remove(t);
     }
 
+    /**
+     * Removes and returns the tile at the end of the tile holder.
+     *
+     * @return The tile at the end of the tile holder.
+     */
     public Tile popLastTile(){
         Tile t;
         if(!tileHolder.isEmpty()){
@@ -67,18 +92,33 @@ public class Player {
        return null;
     }
 
+    /**
+     * Returns the tile that is currently at the end of the tile holder.
+     *
+     * @return The tile at the end of the tile holder.
+     */
     public Tile showLastTile(){
         return tileHolder.getLast();
     }
 
+    /**
+     * Returns the number of tiles that are currently in a player's tile holder.
+     *
+     * @return Number of tiles tile holders.
+     */
     public int numTiles(){
         return tileHolder.size();
     }
 
+    /**
+     * Provides a string representation of the player assets (their name, tiles, and score).
+     *
+     * @return String representation of the player assets.
+     */
     public String toString(){
-        String tileCharacters = "";
+        StringBuilder tileCharacters = new StringBuilder();
         for(Tile t : tileHolder){
-            tileCharacters += "\"" + t.getChar() + "\"  ";
+            tileCharacters.append("\"").append(t.getChar()).append("\"  ");
         }
         return "Player: " + this.name + "\n   - Tiles: " + tileCharacters + "\n   - Score: " + score + " pts";
     }

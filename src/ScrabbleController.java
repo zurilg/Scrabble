@@ -45,7 +45,7 @@ public class ScrabbleController {
         catch(Exception e){
             view.viewPrint("File read error. Exception: " + e); // TEMPORARY
         }
-        wordsOnBoard = new HashMap<String, Integer>();
+        wordsOnBoard = new HashMap<>();
     }
 
     /**
@@ -111,7 +111,7 @@ public class ScrabbleController {
                         // All tiles in players hand that are playable
                         ArrayList<Tile> playable = new ArrayList<>();
                         // Store the letters not found in the players tile holder.
-                        String lettersNotFound = "";
+                        StringBuilder lettersNotFound = new StringBuilder();
                         for(int i = 0; i < word.length(); i++){
                             boolean found = false;
                             for(Tile t : p.getTiles()){
@@ -123,12 +123,12 @@ public class ScrabbleController {
                                 }
                             }
                             // If the tile isn't found in the player's tile holder then declare it as not found.
-                            if(!found){ lettersNotFound += word.charAt(0); }
+                            if(!found){ lettersNotFound.append(word.charAt(0)); }
                         }
 
                         // Handles first play
-                        if (board.isEmpty() && lettersNotFound.isEmpty()) {
-                            int coords[];
+                        if (board.isEmpty() && (lettersNotFound.isEmpty())) {
+                            int[] coords;
                             // THIS CASE IS EMPTY BOARD & NEED TO PLAY IN CENTER
                             for(Tile t : playable){
                                 coords = coordinates;
@@ -206,11 +206,11 @@ public class ScrabbleController {
                             }
                         }
                         // If the player enters a word that they don't have all the tiles for on first turn.
-                        else if (board.isEmpty() && !lettersNotFound.isEmpty())
+                        else if (board.isEmpty() && (!lettersNotFound.isEmpty()))
                             view.viewPrint("DON'T HAVE ALL TILES");
                         // Used for testing - TEMPORARY SHOULD BE REMOVED
                         else
-                            view.viewPrint("UNHANDLED STATE\nEmpty board: " + board.isEmpty() + "Letters found empty: " + lettersNotFound.isEmpty());
+                            view.viewPrint("UNHANDLED STATE\nEmpty board: " + board.isEmpty() + "Letters found empty: " + (lettersNotFound.isEmpty()));
                     }
                     // Player tried to play word out of bounds.
                     else{
@@ -250,7 +250,6 @@ public class ScrabbleController {
 
     /**
      * Have each player draw a tile and determine who goes first.
-     *
      * Note: currently doesn't handle redraws. If two players draw, oh well...
      */
     private void determinePlayerOrder(){
@@ -303,21 +302,21 @@ public class ScrabbleController {
     private boolean validateBoard(){
         // Check all rows and columns for valid data
         for(int r = 0; r < 15; r ++){
-            String rowWords = "";
-            String columnWords = "";
+            StringBuilder rowWords = new StringBuilder();
+            StringBuilder columnWords = new StringBuilder();
             for(int c = 0; c < 15; c ++){
                 int[] rows = {r, c};
                 int[] columns = {c, r};
                 // If there is a letter at certain row coordinate, add it to rowWords. Otherwise, add a space to rowWords.
-                if(board.getLetterAtIndex(rows)!=null){ rowWords += board.getLetterAtIndex(rows); }
-                else{ rowWords += " "; }
+                if(board.getLetterAtIndex(rows)!=null){ rowWords.append(board.getLetterAtIndex(rows)); }
+                else{ rowWords.append(" "); }
                 // If there is a letter at certain column coordinate, add it to columnWords. Otherwise, add a space to columnWords.
-                if(board.getLetterAtIndex(columns) != null){ columnWords += board.getLetterAtIndex(columns); }
-                else{ columnWords += " "; }
+                if(board.getLetterAtIndex(columns) != null){ columnWords.append(board.getLetterAtIndex(columns)); }
+                else{ columnWords.append(" "); }
             }
 
             // Validate all row words
-            String[] rowW = rowWords.split(" ");
+            String[] rowW = rowWords.toString().split(" ");
             for (String s : rowW) {
                 if(s.length() > 1){
                     // view.viewPrint(s.strip().toLowerCase()); // TEMPORARY FOR TESTING
@@ -326,7 +325,7 @@ public class ScrabbleController {
             }
 
             // Validate all column words
-            String[] colW = columnWords.split(" ");
+            String[] colW = columnWords.toString().split(" ");
             for (String s : colW) {
                 if(s.length() > 1){
                     // view.viewPrint(s.strip().toLowerCase()); // TEMPORARY FOR TESTING
@@ -347,22 +346,22 @@ public class ScrabbleController {
         int score = 0; // Score for a players turn. Addition of all letter tiles in the words they created.
         int [] tileValues = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10}; // All letter values alphabetical A-Z
         // Hashmap to store words that are on board after players turn. Used to compare to past words. Format: < Word, # of Occurrences >
-        HashMap<String, Integer> allWords = new HashMap<String, Integer>();
+        HashMap<String, Integer> allWords = new HashMap<>();
         for(int r = 0; r < 15; r ++){
-            String rowWords = "";
-            String columnWords = "";
+            StringBuilder rowWords = new StringBuilder();
+            StringBuilder columnWords = new StringBuilder();
             for(int c = 0; c < 15; c ++){
                 int[] rows = {r, c};
                 int[] columns = {c, r};
                 // Get all row words in a string
-                if(board.getLetterAtIndex(rows)!=null){ rowWords += board.getLetterAtIndex(rows); }
-                else{ rowWords += " "; }
+                if(board.getLetterAtIndex(rows)!=null){ rowWords.append(board.getLetterAtIndex(rows)); }
+                else{ rowWords.append(" "); }
                 // Get all column words a string
-                if(board.getLetterAtIndex(columns) != null){ columnWords += board.getLetterAtIndex(columns); }
-                else{ columnWords += " "; }
+                if(board.getLetterAtIndex(columns) != null){ columnWords.append(board.getLetterAtIndex(columns)); }
+                else{ columnWords.append(" "); }
             }
             // Get row words in a string array then add them to hash map.
-            String[] rowW = rowWords.split(" ");
+            String[] rowW = rowWords.toString().split(" ");
             for (String s : rowW) {
                 if(s.length() > 1){
                     s = s.strip();
@@ -371,7 +370,7 @@ public class ScrabbleController {
                 }
             }
             // Get column words in a string array then add them to hash map.
-            String[] colW = columnWords.split(" ");
+            String[] colW = columnWords.toString().split(" ");
             for (String s : colW) {
                 if(s.length() > 1){
                     s = s.strip();

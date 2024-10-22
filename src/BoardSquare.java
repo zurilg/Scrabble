@@ -14,37 +14,69 @@ public class BoardSquare {
     private int letterScore;
     private int wordScore;
 
+    /**
+     * Constructor for BoardSquare.
+     *
+     * @param letterScore The letter score multiplier for the board square.
+     * @param wordScore The word score multiplier for the board square.
+     */
     public BoardSquare(int letterScore, int wordScore){
         t = null;
         this.letterScore = letterScore;
         this.wordScore = wordScore;
     }
+
+    /**
+     * Show what tile is on the board square.
+     *
+     * @return Tile on board square.
+     */
     public Tile getTile(){
         return t;
     }
+
+    /**
+     * Places tile on board square.
+     *
+     * @param t Tile to place.
+     */
     public void placeTile(Tile t){
         this.t = t;
     }
 
-    public Tile popTile(){
-        Tile tile = this.t;
-        this.t = null;
-        return tile;
-    }
-
+    /**
+     * Returns the letter score multiplier corresponding to the square.
+     *
+     * @return The letter score bonus of the board square.
+     */
     public int getLetterScore() {
         return this.letterScore;
     }
 
+    /**
+     * Returns the word score multiplier corresponding to the square.
+     *
+     * @return The word score bonus of the board square.
+     */
     public int getWordScore(){
         return this.wordScore;
     }
 
+    /**
+     * Returns a string representation of the letter on the board square.
+     *
+     * @return The letter of the tile on the board square.
+     */
     public String getLetter(){
         if(t == null) return null;
         return t.getChar();
     }
 
+    /**
+     * Returns the point value of the letter on the board square.
+     *
+     * @return The point value of the letter of the tile on the board square.
+     */
     public int getLetterPoint(){
         if(t == null) return -1;
         return t.getValue();

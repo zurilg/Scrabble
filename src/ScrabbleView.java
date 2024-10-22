@@ -1,5 +1,5 @@
 /**
- * Scrabble's view class.
+ * Scrabble's view class. This is the only class allowed to print and use scanner.
  *
  * @author Zuri Lane-Griffore (101241678)
  * @author Mohammad Ahmadi (101267874)
@@ -17,13 +17,15 @@ public class ScrabbleView {
      */
     public ScrabbleView(){
         // Show fancy title
-        System.out.println(
-                "  _____                _     _     _ \n" +
-                " / ____|              | |   | |   | |\n" +
-                "| (___   ___ _ __ __ _| |__ | |__ | | ___ \n" +
-                " \\___ \\ / __| '__/ _` | '_ \\| '_ \\| |/ _ \\ \n" +
-                " ____) | (__| | | (_| | |_) | |_) | |  __/\n" +
-                "|_____/ \\___|_|  \\__,_|_.__/|_.__/|_|\\___|\n");
+        System.out.println("""
+                                                      ,,         ,,          ,,          \s
+                 .M""\"bgd                            *MM        *MM        `7MM          \s
+                ,MI    "Y                             MM         MM          MM          \s
+                `MMb.      ,p6"bo  `7Mb,od8  ,6"Yb.   MM,dMMb.   MM,dMMb.    MM   .gP"Ya \s
+                  `YMMNq. 6M'  OO    MM' "' 8)   MM   MM    `Mb  MM    `Mb   MM  ,M'   Yb\s
+                .     `MM 8M         MM      ,pm9MM   MM     M8  MM     M8   MM  8M""\"""\"\s
+                Mb     dM YM.    ,   MM     8M   MM   MM.   ,M9  MM.   ,M9   MM  YM.    ,\s
+                P"Ybmmd"   YMbmd'  .JMML.   `Moo9^Yo. P^YbmdP'   P^YbmdP'  .JMML. `Mbmmd'\s""");
     }
 
     /**
@@ -41,7 +43,7 @@ public class ScrabbleView {
      */
     public String getString(String message){
         Scanner scan = new Scanner(System.in);
-        String str = "";
+        String str;
         System.out.print(message);
         str = scan.nextLine();
         while(str.isEmpty()){
@@ -84,7 +86,7 @@ public class ScrabbleView {
     public int getCharToInt(String message, String allowedCharacters, int shift){
         Scanner scan = new Scanner(System.in);
         boolean valid = false;
-        String str = ""; // Take input as a string
+        String str; // Take input as a string
         do{
             System.out.print(message); // Show user message
             str = scan.nextLine().toUpperCase(); // Get users input
