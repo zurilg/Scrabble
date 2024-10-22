@@ -81,9 +81,11 @@ public class ScrabbleView {
             System.out.print(message); // Show user message
             str = scan.nextLine().toUpperCase(); // Get users input
             for(int i = 0; i < allowedCharacters.length(); i++){
-                if(allowedCharacters.charAt(i) == str.charAt(0)){
-                    valid = true;
-                    break;
+                if(!str.isEmpty()){
+                    if(allowedCharacters.charAt(i) == str.charAt(0)){
+                        valid = true;
+                        break;
+                    }
                 }
             }
             if(!valid){ System.out.println("Invalid input. Try again."); }
