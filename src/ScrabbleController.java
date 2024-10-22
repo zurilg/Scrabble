@@ -160,15 +160,12 @@ public class ScrabbleController {
                         else if (!board.isEmpty()) { // board isn't empty and some letters are (hopefully) on board
                             board.setPrevState();
                             int[] coords = coordinates;
-                            int letInd = 0;
                             boolean onBoard = false;
 
                             // The player is missing some of the tiles for the word (the rest should be on the board).
                             if(!lettersNotFound.isEmpty()){
                                 for(int i = 0; i < word.length(); i++){
                                     if(board.getLetterAtIndex(coords) == null){
-                                        if(playable.size() == letInd) { break; // This means that the word is placed in a spot it doesn't belong.
-                                        }
                                         // Makes sure correct tile is placed.
                                         for(Tile t : playable){
                                             if(t.getChar().charAt(0) == word.charAt(i)){
@@ -181,7 +178,6 @@ public class ScrabbleController {
                                                     }
                                                 }
                                                 p.removeTile(t);
-                                                letInd+=1;
                                             }
                                         }
                                     }
@@ -200,7 +196,6 @@ public class ScrabbleController {
                                     if(board.getLetterAtIndex(coords) == null){
                                         board.placeTile(playable.get(i), coords);
                                         p.removeTile(playable.get(i));
-                                        letInd+=1;
                                     }
                                     else{
                                         onBoard = true;
