@@ -59,7 +59,8 @@ public class ScrabbleController {
         int scorelessTurns = 0; // Keeps track of number of scoreless turns.
         boolean tilesRemain = true; // Flags when a player runs out of tiles.
 
-        while(scorelessTurns !=6 && tilesRemain){
+        // This limits the amount of scoreless turns before game ends from 6-8. 6 for 2-3 players, 8 for 4 players...
+        while(scorelessTurns <= 6 && tilesRemain){
             // Iterate through player order to constitute turns.
             for(Player p : players){
                 int initialScore = p.getScore(); // Store initial score to keep track of scoreless turns
