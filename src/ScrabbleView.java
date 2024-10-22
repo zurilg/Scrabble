@@ -1,6 +1,20 @@
+/**
+ * Scrabble's view class.
+ *
+ * @author Zuri Lane-Griffore (101241678)
+ * @author Mohammad Ahmadi (101267874)
+ * @author Abdul Aziz Al-Sibakhi (101246056)
+ * @author Redah Eliwa (101273466)
+ *
+ * @version 10-22-2024
+ */
+
 import java.util.Scanner;
 
 public class ScrabbleView {
+    /**
+     * Constructor for scrabble's view class. Prints out a fancy title for the game.
+     */
     public ScrabbleView(){
         // Show fancy title
         System.out.println(

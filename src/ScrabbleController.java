@@ -1,3 +1,14 @@
+/**
+ * Scrabble's controller class. Holds the game logic.
+ *
+ * @author Zuri Lane-Griffore (101241678)
+ * @author Mohammad Ahmadi (101267874)
+ * @author Abdul Aziz Al-Sibakhi (101246056)
+ * @author Redah Eliwa (101273466)
+ *
+ * @version 10-22-2024
+ */
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,39 +49,40 @@ public class ScrabbleController {
     }
 
     /**
-     * Game setup has finished, ready to start.
+     * Setup has finished. Starting game and going until user quits or completion.
      */
     public void startGame(){
         addPlayers(); // Get all players for game and their names.
         determinePlayerOrder(); // Determine order or play.
         distributeTiles(); // Give each player 7 tiles to start.
 
-        boolean gameStatus = true;
-        int scorelessTurns = 0;
-        Player winner = null;
+        int scorelessTurns = 0; // Keeps track of number of scoreless turns.
+        boolean tilesRemain = true; // Flags when a player runs out of tiles.
 
-        while(gameStatus && scorelessTurns !=6 && winner == null){
+        while(scorelessTurns !=6 && tilesRemain){
             // Iterate through player order to constitute turns.
             for(Player p : players){
-                int initialScore = p.getScore();
-                playerTurn(p);
-                distributeTiles();
-                p.addToScore(scoreBoard());
+                int initialScore = p.getScore(); // Store initial score to keep track of scoreless turns
+
+                playerTurn(p); // Give player their turn.
+                distributeTiles(); // Fill up each player's tile holder.
+                p.addToScore(scoreBoard()); // Calculate the player's score after turn and add their turn score to their overall score.
 
                 // Track number of scoreless turns
-                if(initialScore == p.getScore()) scorelessTurns += 1;
-                else scorelessTurns = 0;
+                if(initialScore == p.getScore()){ scorelessTurns += 1; }
+                else{ scorelessTurns = 0; }
 
-                //
-                if(p.getTiles().isEmpty()){
-                    winner = p;
-                }
-
+                // A player has 0 tiles left.
+                if(p.getTiles().isEmpty()){ tilesRemain = false; }
             }
-            //gameStatus = false; // Only does one round. NEEDS REMOVED...
         }
     }
 
+    /**
+     * Determines/enables the logistics and abilities behind a player turn provided the player whose turn it is.
+     *
+     * @param p The player whose turn it is.
+     */
     private void playerTurn(Player p){
         view.viewPrint(board.toString()); // print board for player
         view.viewPrint(p.toString()); // print the player tiles
@@ -88,17 +100,17 @@ public class ScrabbleController {
                     int direction = view.getCharToInt("\nEnter word direction up-to-down (D) or left-to-right (R): ", "DR", 68);
                     // Check coordinates and direction. Cant go outside of scrabble board.
                     boolean outOfBounts = false;
-                    if(direction == 0){
-                        if(coordinates[0] + word.length() > 14) outOfBounts = true;
+                    if(direction == 0) {
+                        if (coordinates[0] + word.length() > 14){ outOfBounts = true; } // The word is being written down and goes off the board downwards.
                     }
-                    else{
-                        if(coordinates[1] + word.length() > 14) outOfBounts = true;
+                    else {
+                        if (coordinates[1] + word.length() > 14){ outOfBounts = true; } // The word is being written to the right and goes off the board to the right.
                     }
                     // Still good to keep going, not out of bounds.
                     if(!outOfBounts){
                         // All tiles in players hand that are playable
                         ArrayList<Tile> playable = new ArrayList<>();
-                        // Get tiles from player that are playable
+                        // Store the letters not found in the players tile holder.
                         String lettersNotFound = "";
                         for(int i = 0; i < word.length(); i++){
                             boolean found = false;
@@ -110,9 +122,8 @@ public class ScrabbleController {
                                     break;
                                 }
                             }
-                            if(!found){
-                                lettersNotFound += word.charAt(0);
-                            }
+                            // If the tile isn't found in the player's tile holder then declare it as not found.
+                            if(!found){ lettersNotFound += word.charAt(0); }
                         }
 
                         // Handles first play
@@ -149,6 +160,7 @@ public class ScrabbleController {
                             int letInd = 0;
                             boolean onBoard = false;
 
+                            // The player is missing some of the tiles for the word (the rest should be on the board).
                             if(!lettersNotFound.isEmpty()){
                                 for(int i = 0; i < word.length(); i++){
                                     if(board.getLetterAtIndex(coords) == null){
@@ -162,8 +174,8 @@ public class ScrabbleController {
                                 }
                                 onBoard = true;
                             }
+                            // The player has all the letters for the word, but some are supposed to be on the board.
                             else{
-
                                 for(int i = 0; i < word.length(); i++){
                                     if(board.getLetterAtIndex(coords) == null){
                                         board.placeTile(playable.get(i), coords);
@@ -173,40 +185,51 @@ public class ScrabbleController {
                                     else{
                                         onBoard = true;
                                     }
-
                                     if(direction != 0){ coords[1]+=1; }
                                     else{ coords[0]+=1; }
                                 }
                             }
 
+                            // Once all tiles are placed on the board, check if the board is valid and whether the word was placed on the board.
                             if(validateBoard() && onBoard){
                                 view.viewPrint("Valid Turn"); // TEMPORARY
                                 validTurn = true;
                             }
+                            // If something about the board isn't right, revert changes and give the player their tiles back.
                             else{ // Something went wrong... revert board.
-                                view.viewPrint("Invalid Turn"); // TEMPORARY
-                                board.reset();
+                                view.viewPrint("Invalid Turn");
+                                board.reset(); // Revert changes to board
+                                // Give player their tiles back.
                                 for(Tile t : playable){
                                     p.addTileToHolder(t);
                                 }
                             }
                         }
+                        // If the player enters a word that they don't have all the tiles for on first turn.
                         else if (board.isEmpty() && !lettersNotFound.isEmpty())
                             view.viewPrint("DON'T HAVE ALL TILES");
+                        // Used for testing - TEMPORARY SHOULD BE REMOVED
                         else
                             view.viewPrint("UNHANDLED STATE\nEmpty board: " + board.isEmpty() + "Letters found empty: " + lettersNotFound.isEmpty());
                     }
-                    else
+                    // Player tried to play word out of bounds.
+                    else{
                         view.viewPrint("OUT OF BOUNDS");
+                    }
                 }
-                else
+                // Word isn't in the dictionary.
+                else{
                     view.viewPrint("NOT A WORD"); // TEMPORARY
+                }
             }
+
+            // Player decides to skip their turn.
             else if(c == 83){ // 83 is the ASCII value for S
                 validTurn = true;
                 view.viewPrint(p.getName() + " decided to skip their turn.");
             }
-            else{ // Player decides to quit game.
+            // Player decides to quit game.
+            else{
                 view.viewPrint("Thanks for playing!");
                 System.exit(0);
             }
@@ -217,18 +240,22 @@ public class ScrabbleController {
      * Add all players according to how many players the user would like to play with. Get each player's name.
      */
     private void addPlayers(){
+        // Get number of players.
         int numPlayers = view.getInt("\nEnter number of players (2-4): ", 2, 4); // Get number of players to initialize players
         for(int i = 1; i<= numPlayers; i++){
+            // Get each player's name.
             players.add(new Player(view.getString("\nEnter player " + i + "'s name: ")));
         }
     }
 
     /**
      * Have each player draw a tile and determine who goes first.
+     *
+     * Note: currently doesn't handle redraws. If two players draw, oh well...
      */
     private void determinePlayerOrder(){
         // Used to determine whether players ties
-        boolean redraw = false;
+        boolean redraw = false; // Not used for now...
         // Have each player draw a tile
         for(Player p : players){
             p.addTileToHolder(tiles.popTile());
@@ -242,7 +269,7 @@ public class ScrabbleController {
                     players.set(j+1, temp);
                 }
                 else if(players.get(j).showLastTile().getChar().charAt(0) == players.get(j + 1).showLastTile().getChar().charAt(0)){
-                    redraw = true;
+                    redraw = true; // Not used for now...
                 }
             }
         }
@@ -261,13 +288,18 @@ public class ScrabbleController {
      */
     private void distributeTiles(){
         for(Player p : players){
+            // Give player 7 - (# tiles in tile holder) tiles
             for(int i = 7 - p.numTiles();i>0;i--){
-                if(tiles.returnSize() != 0)
-                    p.addTileToHolder(tiles.popTile());
+                if(tiles.returnSize() != 0){ p.addTileToHolder(tiles.popTile()); }
             }
         }
     }
 
+    /**
+     * Determines whether the board is valid (i.e., all words in all rows and columns are in the dictionary).
+     *
+     * @return Board validity (true : false).
+     */
     private boolean validateBoard(){
         // Check all rows and columns for valid data
         for(int r = 0; r < 15; r ++){
@@ -276,10 +308,10 @@ public class ScrabbleController {
             for(int c = 0; c < 15; c ++){
                 int[] rows = {r, c};
                 int[] columns = {c, r};
-
+                // If there is a letter at certain row coordinate, add it to rowWords. Otherwise, add a space to rowWords.
                 if(board.getLetterAtIndex(rows)!=null){ rowWords += board.getLetterAtIndex(rows); }
                 else{ rowWords += " "; }
-
+                // If there is a letter at certain column coordinate, add it to columnWords. Otherwise, add a space to columnWords.
                 if(board.getLetterAtIndex(columns) != null){ columnWords += board.getLetterAtIndex(columns); }
                 else{ columnWords += " "; }
             }
@@ -288,8 +320,8 @@ public class ScrabbleController {
             String[] rowW = rowWords.split(" ");
             for (String s : rowW) {
                 if(s.length() > 1){
-                    //System.out.println(s.strip().toLowerCase()); // TEMPORARY FOR TESTING
-                    if (!(dictionary.contains(s.strip().toLowerCase()))) { return false; }
+                    // view.viewPrint(s.strip().toLowerCase()); // TEMPORARY FOR TESTING
+                    if (!(dictionary.contains(s.strip().toLowerCase()))) { return false; } // If the dictionary doesn't contain one of the words then board isn't valid.
                 }
             }
 
@@ -297,19 +329,24 @@ public class ScrabbleController {
             String[] colW = columnWords.split(" ");
             for (String s : colW) {
                 if(s.length() > 1){
-                    // System.out.println(s.strip().toLowerCase()); // TEMPORARY FOR TESTING
-                    if (!(dictionary.contains(s.strip().toLowerCase()))) { return false; }
+                    // view.viewPrint(s.strip().toLowerCase()); // TEMPORARY FOR TESTING
+                    if (!(dictionary.contains(s.strip().toLowerCase()))) { return false; } // If the dictionary doesn't contain one of the words then board isn't valid.
                 }
             }
         }
-        return true;
+        return true; // The board is valid. All words on the board are in the dictionary.
     }
 
-
-    // Nearly identical to the validate board method
+    /**
+     * Calculates the total score from a player's turn.
+     * Note: currently a player's score per turn is only determine by sum of all word scores. WordScore = TileValue1 + --- + TileValueN. *BONUS BOARD SQUARES NOT SCORED*
+     *
+     * @return The sum of all letter scores for the player.
+     */
     private int scoreBoard(){
-        int score = 0;
-        int [] tileValues = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10};
+        int score = 0; // Score for a players turn. Addition of all letter tiles in the words they created.
+        int [] tileValues = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10}; // All letter values alphabetical A-Z
+        // Hashmap to store words that are on board after players turn. Used to compare to past words. Format: < Word, # of Occurrences >
         HashMap<String, Integer> allWords = new HashMap<String, Integer>();
         for(int r = 0; r < 15; r ++){
             String rowWords = "";
@@ -317,15 +354,14 @@ public class ScrabbleController {
             for(int c = 0; c < 15; c ++){
                 int[] rows = {r, c};
                 int[] columns = {c, r};
-
+                // Get all row words in a string
                 if(board.getLetterAtIndex(rows)!=null){ rowWords += board.getLetterAtIndex(rows); }
                 else{ rowWords += " "; }
-
+                // Get all column words a string
                 if(board.getLetterAtIndex(columns) != null){ columnWords += board.getLetterAtIndex(columns); }
                 else{ columnWords += " "; }
             }
-
-
+            // Get row words in a string array then add them to hash map.
             String[] rowW = rowWords.split(" ");
             for (String s : rowW) {
                 if(s.length() > 1){
@@ -334,6 +370,7 @@ public class ScrabbleController {
                     else allWords.put(s, 1);
                 }
             }
+            // Get column words in a string array then add them to hash map.
             String[] colW = columnWords.split(" ");
             for (String s : colW) {
                 if(s.length() > 1){
@@ -343,7 +380,9 @@ public class ScrabbleController {
                 }
             }
         }
-
+        /* For each word on the board generated after the new turn, compare it to the current words on the board.
+        This helps determine which words the player just played and therefore get credit for.
+        If the word belongs to the player, give its point values to the player. */
         for(String key : allWords.keySet()){
             int wordScore = 0;
             if (wordsOnBoard.containsKey(key)) {
@@ -367,12 +406,13 @@ public class ScrabbleController {
             view.viewPrint("Word: " + key + " Score: " + wordScore);
             score += wordScore;
         }
-
         return score;
     }
 
     /**
-     * @throws FileNotFoundException
+     * Attempts to open then read and save the contents of the dictionary text file.
+     *
+     * @throws FileNotFoundException When file trying to be read can not be found in specified directory.
      */
     private void getWordsFromFile() throws FileNotFoundException {
         BufferedReader r = new BufferedReader(new FileReader("./Words.txt"));

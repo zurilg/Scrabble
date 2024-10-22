@@ -1,3 +1,14 @@
+/**
+ * Player class.
+ *
+ * @author Zuri Lane-Griffore (101241678)
+ * @author Mohammad Ahmadi (101267874)
+ * @author Abdul Aziz Al-Sibakhi (101246056)
+ * @author Redah Eliwa (101273466)
+ *
+ * @version 10-22-2024
+ */
+
 import java.util.ArrayList;
 
 public class Player {
@@ -42,8 +53,8 @@ public class Player {
         tileHolder.add(tile);
     }
 
-    public void removeTileFromHolder(Tile tile){
-        tileHolder.remove(tile);
+    public void removeTile(Tile t){
+        tileHolder.remove(t);
     }
 
     public Tile popLastTile(){
@@ -62,10 +73,6 @@ public class Player {
 
     public int numTiles(){
         return tileHolder.size();
-    }
-
-    public void removeTile(Tile t){
-        tileHolder.remove(t);
     }
 
     public String toString(){
