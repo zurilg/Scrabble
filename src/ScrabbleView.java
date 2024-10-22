@@ -20,7 +20,7 @@ public class ScrabbleView {
         System.out.println(board);
     }
 
-    // Want to redo print player tiles to print player stats...
+    // Want to redo print player tiles to print player stats.
     public void printPlayerInfo(String playerInfo){
         System.out.println(playerInfo);
     }
