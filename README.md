@@ -6,7 +6,6 @@ Scrabble *License*: MIT (see bottom of README for full license description)
 
 # IntelliJ IDEA Community Edition 2023.3.2
 
-
 __________________________________________________________________________________________________________________________
 
 # Description
@@ -38,16 +37,19 @@ Java
 
 IntelliJ IDEA Community Edition 2023.3.2
 
+Oracle OpenJDK version 22
+
 __________________________________________________________________________________________________________________________
 
 # Installation
 
-#Download IntelliJ IDEA Community Edition 2023.3.2 to your computer
+## Download IntelliJ IDEA Community Edition 2023.3.2 to your computer
 
-#Download The latest version of Java
+## Download The latest version of Java
 
-#Check the presence of the different Java libraries on your computer using the terminal. Install it if needed.
+## Check the presence of the different Java libraries on your computer using the terminal. Install it if needed.
 
+## Use Oracle OpenJDK version 22 as SDK
 __________________________________________________________________________________________________________________________
 
 # Usage
@@ -64,15 +66,42 @@ Each player is assigned a tile, the player whose tile letter is closest to A goe
 
 ## Gameplay:
 
-Each player has three options each turn, play their turn, skip their turn, or quit the game. The game ends when a player quits. Once the player places their tiles, the legality of the move is checked, then the board is updated and the next player goes. The score is 
-updated after each turn.
+To play the game, the user must enter the word they wish to place on the board. Before placing the word, the user must ensure they have the required tiles in their hand or available on the board. The placement process follows these steps:
 
-If the move is illegal a message is displayed and the player is forced to restart their turn.
+The user enters the entire word they want to place.
+
+The user specifies the starting coordinates by first entering the x coordinate  of the word's starting point.
+
+Then, the user enters the y coordinate of the starting point.
+
+Finally, the user specifies the direction in which the word will be placed, choosing either "down" (vertically) or "right" (horizontally).
+
+The legality of each move is determine after player inputs.
 
 ## End of game: 
 
-The game is played until either a player quits, or the bag is empty and all the tiles are placed. The player with the most points 
-accumalted is the winner.
+Game Ending Scenarios:
+
+### Consecutive Skips:
+
+If there are 2 or 3 players:
+
+The game ends after 6 consecutive turns where no player places a tile on the board.
+
+If there are 4 players:
+
+The game ends after 8 consecutive turns without any player placing a tile on the board.
+Other End-of-Game Conditions:
+
+### The game also ends if:
+
+A player quits.
+
+The tile bag is empty, and all players have placed their remaining tiles on the board.
+
+Determining the Winner:
+
+At the end of the game, the player with the highest score is declared the winner.
 
 __________________________________________________________________________________________________________________________
 
