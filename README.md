@@ -18,10 +18,10 @@ To execute Scrabble, the following must be installed:
 
 ## Credits
 
-- ### Mohammad Ahmadi (101267874)
-- ### Zuri Lane-Griffore (101241678)
-- ### Abdul Aziz Al-Sibakhi (101246056)
-- ### Redah Eliwa (101273466)
+- Mohammad Ahmadi (101267874)
+- Zuri Lane-Griffore (101241678)
+- Abdul Aziz Al-Sibakhi (101246056)
+- Redah Eliwa (101273466)
 
 
 ## License
