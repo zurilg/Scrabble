@@ -415,11 +415,7 @@ public class ScrabbleController {
      */
     private void determineWinner(){
         // Alert user that the game is over
-        view.viewPrint("""
-                \n ____ ____ ____ ____ ____ ____ ____ ____ ____\s
-                ||G |||A |||M |||E |||  |||O |||V |||E |||R ||
-                ||__|||__|||__|||__|||__|||__|||__|||__|||__||
-                |/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|""");
+        view.viewPrint("");
 
         // Adjust scores for tiles. Deduct remaining tile points from user. Add all remaining tile points to players with no tiles left.
         sortRemainingTilePoints();
