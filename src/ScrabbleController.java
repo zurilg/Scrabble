@@ -77,7 +77,6 @@ public class ScrabbleController {
                 if(p.getTiles().isEmpty()){ tilesRemain = false; }
             }
         }
-
         determineWinner();
     }
 
@@ -337,7 +336,7 @@ public class ScrabbleController {
             String[] rowW = rowWords.toString().split(" ");
             for (String s : rowW) {
                 if(s.length() > 1){
-                    view.viewPrint(s.strip().toLowerCase()); // TEMPORARY FOR TESTING
+                    // view.viewPrint(s.strip().toLowerCase()); // TEMPORARY FOR TESTING
                     if (!(dictionary.contains(s.strip().toLowerCase()))) { return false; } // If the dictionary doesn't contain one of the words then board isn't valid.
                 }
             }
@@ -346,7 +345,7 @@ public class ScrabbleController {
             String[] colW = columnWords.toString().split(" ");
             for (String s : colW) {
                 if(s.length() > 1){
-                    view.viewPrint(s.strip().toLowerCase()); // TEMPORARY FOR TESTING
+                    // view.viewPrint(s.strip().toLowerCase()); // TEMPORARY FOR TESTING
                     if (!(dictionary.contains(s.strip().toLowerCase()))) { return false; } // If the dictionary doesn't contain one of the words then board isn't valid.
                 }
             }
