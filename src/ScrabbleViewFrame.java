@@ -9,7 +9,16 @@
  * @version 10-22-2024
  */
 
-public class Scrabble {
+import javax.swing.*;
+import java.awt.*;
+
+public class ScrabbleViewFrame extends JFrame{
+    public ScrabbleViewFrame(){
+        super("Scrabble");
+        this.setLayout(new BorderLayout());
+
+        this.setVisible(true);
+    }
     /**
      * Main method of the Scrabble class. Instantiates the controller and starts the game.
      *
@@ -17,6 +26,7 @@ public class Scrabble {
      */
     public static void main(String[] args) {
         // Initialize controller then start a new game.
+        new ScrabbleViewFrame();
         ScrabbleController cont = new ScrabbleController();
         cont.startGame();
     }

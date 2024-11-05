@@ -9,6 +9,7 @@
  * @version 10-22-2024
  */
 
+// TODO: DELETE THIS CLASS!!!
 import java.util.Scanner;
 
 public class ScrabbleView {
