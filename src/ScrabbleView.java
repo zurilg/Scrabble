@@ -40,6 +40,7 @@ public class ScrabbleView {
                    3. Then, the user enters the y coordinate of the starting point.
                    4. Finally, the user specifies the direction in which the word will be placed, choosing either "down" (vertically) or "right" (horizontally).
                 =================================================================================================================================================""");
+
     }
 
     /**
