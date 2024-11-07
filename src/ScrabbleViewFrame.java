@@ -51,7 +51,7 @@ public class ScrabbleViewFrame extends JFrame{
         }
         this.add(boardPanel, BorderLayout.CENTER);
 
-
+        //change to code
         userButtons = new JButton [8];
         for(int r = 0; r < 7; r++){
             JButton button = new JButton(" "); // Initialize to empty.
