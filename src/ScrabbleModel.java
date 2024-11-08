@@ -28,6 +28,9 @@ public class ScrabbleModel {
 
     private HashSet<String> dictionary; // valid words
 
+    private HashSet<Integer> rowsPlayed;
+    private HashSet<Integer> colsPlayed;
+
     public ScrabbleModel(int numPlayers){
         this.board = new Board();
         this.board.setPrevState();
@@ -46,6 +49,9 @@ public class ScrabbleModel {
         }
 
         selectedUserTile = -1;
+
+        rowsPlayed = new HashSet<Integer>();
+        colsPlayed = new HashSet<Integer>();
 
         for(Player p : players){
             p.setPrevTiles();
@@ -113,6 +119,8 @@ public class ScrabbleModel {
         if(selectedUserTile >= 0 && selectedUserTile < NUM_PLAYER_TILES){
             if(Objects.equals(board.getLetterAtIndex(r, c), null)){
                 board.placeTile(getCurrentPlayer().getTiles().get(selectedUserTile), r, c);
+                rowsPlayed.add(r);
+                colsPlayed.add(c);
                 getCurrentPlayer().setTileAsUsed(selectedUserTile);
 
                 for(ScrabbleModelView view : views){
@@ -199,6 +207,12 @@ public class ScrabbleModel {
         }
 
         if(board.isEmpty()){
+            valid = false;
+        }
+
+        // Make sure they played within the same row or column.
+        if((colsPlayed.size() > 1 && rowsPlayed.size() != 1) || (rowsPlayed.size() > 1 && colsPlayed.size() != 1)){
+            System.out.println("Didn't play in same spot!!!");
             valid = false;
         }
 
