@@ -229,6 +229,9 @@ public class ScrabbleModel {
         for(ScrabbleModelView view : views)
             view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
 
+        rowsPlayed.clear();
+        colsPlayed.clear();
+
     }
 
 

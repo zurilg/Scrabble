@@ -15,11 +15,9 @@ import java.util.ArrayList;
 
 public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView {
     private ArrayList<ArrayList<JButton>> boardButtons;
-    private JPanel boardPanel;
+    private JPanel boardPanel, userButtonPanel, userPanel;
     private ArrayList<JButton> userButtons;
-    private JPanel userButtonPanel;
     private JButton submitInput;
-    private JPanel userPanel;
 
     private ScrabbleModel model;
 
