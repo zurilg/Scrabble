@@ -15,6 +15,8 @@ public class Player {
     private String name;
     private int score;
     private ArrayList<Tile> tileHolder;
+    private ArrayList<Tile> prevTiles;
+    private boolean played;
 
     /**
      * Constructor method for player. Initializes name, score, and tiles.
@@ -24,9 +26,26 @@ public class Player {
     public Player(String name){
         this.name = name;
         score = 0;
-        tileHolder = new ArrayList<>();
+        tileHolder = new ArrayList<Tile>(0);
+        prevTiles = new ArrayList<Tile>(7);
+        played = false;
     }
 
+    public Player(Player p){
+        this.name = p.getName();
+        this.score = p.getScore();
+        this.tileHolder = p.getTiles();
+        prevTiles = p.getPrevTiles();
+    }
+
+
+    public boolean getPlayed(){
+        return played;
+    }
+
+    public ArrayList<Tile> getPrevTiles(){
+        return prevTiles;
+    }
     /**
      * Getter method for player name.
      *
@@ -84,6 +103,11 @@ public class Player {
      */
     public void removeTileFromIndex(int index) { tileHolder.remove(index); }
 
+    public void setTileAsUsed(int index) {
+        tileHolder.set(index, null);
+        played = true;
+    }
+
     /**
      * Removes and returns the tile at the end of the tile holder.
      *
@@ -96,7 +120,7 @@ public class Player {
             tileHolder.remove(t);
             return t;
         }
-       return null;
+        return null;
     }
 
     /**
@@ -117,17 +141,17 @@ public class Player {
         return tileHolder.size();
     }
 
-    /**
-     * Provides a string representation of the player assets (their name, tiles, and score).
-     *
-     * @return String representation of the player assets.
-     */
-    public String toString(){
-        StringBuilder tileCharacters = new StringBuilder();
-        for(Tile t : tileHolder){
-            tileCharacters.append("\"").append(t.getChar()).append("\"  ");
-        }
-        return "Player: " + this.name + "\n   - Tiles: " + tileCharacters + "\n   - Score: " + score + " pts";
+
+    public void setPrevTiles(){
+        for(int i = 0; i < ScrabbleModel.NUM_PLAYER_TILES; i++)
+            prevTiles.add(tileHolder.get(i));
+    }
+
+    public void resetTiles(){
+        for(int i = 0; i < ScrabbleModel.NUM_PLAYER_TILES; i++)
+            tileHolder.set(i, prevTiles.get(i));
+
+        played = false;
     }
 
 }
