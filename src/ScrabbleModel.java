@@ -248,5 +248,7 @@ public class ScrabbleModel {
         }
     }
 
+    public ArrayList<Player> getPlayers(){ return players; }
+
 
 }
