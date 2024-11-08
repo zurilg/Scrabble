@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<boardSquareInfo>
+	<coordinate rc = "0,0">
+		<wordScore>3</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "0,3">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "0,7">
+		<wordScore>3</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "0,11">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "0,14">
+		<wordScore>3</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "1,1">
+		<wordScore>2</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>	
+	<coordinate rc = "1,5">
+		<wordScore>0</wordScore>
+		<letterScore>3</letterScore>
+	</coordinate>
+	<coordinate rc = "1,9">
+		<wordScore>0</wordScore>
+		<letterScore>3</letterScore>
+	</coordinate>
+	<coordinate rc = "1,13">
+		<wordScore>2</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "2,2">
+		<wordScore>2</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "2,6">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "2,8">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "2,12">
+		<wordScore>2</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "3,0">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "3,3">
+		<wordScore>2</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "3,7">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "3,11">
+		<wordScore>2</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "3,14">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "4,4">
+		<wordScore>2</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "4,10">
+		<wordScore>2</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "5,1">
+		<wordScore>0</wordScore>
+		<letterScore>3</letterScore>
+	</coordinate>
+	<coordinate rc = "5,5">
+		<wordScore>0</wordScore>
+		<letterScore>3</letterScore>
+	</coordinate>
+	<coordinate rc = "5,9">
+		<wordScore>0</wordScore>
+		<letterScore>3</letterScore>
+	</coordinate>
+	<coordinate rc = "5,13">
+		<wordScore>0</wordScore>
+		<letterScore>3</letterScore>
+	</coordinate>
+	<coordinate rc = "6,2">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "6,6">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "6,8">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "6,12">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "7,0">
+		<wordScore>3</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "7,3">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "7,7">
+		<wordScore>2</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "7,11">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "7,14">
+		<wordScore>3</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "14,0">
+		<wordScore>3</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "14,3">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "14,7">
+		<wordScore>3</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "14,11">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "14,14">
+		<wordScore>3</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "13,1">
+		<wordScore>2</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>	
+	<coordinate rc = "13,5">
+		<wordScore>0</wordScore>
+		<letterScore>3</letterScore>
+	</coordinate>
+	<coordinate rc = "13,9">
+		<wordScore>0</wordScore>
+		<letterScore>3</letterScore>
+	</coordinate>
+	<coordinate rc = "13,13">
+		<wordScore>2</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "12,2">
+		<wordScore>2</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "12,6">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "12,8">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "12,12">
+		<wordScore>2</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "11,0">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "11,3">
+		<wordScore>2</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "11,7">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "11,11">
+		<wordScore>2</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "11,14">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "10,4">
+		<wordScore>2</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "10,10">
+		<wordScore>2</wordScore>
+		<letterScore>0</letterScore>
+	</coordinate>
+	<coordinate rc = "9,1">
+		<wordScore>0</wordScore>
+		<letterScore>3</letterScore>
+	</coordinate>
+	<coordinate rc = "9,5">
+		<wordScore>0</wordScore>
+		<letterScore>3</letterScore>
+	</coordinate>
+	<coordinate rc = "9,9">
+		<wordScore>0</wordScore>
+		<letterScore>3</letterScore>
+	</coordinate>
+	<coordinate rc = "9,13">
+		<wordScore>0</wordScore>
+		<letterScore>3</letterScore>
+	</coordinate>
+	<coordinate rc = "8,2">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "8,6">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "8,8">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+	<coordinate rc = "8,12">
+		<wordScore>0</wordScore>
+		<letterScore>2</letterScore>
+	</coordinate>
+</boardSquareInfo>

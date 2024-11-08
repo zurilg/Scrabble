@@ -1,3 +1,12 @@
+// Imports to be able to read xml file
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+import java.io.File;
+
 /**
  * Board class.
  *
@@ -22,6 +31,8 @@ public class Board {
 
         empty = true;
 
+
+
         // Initialize all squares as empty
         for(int i = 0; i < ScrabbleModel.BOARD_SIZE; i+=1){
             for(int j = 0; j < ScrabbleModel.BOARD_SIZE; j+=1){
@@ -29,14 +40,40 @@ public class Board {
                 prevState[i][j] = new BoardSquare(0,0);
             }
         }
-        //Triple Words
-        for(int i = 0; i<=14; i+=7){
-            for(int j = 0; j<=14; j+=7)
-                if(!(i == 7 && j == 7))
-                    board[i][j] = new BoardSquare(0, 3);
-        }
+
+        initBoard(); // Correct all word and letter scores
 
     }
+
+    private void initBoard(){
+        try {
+            File xmlFile = new File("./BoardSquareInfo.xml");
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(xmlFile);
+            doc.getDocumentElement().normalize();
+
+            NodeList nodeList = doc.getElementsByTagName("coordinate");
+
+            for(int i = 0; i < nodeList.getLength(); i++){
+                Node node = nodeList.item(i);
+
+                if(node.getNodeType() == Node.ELEMENT_NODE){
+                    Element e = (Element) node;
+                    String[] coordinates = e.getAttribute("rc").split(",");
+                    int wordScore = Integer.parseInt(e.getElementsByTagName("wordScore").item(0).getTextContent());
+                    int letterScore = Integer.parseInt(e.getElementsByTagName("letterScore").item(0).getTextContent());
+
+                    board[Integer.parseInt(coordinates[0])][Integer.parseInt(coordinates[1])] = new BoardSquare(letterScore, wordScore);
+                }
+            }
+        }
+        catch(Exception e){
+            System.out.println("This error shouldn't occur. XML error"); // TODO: Temporary. Remove/replace
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * Saves the current state of the board for future reset purposes.
@@ -55,6 +92,8 @@ public class Board {
             for(int j = 0; j<=14; j+=1)
                 board[i][j].placeTile(prevState[i][j].getTile());
     }
+
+
 
     /**
      * Returns the tile letter on the corresponding board square provided coordinates.

@@ -65,10 +65,17 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
                 JButton button = new JButton(" "); // Initialize to empty.
                 button.setSize(new Dimension(55,55)); // Set the button size
                 button.setForeground(Color.BLACK); // Sets text color to black
-                button.setBackground(new Color(0xFFF1B0)); // Sets button color to a nice, light yellow
                 button.setActionCommand(String.format("B,%d,%d", r, c)); // Action command says it's a board buttons at index (row, column)
                 button.addActionListener(sc);
                 button.setFocusable(false); // Get rid of annoying box
+
+                // Configure colors for the bonus squares
+                if(model.getBoard().getSqAtIndex(r, c).getWordScore() == 3) button.setBackground(new Color(0x8D0000));
+                else if(model.getBoard().getSqAtIndex(r, c).getWordScore() == 2) button.setBackground(new Color(0xFF9E9E));
+                else if(model.getBoard().getSqAtIndex(r, c).getLetterScore() == 3) button.setBackground(new Color(0x224994));
+                else if(model.getBoard().getSqAtIndex(r, c).getLetterScore() == 2) button.setBackground(new Color(0xC1D6FF));
+                else button.setBackground(new Color(0xFFF1B0));
+
                 row.add(c, button);
                 boardPanel.add(button); // Add button to the panel it's associated with.
             }

@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
 
+
 /**
  * TODO: JavaDoc for Scrabble model class
  */
 public class ScrabbleModel {
+
     private List<ScrabbleModelView> views;
 
     public static final int BOARD_SIZE = 15;
