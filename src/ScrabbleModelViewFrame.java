@@ -160,12 +160,12 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
 
         // Redraw user buttons
         for(int r = 0; r < ScrabbleModel.NUM_PLAYER_TILES; r++){
-            if(e.getCurrentPlayer().getTiles().get(r) != null){
+            if(e.getCurrentPlayer().getTiles().get(r) != null){ // TODO: Temporary???? Useless????
                 userButtons.get(r).setText(e.getCurrentPlayer().getTiles().get(r).getChar());
-                userButtons.get(r).setBackground(new Color(0xBBAF82));
+                userButtons.get(r).setBackground(new Color(0xDEC38A));
             }
             else{
-                System.out.println("Here?");
+                System.out.println("Here?"); // TODO: Temporary.. Should hopefully never print? Remove
             }
         }
     }
