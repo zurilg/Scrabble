@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * TODO: JavaDoc for Scrabble model class
+ */
 public class ScrabbleModel {
     private List<ScrabbleModelView> views;
 
@@ -39,7 +42,7 @@ public class ScrabbleModel {
             getWordsFromFile();
         }
         catch(Exception e){
-            System.out.println("File read error. Exception: " + e); // TEMPORARY
+            System.out.println("File read error. Exception: " + e); // TODO: TEMPORARY. Replace with JOptionPane?
         }
 
         selectedUserTile = -1;
@@ -121,16 +124,39 @@ public class ScrabbleModel {
 
     public void validateBoard(){
         boolean valid = true;
+        // To keep track of single letters. Row and column should not produce single letters at same coordinate.
+        StringBuilder soloRowLetters = new StringBuilder();
+        StringBuilder soloColLetters = new StringBuilder();
+
         // Check all rows and columns for valid data
-        for(int r = 0; r < 15; r ++){
+        for(int r = 0; r < BOARD_SIZE; r ++){
+            // To read all words written from left-to-right and up-to-down
             StringBuilder rowWords = new StringBuilder();
             StringBuilder columnWords = new StringBuilder();
-            for(int c = 0; c < 15; c ++){
+            // Read rows and columns
+            for(int c = 0; c < BOARD_SIZE; c ++){
                 // If there is a letter at certain row coordinate, add it to rowWords. Otherwise, add a space to rowWords.
-                if(board.getLetterAtIndex(r, c)!=null){ rowWords.append(board.getLetterAtIndex(r, c)); }
+                if(board.getLetterAtIndex(r, c)!=null){
+                    rowWords.append(board.getLetterAtIndex(r, c));
+
+                    // Find solo letters
+                    if(((c == 0) && (board.getLetterAtIndex(r, c + 1) == null)) // If first letter of row and next letter is null
+                        || ((c == 14) && (board.getLetterAtIndex(r, c - 1) == null)) // Or if last letter of row and last letter is null
+                        || ((board.getLetterAtIndex(r, c + 1) == null) && (board.getLetterAtIndex(r, c - 1) == null))) // Or if next and last letter null
+                        soloRowLetters.append(String.format("%d%d:", r, c)); // Then the letter is all alone.
+                }
                 else{ rowWords.append(" "); }
+
                 // If there is a letter at certain column coordinate, add it to columnWords. Otherwise, add a space to columnWords.
-                if(board.getLetterAtIndex(c, r) != null){ columnWords.append(board.getLetterAtIndex(c, r)); }
+                if(board.getLetterAtIndex(c, r) != null){
+                    columnWords.append(board.getLetterAtIndex(c, r));
+
+                    // Find solo letters
+                    if(((c == 0) && (board.getLetterAtIndex(c + 1, r) == null)) // If first letter of row and next letter is null
+                            || ((c == 14) && (board.getLetterAtIndex(c - 1, r) == null)) // Or if last letter of row and last letter is null
+                            || ((board.getLetterAtIndex(c + 1, r) == null) && (board.getLetterAtIndex( c - 1, r) == null))) // Or if next and last letter null
+                        soloColLetters.append(String.format("%d%d:", c, r)); // Then the letter is all alone.
+                }
                 else{ columnWords.append(" "); }
             }
 
@@ -149,6 +175,27 @@ public class ScrabbleModel {
                     if (!(dictionary.contains(s.strip().toLowerCase()))) { valid = false; } // If the dictionary doesn't contain one of the words then board isn't valid.
                 }
             }
+
+        }
+
+        // Validate that there are no clashing (i.e. row and column should not produce single letters at same coordinate)
+        String[] rowSoloCords = soloRowLetters.toString().strip().split(":");
+        String[] colSoloCords = soloColLetters.toString().strip().split(":");
+
+        for(String rs : rowSoloCords){
+            for(String cs : colSoloCords){
+
+                if(!cs.isEmpty()){
+                    System.out.println(cs);
+                    if(!rs.isEmpty()) System.out.println(rs);
+                }
+                if(rs.equalsIgnoreCase(cs) && !cs.isEmpty()){
+                    valid = false; // Two solo letters can't have same coordinates!
+                    System.out.println("SOLO!!!");
+                    System.out.printf("\n\"%s\" \"%s\"%n", rs, cs);
+                    break; // Loop can be terminated once condition is met.
+                }
+            }
         }
 
         if(board.isEmpty()){
@@ -158,7 +205,6 @@ public class ScrabbleModel {
         if(!valid){
             board.reset(); // Reset board
             getCurrentPlayer().resetTiles(); // Reset player tiles
-            System.out.println(getCurrentPlayer().getTiles().size());
         }
         else if(getCurrentPlayer().getPlayed()){
             board.setPrevState(); // Correct, so set new board prev state for possible future reset
@@ -181,7 +227,7 @@ public class ScrabbleModel {
                 word = r.readLine();
             }
         } catch (Exception e) {
-            System.out.println("IOException: " + e);
+            System.out.println("IOException: " + e); // TODO: Replace. JOptionPane? Needs to go in GUI part
         }
     }
 

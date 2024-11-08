@@ -1,35 +1,34 @@
 /**
- * Scrabble's main class.
+ * TODO: Write description. Scrabble's main class...
  *
  * @author Zuri Lane-Griffore (101241678)
  * @author Mohammad Ahmadi (101267874)
  * @author Abdul Aziz Al-Sibakhi (101246056)
  * @author Redah Eliwa (101273466)
  *
- * @version 10-22-2024
+ * @version 11-10-2024
  */
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView {
-    public ArrayList<ArrayList<JButton>> boardButtons;
-    public JPanel boardPanel;
-    public ArrayList<JButton> userButtons;
-    public JPanel userButtonPanel;
-    public JButton submitInput;
-    public JPanel userPanel;
+    private ArrayList<ArrayList<JButton>> boardButtons;
+    private JPanel boardPanel;
+    private ArrayList<JButton> userButtons;
+    private JPanel userButtonPanel;
+    private JButton submitInput;
+    private JPanel userPanel;
 
-    ScrabbleModel model;
+    private ScrabbleModel model;
 
     public ScrabbleModelViewFrame(){
-        super("Scrabble");
-        this.setLayout(new BorderLayout());
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        super("Scrabble"); // Call superclass (JFrame)
+        this.setLayout(new BorderLayout()); // Set layout as a border layout.
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Set default close operation to exit.
 
-        // Get num players here
+        // Get the number of players
         int numPlayers = 0;
         while(numPlayers < 2 || numPlayers > 4){
             String input = JOptionPane.showInputDialog("Enter the number of players (2-4).");
@@ -127,7 +126,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         // Redraw user buttons
         for(int r = 0; r < ScrabbleModel.NUM_PLAYER_TILES; r++){
             if(e.getCurrentPlayer().getTiles().get(r) != null){
-                System.out.println("HERE!!!");
                 userButtons.get(r).setText(e.getCurrentPlayer().getTiles().get(r).getChar());
                 userButtons.get(r).setBackground(new Color(0xBBAF82));
             }
@@ -135,8 +133,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
                 System.out.println("Here?");
             }
         }
-
-
     }
 
     /**
