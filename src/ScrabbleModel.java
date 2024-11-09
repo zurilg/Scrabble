@@ -98,7 +98,6 @@ public class ScrabbleModel {
                 p.addTileToHolder(tiles.popTile());
         }
         else if(tiles.returnSize() != 0 && p.getTiles().size() == NUM_PLAYER_TILES){
-            System.out.println("fskdjflskdjfskl");
             for(int i = 0; i < NUM_PLAYER_TILES; i++){
                 if(p.getTiles().get(i) == null) p.getTiles().set(i, tiles.popTile());
             }
@@ -152,13 +151,13 @@ public class ScrabbleModel {
                     // Find solo letters
 
                     if(c == 0){
-                        if(board.getLetterAtIndex(r, c+1) == null) soloColLetters.append(String.format("%d%d:", r, c));
+                        if(board.getLetterAtIndex(r, c+1) == null) soloRowLetters.append(String.format("%d%d:", r, c));
                     }
                     else if(c == 14){
-                        if(board.getLetterAtIndex(r, c-1) == null) soloColLetters.append(String.format("%d%d:", r, c));
+                        if(board.getLetterAtIndex(r, c-1) == null) soloRowLetters.append(String.format("%d%d:", r, c));
                     }
                     else{
-                        if((board.getLetterAtIndex(r, c+1) == null) && (board.getLetterAtIndex( r, c-1) == null)) soloColLetters.append(String.format("%d%d:", r, c));
+                        if((board.getLetterAtIndex(r, c+1) == null) && (board.getLetterAtIndex( r, c-1) == null)) soloRowLetters.append(String.format("%d%d:", r, c));
                     }
                 }
                 else{ rowWords.append(" "); }
@@ -205,16 +204,17 @@ public class ScrabbleModel {
 
         for(String rs : rowSoloCords){
             for(String cs : colSoloCords){
-
                 if(!cs.isEmpty()){
-                    System.out.println(cs);
-                    if(!rs.isEmpty()) System.out.println(rs);
-                }
-                if(rs.equalsIgnoreCase(cs) && !cs.isEmpty()){
-                    valid = false; // Two solo letters can't have same coordinates!
-                    System.out.println("SOLO!!!");
-                    System.out.printf("\n\"%s\" \"%s\"%n", rs, cs);
-                    break; // Loop can be terminated once condition is met.
+                    System.out.println("CS " + cs);
+                    if(!rs.isEmpty()){
+                        System.out.println("RS " + rs);
+                        if(Integer.parseInt(cs) == Integer.parseInt(rs)){
+                            valid = false; // Two solo letters can't have same coordinates!
+                            System.out.println("SOLO!!!");
+                            System.out.printf("\n\"%s\" \"%s\"%n", rs, cs);
+                            break; // Loop can be terminated once condition is met.
+                        }
+                    }
                 }
             }
         }
