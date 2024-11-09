@@ -150,10 +150,16 @@ public class ScrabbleModel {
                     rowWords.append(board.getLetterAtIndex(r, c));
 
                     // Find solo letters
-                    if(((c == 0) && (board.getLetterAtIndex(r, c + 1) == null)) // If first letter of row and next letter is null
-                        || ((c == 14) && (board.getLetterAtIndex(r, c - 1) == null)) // Or if last letter of row and last letter is null
-                        || ((board.getLetterAtIndex(r, c + 1) == null) && (board.getLetterAtIndex(r, c - 1) == null))) // Or if next and last letter null
-                        soloRowLetters.append(String.format("%d%d:", r, c)); // Then the letter is all alone.
+
+                    if(c == 0){
+                        if(board.getLetterAtIndex(r, c+1) == null) soloColLetters.append(String.format("%d%d:", r, c));
+                    }
+                    else if(c == 14){
+                        if(board.getLetterAtIndex(r, c-1) == null) soloColLetters.append(String.format("%d%d:", r, c));
+                    }
+                    else{
+                        if((board.getLetterAtIndex(r, c+1) == null) && (board.getLetterAtIndex( r, c-1) == null)) soloColLetters.append(String.format("%d%d:", r, c));
+                    }
                 }
                 else{ rowWords.append(" "); }
 

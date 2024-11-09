@@ -85,7 +85,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
 
                 // Configure colors for the bonus squares
                 if(model.getBoard().getSqAtIndex(r, c).getWordScore() == 3){
-                    button.setBackground(new Color(0x8D0000));
+                    button.setBackground(new Color(0xD35252));
                     boardSqLabels.get(r).get(c)[0] = new JLabel("3W");
                 }
                 else if(model.getBoard().getSqAtIndex(r, c).getWordScore() == 2){
@@ -93,7 +93,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
                     boardSqLabels.get(r).get(c)[0] = new JLabel("2W");
                 }
                 else if(model.getBoard().getSqAtIndex(r, c).getLetterScore() == 3){
-                    button.setBackground(new Color(0x224994));
+                    button.setBackground(new Color(0x84AFFF));
                     boardSqLabels.get(r).get(c)[0] = new JLabel("3L");
                 }
                 else if(model.getBoard().getSqAtIndex(r, c).getLetterScore() == 2){
@@ -165,12 +165,14 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
             playerInfo.add(lb);
         }
         // Add player info text fields to their corresponding panel
+        playerInfo.get(0).setForeground(new Color(0x47A66E));
         players = new JPanel(new GridLayout(playerInfo.size(), 1));
         players.setBackground(new Color(0xFAEEDD));
         players.setSize(100, 825);
         for(JLabel j : playerInfo){
             players.add(j);
         }
+
 
         this.add(players, BorderLayout.EAST);
 
@@ -199,6 +201,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
             }
         }
 
+
         // Redraw user buttons
         for(int r = 0; r < ScrabbleModel.NUM_PLAYER_TILES; r++){
             if(e.getCurrentPlayer().getTiles().get(r) != null){ // TODO: Temporary???? Useless????
@@ -207,6 +210,16 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
             }
             else{
                 System.out.println("Here?"); // TODO: Temporary.. Should hopefully never print? Remove
+            }
+        }
+
+        for (int i = 0; i < numPlayers * 2; i+=2){
+            System.out.println(playerInfo.get(i).getText().equals(model.getCurrentPlayer().getName()));
+            if (playerInfo.get(i).getText().equals(model.getCurrentPlayer().getName())){
+                playerInfo.get(i).setForeground(new Color(0x47A66E));
+            }
+            else{
+                playerInfo.get(i).setForeground(new Color(0x000000));
             }
         }
     }
