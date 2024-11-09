@@ -20,6 +20,8 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
     private JButton submitInput, skipTurn;
     ArrayList<JLabel> playerInfo;
 
+    ArrayList<ArrayList<JLabel[]>> boardSqLabels;
+
     private int numPlayers;
 
     private ScrabbleModel model;
@@ -56,13 +58,25 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
 
         boardButtons = new ArrayList<ArrayList<JButton>>(ScrabbleModel.BOARD_SIZE);
 
+        boardSqLabels = new ArrayList<>(15);
+        for(int j = 0; j < ScrabbleModel.BOARD_SIZE; j++){
+            ArrayList<JLabel[]> temp = new ArrayList<>(15);
+            for(int i = 0; i < ScrabbleModel.BOARD_SIZE; i++){
+                JLabel[] empty = {new JLabel(""), new JLabel(""), new JLabel("")};
+                for(JLabel l : empty) l.setHorizontalAlignment(JLabel.CENTER);
+                temp.add(empty);
+            }
+            boardSqLabels.add(temp);
+        }
+
         ScrabbleController sc = new ScrabbleController(model);
 
         // Create all board buttons
         for(int r = 0; r < 15; r++){
             ArrayList<JButton> row = new ArrayList<JButton>(ScrabbleModel.BOARD_SIZE);
             for(int c = 0; c<15; c++){
-                JButton button = new JButton(" "); // Initialize to empty.
+                JButton button = new JButton(); // Initialize to empty.
+                button.setLayout(new GridLayout(3, 1));
                 button.setSize(new Dimension(55,55)); // Set the button size
                 button.setForeground(Color.BLACK); // Sets text color to black
                 button.setActionCommand(String.format("B,%d,%d", r, c)); // Action command says it's a board buttons at index (row, column)
@@ -70,11 +84,29 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
                 button.setFocusable(false); // Get rid of annoying box
 
                 // Configure colors for the bonus squares
-                if(model.getBoard().getSqAtIndex(r, c).getWordScore() == 3) button.setBackground(new Color(0x8D0000));
-                else if(model.getBoard().getSqAtIndex(r, c).getWordScore() == 2) button.setBackground(new Color(0xFF9E9E));
-                else if(model.getBoard().getSqAtIndex(r, c).getLetterScore() == 3) button.setBackground(new Color(0x224994));
-                else if(model.getBoard().getSqAtIndex(r, c).getLetterScore() == 2) button.setBackground(new Color(0xC1D6FF));
-                else button.setBackground(new Color(0xFFF1B0));
+                if(model.getBoard().getSqAtIndex(r, c).getWordScore() == 3){
+                    button.setBackground(new Color(0x8D0000));
+                    boardSqLabels.get(r).get(c)[0] = new JLabel("3W");
+                }
+                else if(model.getBoard().getSqAtIndex(r, c).getWordScore() == 2){
+                    button.setBackground(new Color(0xFF9E9E));
+                    boardSqLabels.get(r).get(c)[0] = new JLabel("2W");
+                }
+                else if(model.getBoard().getSqAtIndex(r, c).getLetterScore() == 3){
+                    button.setBackground(new Color(0x224994));
+                    boardSqLabels.get(r).get(c)[0] = new JLabel("3L");
+                }
+                else if(model.getBoard().getSqAtIndex(r, c).getLetterScore() == 2){
+                    button.setBackground(new Color(0xC1D6FF));
+                    boardSqLabels.get(r).get(c)[0] = new JLabel("2L");
+                }
+                else{
+                    button.setBackground(new Color(0xFFF1B0));
+                }
+
+                button.add(boardSqLabels.get(r).get(c)[0]);
+                button.add(boardSqLabels.get(r).get(c)[1]);
+                button.add(boardSqLabels.get(r).get(c)[2]);
 
                 row.add(c, button);
                 boardPanel.add(button); // Add button to the panel it's associated with.
@@ -123,7 +155,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         for(Player p : model.getPlayers()){
             JLabel lb = new JLabel(p.getName());
             lb.setPreferredSize(new Dimension(100, 100));
-            lb.setHorizontalAlignment(JTextField.CENTER); // Center text
+            lb.setHorizontalAlignment(JLabel.CENTER); // Center text
             lb.setFont(new Font("Arial", Font.BOLD, 15)); // Make player name bold
             playerInfo.add(lb);
 
@@ -151,7 +183,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
 
     @Override
     public void handleLetterPlacement(ScrabbleEvent e){
-        boardButtons.get(e.getR()).get(e.getC()).setText(userButtons.get(e.getSelectedTile()).getText());
+        boardSqLabels.get(e.getR()).get(e.getC())[1].setText(userButtons.get(e.getSelectedTile()).getText());
         userButtons.get(e.getSelectedTile()).setText(" ");
         userButtons.get(e.getSelectedTile()).setBackground(new Color(0xB0B0B0));
     }
@@ -160,9 +192,11 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
     public void updateBoard(ScrabbleEvent e){
         // Redraw board
         for(int r = 0; r < 15; r++){
-            ArrayList<JButton> row = boardButtons.get(r);
-            for(int c = 0; c<15; c++)
-                row.get(c).setText(e.getBoard().getLetterAtIndex(r, c));
+            for(int c = 0; c<15; c++){
+                boardSqLabels.get(r).get(c)[1].setText(e.getBoard().getLetterAtIndex(r, c));
+                if(e.getBoard().getSqAtIndex(r, c).getTile() != null)
+                    boardSqLabels.get(r).get(c)[2].setText(String.format("%d", e.getBoard().getSqAtIndex(r, c).getTile().getValue()));
+            }
         }
 
         // Redraw user buttons
