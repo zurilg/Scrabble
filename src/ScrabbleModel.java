@@ -162,10 +162,15 @@ public class ScrabbleModel {
                     columnWords.append(board.getLetterAtIndex(c, r));
 
                     // Find solo letters
-                    if(((c == 0) && (board.getLetterAtIndex(c + 1, r) == null)) // If first letter of row and next letter is null
-                            || ((c == 14) && (board.getLetterAtIndex(c - 1, r) == null)) // Or if last letter of row and last letter is null
-                            || ((board.getLetterAtIndex(c + 1, r) == null) && (board.getLetterAtIndex( c - 1, r) == null))) // Or if next and last letter null
-                        soloColLetters.append(String.format("%d%d:", c, r)); // Then the letter is all alone.
+                    if(c == 0){
+                        if(board.getLetterAtIndex(c + 1, r) == null) soloColLetters.append(String.format("%d%d:", c, r));
+                    }
+                    else if(c == 14){
+                        if(board.getLetterAtIndex(c - 1, r) == null) soloColLetters.append(String.format("%d%d:", c, r));
+                    }
+                    else{
+                        if((board.getLetterAtIndex(c + 1, r) == null) && (board.getLetterAtIndex( c - 1, r) == null)) soloColLetters.append(String.format("%d%d:", c, r));
+                    }
                 }
                 else{ columnWords.append(" "); }
             }
