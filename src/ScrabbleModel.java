@@ -1,10 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.*;
 
 
 /**
@@ -32,6 +29,9 @@ public class ScrabbleModel {
 
     private HashSet<Integer> rowsPlayed;
     private HashSet<Integer> colsPlayed;
+    private HashMap<String, Integer> wordsOnBoard;
+
+
 
     public ScrabbleModel(int numPlayers){
         this.board = new Board();
@@ -41,6 +41,7 @@ public class ScrabbleModel {
         this.status = Status.ONGOING;
         playerTurn = 0; // First player's turn
         this.views = new ArrayList<ScrabbleModelView>();
+
 
         dictionary = new HashSet<>();
         try{
@@ -54,6 +55,8 @@ public class ScrabbleModel {
 
         rowsPlayed = new HashSet<Integer>();
         colsPlayed = new HashSet<Integer>();
+
+        wordsOnBoard = new HashMap<>();
 
         for(Player p : players){
             p.setPrevTiles();
@@ -98,6 +101,7 @@ public class ScrabbleModel {
                 p.addTileToHolder(tiles.popTile());
         }
         else if(tiles.returnSize() != 0 && p.getTiles().size() == NUM_PLAYER_TILES){
+            System.out.println("fskdjflskdjfskl");
             for(int i = 0; i < NUM_PLAYER_TILES; i++){
                 if(p.getTiles().get(i) == null) p.getTiles().set(i, tiles.popTile());
             }
@@ -151,13 +155,13 @@ public class ScrabbleModel {
                     // Find solo letters
 
                     if(c == 0){
-                        if(board.getLetterAtIndex(r, c+1) == null) soloRowLetters.append(String.format("%d%d:", r, c));
+                        if(board.getLetterAtIndex(r, c+1) == null) soloColLetters.append(String.format("%d%d:", r, c));
                     }
                     else if(c == 14){
-                        if(board.getLetterAtIndex(r, c-1) == null) soloRowLetters.append(String.format("%d%d:", r, c));
+                        if(board.getLetterAtIndex(r, c-1) == null) soloColLetters.append(String.format("%d%d:", r, c));
                     }
                     else{
-                        if((board.getLetterAtIndex(r, c+1) == null) && (board.getLetterAtIndex( r, c-1) == null)) soloRowLetters.append(String.format("%d%d:", r, c));
+                        if((board.getLetterAtIndex(r, c+1) == null) && (board.getLetterAtIndex( r, c-1) == null)) soloColLetters.append(String.format("%d%d:", r, c));
                     }
                 }
                 else{ rowWords.append(" "); }
@@ -204,17 +208,16 @@ public class ScrabbleModel {
 
         for(String rs : rowSoloCords){
             for(String cs : colSoloCords){
+
                 if(!cs.isEmpty()){
-                    System.out.println("CS " + cs);
-                    if(!rs.isEmpty()){
-                        System.out.println("RS " + rs);
-                        if(Integer.parseInt(cs) == Integer.parseInt(rs)){
-                            valid = false; // Two solo letters can't have same coordinates!
-                            System.out.println("SOLO!!!");
-                            System.out.printf("\n\"%s\" \"%s\"%n", rs, cs);
-                            break; // Loop can be terminated once condition is met.
-                        }
-                    }
+                    System.out.println(cs);
+                    if(!rs.isEmpty()) System.out.println(rs);
+                }
+                if(rs.equalsIgnoreCase(cs) && !cs.isEmpty()){
+                    valid = false; // Two solo letters can't have same coordinates!
+                    System.out.println("SOLO!!!");
+                    System.out.printf("\n\"%s\" \"%s\"%n", rs, cs);
+                    break; // Loop can be terminated once condition is met.
                 }
             }
         }
@@ -229,14 +232,18 @@ public class ScrabbleModel {
             valid = false;
         }
 
+
         if(!valid){
             board.reset(); // Reset board
             getCurrentPlayer().resetTiles(); // Reset player tiles
         }
         else if(getCurrentPlayer().getPlayed()){
+            getCurrentPlayer().addToScore(scoreBoard());
             board.setPrevState(); // Correct, so set new board prev state for possible future reset
             fillTiles(getCurrentPlayer()); // Fill player's tiles who just went
             getCurrentPlayer().setPrevTiles();
+            for(ScrabbleModelView view : views)
+            view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
             changePlayer(); // Change turns
         }
         for(ScrabbleModelView view : views)
@@ -244,6 +251,7 @@ public class ScrabbleModel {
 
         rowsPlayed.clear();
         colsPlayed.clear();
+
 
     }
 
@@ -261,7 +269,77 @@ public class ScrabbleModel {
         }
     }
 
+
     public ArrayList<Player> getPlayers(){ return players; }
+
+
+    public int scoreBoard(){
+
+        int score = 0; // Score for a players turn. Addition of all letter tiles in the words they created.
+        int [] tileValues = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10}; // All letter values alphabetical A-Z
+        // Hashmap to store words that are on board after players turn. Used to compare to past words. Format: < Word, # of Occurrences >
+        HashMap<String, Integer> allWords = new HashMap<>();
+        for(int r = 0; r < 15; r ++){
+            StringBuilder rowWords = new StringBuilder();
+            StringBuilder columnWords = new StringBuilder();
+            for(int c = 0; c < 15; c ++){
+                int[] rows = {r, c};
+                int[] columns = {c, r};
+                // Get all row words in a string
+                if(board.getLetterAtIndex(r,c)!=null) rowWords.append(board.getLetterAtIndex(r,c));
+                else{ rowWords.append(" "); }
+                // Get all column words a string
+                if(board.getLetterAtIndex(c,r) != null){ columnWords.append(board.getLetterAtIndex(c,r)); }
+                else{ columnWords.append(" "); }
+            }
+            // Get row words in a string array then add them to hash map.
+            String[] rowW = rowWords.toString().split(" ");
+            for (String s : rowW) {
+                if(s.length() > 1){
+                    s = s.strip();
+                    if(allWords.containsKey(s)) allWords.put(s, allWords.get(s) + 1);
+                    else allWords.put(s, 1);
+                }
+            }
+            // Get column words in a string array then add them to hash map.
+            String[] colW = columnWords.toString().split(" ");
+            for (String s : colW) {
+                if(s.length() > 1){
+                    s = s.strip();
+                    if(allWords.containsKey(s)) allWords.put(s, allWords.get(s) + 1);
+                    else allWords.put(s, 1);
+                }
+            }
+        }
+        /* For each word on the board generated after the new turn, compare it to the current words on the board.
+        This helps determine which words the player just played and therefore get credit for.
+        If the word belongs to the player, give its point values to the player. */
+        for(String key : allWords.keySet()){
+            int wordScore = 0;
+            if (wordsOnBoard.containsKey(key)) {
+                if(wordsOnBoard.get(key) != allWords.get(key)){
+                    for(int i = 0; i < allWords.get(key) - wordsOnBoard.get(key); i++){
+                        for(int x = 0; x < key.length(); x++){
+                            wordScore += tileValues[key.charAt(x)-65];
+                        }
+                    }
+                    wordsOnBoard.put(key, allWords.get(key));
+                }
+            }
+            else{
+                for(int i = 0; i < allWords.get(key); i++){
+                    for(int x = 0; x < key.length(); x++){
+                        wordScore += tileValues[key.charAt(x)-65];
+                    }
+                }
+                wordsOnBoard.put(key, allWords.get(key));
+            }
+
+            score += wordScore;
+        }
+        System.out.println(score);
+        return score;
+    }
 
 
 }

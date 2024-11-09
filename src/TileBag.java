@@ -14,6 +14,9 @@ import java.util.Random;
 public class TileBag {
     private ArrayList<Tile> bag;
 
+    public static final int[] TILE_VALUES = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10};
+    public static final String[] TILE_CHARS = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+
     /**
      * TileBag constructor method. Fills the bag with the 98 game tiles.
      */
@@ -27,14 +30,13 @@ public class TileBag {
      */
     private void fillBag(){
         // Indexes: 0 (A) - 25 (Z)         ---       ONLY HAVE 98 GAME TILES. ARE NOT USING BLANK TILES.
-        String[] tileChars = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
-        int [] tileValues = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10};
+
         int[] numTiles = {9, 2, 2, 4, 12, 2, 3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 4, 6, 4, 2, 2, 1, 2, 1};
 
         int alphaIndex = 0;
         for(int i : numTiles){
             while(i > 0){
-                bag.add(new Tile(tileChars[alphaIndex], tileValues[alphaIndex]));
+                bag.add(new Tile(TILE_CHARS[alphaIndex], TILE_VALUES[alphaIndex]));
                 i--;
             }
             alphaIndex++;

@@ -216,11 +216,14 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         for (int i = 0; i < numPlayers * 2; i+=2){
             if (playerInfo.get(i).getText().equals(model.getCurrentPlayer().getName())){
                 playerInfo.get(i).setForeground(new Color(0x47A66E));
+                playerInfo.get(i+1).setText(String.format("Points: %d", model.getCurrentPlayer().getScore()));
             }
             else{
                 playerInfo.get(i).setForeground(new Color(0x000000));
             }
         }
+
+
     }
 
     /**
