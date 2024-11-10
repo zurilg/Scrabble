@@ -18,7 +18,7 @@ public class ScrabbleController implements ActionListener{
                 model.handleUserTile(Integer.parseInt(commandParam[1]));
                 break;
             case "P":
-                model.validateBoard();
+                model.validateAndScoreBoard();
                 break;
             default:
                 System.out.println("ERROR!"); // TODO: Remove. Temporary.

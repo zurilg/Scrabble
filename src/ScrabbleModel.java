@@ -135,11 +135,16 @@ public class ScrabbleModel {
         }
     }
 
-    public void validateBoard(){
+    public void validateAndScoreBoard(){
+        // Validation stuff
         boolean valid = true;
-        // To keep track of single letters. Row and column should not produce single letters at same coordinate.
         StringBuilder soloRowLetters = new StringBuilder();
         StringBuilder soloColLetters = new StringBuilder();
+
+        // Scoring stuff
+        int score = 0;
+        int [] tileValues = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10};
+        HashMap<String, Integer> allWords = new HashMap<>();
 
         // Check all rows and columns for valid data
         for(int r = 0; r < BOARD_SIZE; r ++){
@@ -187,19 +192,50 @@ public class ScrabbleModel {
             // Validate all row words
             String[] rowW = rowWords.toString().split(" ");
             for (String s : rowW) {
-                if(!s.isEmpty()){
+                if(s.length()>1){
                     if (!(dictionary.contains(s.strip().toLowerCase()))) { valid = false; } // If the dictionary doesn't contain one of the words then board isn't valid.
+
+                    if(allWords.containsKey(s)) allWords.put(s, allWords.get(s) + 1);
+                    else allWords.put(s, 1);
                 }
             }
 
             // Validate all column words
             String[] colW = columnWords.toString().split(" ");
             for (String s : colW) {
-                if(!s.isEmpty()){
+                if(s.length()>1){
                     if (!(dictionary.contains(s.strip().toLowerCase()))) { valid = false; } // If the dictionary doesn't contain one of the words then board isn't valid.
+
+                    if(allWords.containsKey(s)) allWords.put(s, allWords.get(s) + 1);
+                    else allWords.put(s, 1);
                 }
             }
 
+        }
+
+        for(String key : allWords.keySet()){
+            int wordScore = 0;
+            if (wordsOnBoard.containsKey(key)) {
+                if(wordsOnBoard.get(key) != allWords.get(key)){
+                    for(int i = 0; i < allWords.get(key) - wordsOnBoard.get(key); i++){
+                        for(int x = 0; x < key.length(); x++){
+                            wordScore += tileValues[key.charAt(x)-65];
+                        }
+                    }
+                    wordsOnBoard.put(key, allWords.get(key));
+                }
+            }
+            else{
+                for(int i = 0; i < allWords.get(key); i++){
+                    for(int x = 0; x < key.length(); x++){
+                        wordScore += tileValues[key.charAt(x)-65];
+                    }
+                }
+                wordsOnBoard.put(key, allWords.get(key));
+            }
+
+            System.out.println("Word score: " + wordScore);
+            score += wordScore;
         }
 
         // Validate that there are no clashing (i.e. row and column should not produce single letters at same coordinate)
@@ -222,7 +258,7 @@ public class ScrabbleModel {
             }
         }
 
-        if(board.isEmpty()){
+        if(board.isEmpty() || board.getLetterAtIndex(7,7) == null || score == 0){
             valid = false;
         }
 
@@ -238,16 +274,17 @@ public class ScrabbleModel {
             getCurrentPlayer().resetTiles(); // Reset player tiles
         }
         else if(getCurrentPlayer().getPlayed()){
-            getCurrentPlayer().addToScore(scoreBoard());
+            getCurrentPlayer().addToScore(score);
             board.setPrevState(); // Correct, so set new board prev state for possible future reset
             fillTiles(getCurrentPlayer()); // Fill player's tiles who just went
             getCurrentPlayer().setPrevTiles();
-            for(ScrabbleModelView view : views)
-            view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
+            for(ScrabbleModelView view : views) view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
             changePlayer(); // Change turns
         }
         for(ScrabbleModelView view : views)
-            view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
+            view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board,
+
+                    getCurrentPlayer()));
 
         rowsPlayed.clear();
         colsPlayed.clear();
@@ -271,75 +308,5 @@ public class ScrabbleModel {
 
 
     public ArrayList<Player> getPlayers(){ return players; }
-
-
-    public int scoreBoard(){
-
-        int score = 0; // Score for a players turn. Addition of all letter tiles in the words they created.
-        int [] tileValues = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10}; // All letter values alphabetical A-Z
-        // Hashmap to store words that are on board after players turn. Used to compare to past words. Format: < Word, # of Occurrences >
-        HashMap<String, Integer> allWords = new HashMap<>();
-        for(int r = 0; r < 15; r ++){
-            StringBuilder rowWords = new StringBuilder();
-            StringBuilder columnWords = new StringBuilder();
-            for(int c = 0; c < 15; c ++){
-                int[] rows = {r, c};
-                int[] columns = {c, r};
-                // Get all row words in a string
-                if(board.getLetterAtIndex(r,c)!=null) rowWords.append(board.getLetterAtIndex(r,c));
-                else{ rowWords.append(" "); }
-                // Get all column words a string
-                if(board.getLetterAtIndex(c,r) != null){ columnWords.append(board.getLetterAtIndex(c,r)); }
-                else{ columnWords.append(" "); }
-            }
-            // Get row words in a string array then add them to hash map.
-            String[] rowW = rowWords.toString().split(" ");
-            for (String s : rowW) {
-                if(s.length() > 1){
-                    s = s.strip();
-                    if(allWords.containsKey(s)) allWords.put(s, allWords.get(s) + 1);
-                    else allWords.put(s, 1);
-                }
-            }
-            // Get column words in a string array then add them to hash map.
-            String[] colW = columnWords.toString().split(" ");
-            for (String s : colW) {
-                if(s.length() > 1){
-                    s = s.strip();
-                    if(allWords.containsKey(s)) allWords.put(s, allWords.get(s) + 1);
-                    else allWords.put(s, 1);
-                }
-            }
-        }
-        /* For each word on the board generated after the new turn, compare it to the current words on the board.
-        This helps determine which words the player just played and therefore get credit for.
-        If the word belongs to the player, give its point values to the player. */
-        for(String key : allWords.keySet()){
-            int wordScore = 0;
-            if (wordsOnBoard.containsKey(key)) {
-                if(wordsOnBoard.get(key) != allWords.get(key)){
-                    for(int i = 0; i < allWords.get(key) - wordsOnBoard.get(key); i++){
-                        for(int x = 0; x < key.length(); x++){
-                            wordScore += tileValues[key.charAt(x)-65];
-                        }
-                    }
-                    wordsOnBoard.put(key, allWords.get(key));
-                }
-            }
-            else{
-                for(int i = 0; i < allWords.get(key); i++){
-                    for(int x = 0; x < key.length(); x++){
-                        wordScore += tileValues[key.charAt(x)-65];
-                    }
-                }
-                wordsOnBoard.put(key, allWords.get(key));
-            }
-
-            score += wordScore;
-        }
-        System.out.println(score);
-        return score;
-    }
-
 
 }
