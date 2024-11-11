@@ -135,7 +135,7 @@ public class ScrabbleModel {
         }
     }
 
-    public void validateAndScoreBoard(){
+    public void validateAndScoreBoard(ArrayList<int []> playCoordinates){
         // Validation stuff
         boolean valid = true;
         StringBuilder soloRowLetters = new StringBuilder();
@@ -145,6 +145,9 @@ public class ScrabbleModel {
         int score = 0;
         int [] tileValues = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10};
         HashMap<String, Integer> allWords = new HashMap<>();
+
+        // Words state restor
+        HashMap<String, Integer> bWordsPrev = new HashMap<>(wordsOnBoard);
 
         // Check all rows and columns for valid data
         for(int r = 0; r < BOARD_SIZE; r ++){
@@ -160,13 +163,13 @@ public class ScrabbleModel {
                     // Find solo letters
 
                     if(c == 0){
-                        if(board.getLetterAtIndex(r, c+1) == null) soloColLetters.append(String.format("%d%d:", r, c));
+                        if(board.getLetterAtIndex(r, c+1) == null) soloRowLetters.append(String.format("%d%d:", r, c));
                     }
                     else if(c == 14){
-                        if(board.getLetterAtIndex(r, c-1) == null) soloColLetters.append(String.format("%d%d:", r, c));
+                        if(board.getLetterAtIndex(r, c-1) == null) soloRowLetters.append(String.format("%d%d:", r, c));
                     }
                     else{
-                        if((board.getLetterAtIndex(r, c+1) == null) && (board.getLetterAtIndex( r, c-1) == null)) soloColLetters.append(String.format("%d%d:", r, c));
+                        if((board.getLetterAtIndex(r, c+1) == null) && (board.getLetterAtIndex( r, c-1) == null)) soloRowLetters.append(String.format("%d%d:", r, c));
                     }
                 }
                 else{ rowWords.append(" "); }
@@ -194,9 +197,10 @@ public class ScrabbleModel {
             for (String s : rowW) {
                 if(s.length()>1){
                     if (!(dictionary.contains(s.strip().toLowerCase()))) { valid = false; } // If the dictionary doesn't contain one of the words then board isn't valid.
-
-                    if(allWords.containsKey(s)) allWords.put(s, allWords.get(s) + 1);
-                    else allWords.put(s, 1);
+                    else{
+                        if(allWords.containsKey(s)) allWords.put(s, allWords.get(s) + 1);
+                        else allWords.put(s, 1);
+                    }
                 }
             }
 
@@ -205,13 +209,16 @@ public class ScrabbleModel {
             for (String s : colW) {
                 if(s.length()>1){
                     if (!(dictionary.contains(s.strip().toLowerCase()))) { valid = false; } // If the dictionary doesn't contain one of the words then board isn't valid.
-
-                    if(allWords.containsKey(s)) allWords.put(s, allWords.get(s) + 1);
-                    else allWords.put(s, 1);
+                    else{
+                        if(allWords.containsKey(s)) allWords.put(s, allWords.get(s) + 1);
+                        else allWords.put(s, 1);
+                    }
                 }
             }
 
         }
+
+        System.out.println(String.format("%s\n%s", soloRowLetters, soloColLetters));
 
         for(String key : allWords.keySet()){
             int wordScore = 0;
@@ -222,6 +229,7 @@ public class ScrabbleModel {
                             wordScore += tileValues[key.charAt(x)-65];
                         }
                     }
+
                     wordsOnBoard.put(key, allWords.get(key));
                 }
             }
@@ -234,7 +242,6 @@ public class ScrabbleModel {
                 wordsOnBoard.put(key, allWords.get(key));
             }
 
-            System.out.println("Word score: " + wordScore);
             score += wordScore;
         }
 
@@ -262,6 +269,18 @@ public class ScrabbleModel {
             valid = false;
         }
 
+        if(wordsOnBoard.size() > 1){
+            int largestWord = 0;
+            for(String key : allWords.keySet()){
+                if(key.length() > largestWord) largestWord = key.length();
+            }
+
+            System.out.println(String.format("Coord: %d    Word: %d", playCoordinates.size(), largestWord));
+            if(largestWord <= playCoordinates.size()){
+                valid = false;
+            }
+        }
+
         // Make sure they played within the same row or column.
         if((colsPlayed.size() > 1 && rowsPlayed.size() != 1) || (rowsPlayed.size() > 1 && colsPlayed.size() != 1)){
             System.out.println("Didn't play in same spot!!!");
@@ -272,6 +291,7 @@ public class ScrabbleModel {
         if(!valid){
             board.reset(); // Reset board
             getCurrentPlayer().resetTiles(); // Reset player tiles
+            wordsOnBoard = bWordsPrev;
         }
         else if(getCurrentPlayer().getPlayed()){
             getCurrentPlayer().addToScore(score);
@@ -282,14 +302,24 @@ public class ScrabbleModel {
             changePlayer(); // Change turns
         }
         for(ScrabbleModelView view : views)
-            view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board,
+            view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
 
-                    getCurrentPlayer()));
+        playCoordinates.clear();
+        System.out.println(wordsOnBoard.toString());
+
+        selectedUserTile = -1;
 
         rowsPlayed.clear();
         colsPlayed.clear();
 
 
+    }
+
+    public void skipTurn(){
+        selectedUserTile = -1;
+        changePlayer(); // Change turns
+        for(ScrabbleModelView view : views)
+            view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
     }
 
 
