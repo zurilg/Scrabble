@@ -34,19 +34,11 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
 
         // Get the number of players
         this.numPlayers = 0;
-        while(numPlayers < 2 || numPlayers > 4){
-            String input = JOptionPane.showInputDialog("Enter the number of players (2-4).");
-            try{
-                numPlayers = Integer.parseInt(input);
-            } catch (Exception e){
-                JOptionPane.showMessageDialog(this, "Enter an integer value between 2 and 4.");
-            }
-        }
 
         playerInfo = new ArrayList<>(); // Name, points, ...
 
         // Initialize model. Add view to model.
-        this.model = new ScrabbleModel(numPlayers);
+        this.model = new ScrabbleModel(initPlayers());
         this.model.addScrabbleView(this);
 
 
@@ -166,7 +158,10 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
             playerInfo.add(lb);
         }
         // Add player info text fields to their corresponding panel
-        playerInfo.get(0).setForeground(new Color(0x47A66E));
+        for(JLabel player : playerInfo){
+            if(player.getText().equals(model.getCurrentPlayer().getName()))
+                player.setForeground(new Color(0x47A66E));
+        }
         players = new JPanel(new GridLayout(playerInfo.size(), 1));
         players.setBackground(new Color(0xFAEEDD));
         players.setSize(100, 825);
@@ -182,6 +177,35 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         this.setLocationRelativeTo(null); // Center JFrame
         this.setResizable(false); // Don't allow user to resize
         this.setVisible(true); // Show JFrame
+    }
+
+    private ArrayList<String> initPlayers(){
+        ArrayList<String> playerNames = new ArrayList<>();
+
+        // Get the number of players
+        while(numPlayers < 2 || numPlayers > 4){
+            String input = JOptionPane.showInputDialog("Enter the number of players (2-4).");
+            try{
+                numPlayers = Integer.parseInt(input);
+            } catch (Exception e){
+                JOptionPane.showMessageDialog(this, "Enter an integer value between 2 and 4.");
+            }
+        }
+
+        // Get each player's name
+        for(int i = 0; i < numPlayers; i++){
+            String input = "";
+            while(input.isBlank()){
+                input = JOptionPane.showInputDialog(String.format("Enter player %d's name.", i+1)).toUpperCase();
+                if(input.isBlank()) JOptionPane.showMessageDialog(this, "Can't enter a blank name!");
+                if(playerNames.contains(input)){
+                    JOptionPane.showMessageDialog(this, "Please enter a unique name!");
+                    input = "";
+                }
+            }
+            playerNames.add(input);
+        }
+        return playerNames;
     }
 
     @Override

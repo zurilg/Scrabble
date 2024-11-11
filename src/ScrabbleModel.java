@@ -9,23 +9,21 @@ import java.util.*;
  * TODO: JavaDoc for Scrabble model class
  */
 public class ScrabbleModel {
-
-    private List<ScrabbleModelView> views;
-
+    // List of views to be updated
+    private final List<ScrabbleModelView> views;
+    // Constants and macros to be used
     public static final int BOARD_SIZE = 15;
     public static final int NUM_PLAYER_TILES = 7;
-
     public enum Status {ONGOING, WIN};
-    private Status status;
 
-    private Board board;
-    private TileBag tiles;
-    private ArrayList<Player> players;
-    private int playerTurn;
+    private Status status; // Store current game status
+    private Board board; // Game board
+    private TileBag tiles; // Tile bag
+    private ArrayList<Player> players; // Players
+    private int playerTurn; // Variable to track player turn
 
-    private BoardSquare selectedBS;
     private int selectedUserTile;
-
+    // All playable words. Read from a .txt file currently.
     private HashSet<String> dictionary; // valid words
 
     private HashSet<Integer> rowsPlayed;
@@ -35,13 +33,14 @@ public class ScrabbleModel {
 
 
 
-    public ScrabbleModel(int numPlayers){
+    public ScrabbleModel(ArrayList<String> playerNames){
         this.board = new Board();
         this.board.setPrevState();
         this.tiles = new TileBag();
-        this.players = initPlayers(numPlayers);
+        this.players = initPlayers(playerNames);
         this.status = Status.ONGOING;
-        playerTurn = 0; // First player's turn
+        playerTurn = new Random().nextInt(playerNames.size()); // Pick random player to be first
+        System.out.println("RANDOM" + playerTurn);
         this.views = new ArrayList<ScrabbleModelView>();
 
 
@@ -82,13 +81,12 @@ public class ScrabbleModel {
         this.views.add(view);
     }
 
-    private ArrayList<Player> initPlayers(int n){
+    private ArrayList<Player> initPlayers(ArrayList<String> playerNames){
         ArrayList<Player> ps = new ArrayList<Player>(); // Initialize array list to return
 
         // Initialize each player name (Player1, ..., PlayerN)
-        for(int i = 1; i <= n; i++){
-            ps.add(new Player(String.format("Player %d", i)));
-        }
+        for(String name : playerNames)
+            ps.add(new Player(name));
 
         // Give each player 7 tiles
         for(Player p : ps)
@@ -98,13 +96,14 @@ public class ScrabbleModel {
     }
 
     private void fillTiles(Player p){
+        // If the player's tile holder is empty then add tile objects
         if(tiles.returnSize() != 0 && p.getTiles().size() < NUM_PLAYER_TILES){
             int size =  p.getTiles().size();
             for(int i = 0; i < (ScrabbleModel.NUM_PLAYER_TILES - size); i++)
                 p.addTileToHolder(tiles.popTile());
         }
+        // If the player's tile holder is full, replace non-valid tiles
         else if(tiles.returnSize() != 0 && p.getTiles().size() == NUM_PLAYER_TILES){
-            System.out.println("fskdjflskdjfskl");
             for(int i = 0; i < NUM_PLAYER_TILES; i++){
                 if(p.getTiles().get(i) == null) p.getTiles().set(i, tiles.popTile());
             }
@@ -200,7 +199,11 @@ public class ScrabbleModel {
             String[] rowW = rowWords.toString().split(" ");
             for (String s : rowW) {
                 if(s.length()>1){
-                    if (!(dictionary.contains(s.strip().toLowerCase()))) { valid = false; } // If the dictionary doesn't contain one of the words then board isn't valid.
+                    // If the dictionary doesn't contain one of the words then board isn't valid.
+                    if (!(dictionary.contains(s.strip().toLowerCase()))) {
+                        invalidTurn();
+                        return;
+                    }
                     else{
                         if(allWords.containsKey(s)) allWords.put(s, allWords.get(s) + 1);
                         else allWords.put(s, 1);
@@ -212,7 +215,10 @@ public class ScrabbleModel {
             String[] colW = columnWords.toString().split(" ");
             for (String s : colW) {
                 if(s.length()>1){
-                    if (!(dictionary.contains(s.strip().toLowerCase()))) { valid = false; } // If the dictionary doesn't contain one of the words then board isn't valid.
+                    if (!(dictionary.contains(s.strip().toLowerCase()))) {
+                        invalidTurn();
+                        return;
+                    } // If the dictionary doesn't contain one of the words then board isn't valid.
                     else{
                         if(allWords.containsKey(s)) allWords.put(s, allWords.get(s) + 1);
                         else allWords.put(s, 1);
@@ -261,16 +267,16 @@ public class ScrabbleModel {
                     if(!rs.isEmpty()) System.out.println(rs);
                 }
                 if(rs.equalsIgnoreCase(cs) && !cs.isEmpty()){
-                    valid = false; // Two solo letters can't have same coordinates!
-                    System.out.println("SOLO!!!");
-                    System.out.printf("\n\"%s\" \"%s\"%n", rs, cs);
-                    break; // Loop can be terminated once condition is met.
+                    invalidTurn();
+                    return;
                 }
             }
         }
 
-        if(board.isEmpty() || board.getLetterAtIndex(7,7) == null || score == 0){
-            valid = false;
+        // If the board is empty or
+        if(board.getLetterAtIndex(7,7) == null || score == 0){
+            invalidTurn();
+            return;
         }
 
         for(String k : wordsOnBoard.keySet()){
@@ -292,57 +298,57 @@ public class ScrabbleModel {
 
             System.out.println(String.format("Coord: %d    Word: %d", playCoordinates.size(), largestWord));
             if(largestWord <= playCoordinates.size()){
-                valid = false;
+                invalidTurn();
+                return;
             }
         }
 
         // Make sure they played within the same row or column.
         if((colsPlayed.size() > 1 && rowsPlayed.size() > 1)){
-            System.out.println("Didn't play in same spot!!!");
-            valid = false;
+            invalidTurn();
+            return;
         }
 
+        if(getCurrentPlayer().getPlayed()) validTurn(score);
 
-        if(!valid){
-            board.reset(); // Reset board
-            getCurrentPlayer().resetTiles(); // Reset player tiles
-            wordsOnBoard = new HashMap<>(bWordsPrev);
-        }
-        else if(getCurrentPlayer().getPlayed()){
-            getCurrentPlayer().addToScore(score);
-            board.setPrevState(); // Correct, so set new board prev state for possible future reset
-            fillTiles(getCurrentPlayer()); // Fill player's tiles who just went
-            getCurrentPlayer().setPrevTiles();
-            for(ScrabbleModelView view : views) view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
-            changePlayer(); // Change turns
-            bWordsPrev = new HashMap<>(wordsOnBoard);
-        }
         for(ScrabbleModelView view : views)
             view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
 
-        playCoordinates.clear();
         System.out.println(wordsOnBoard.toString());
+    }
 
+    private void invalidTurn(){
+        board.reset(); // Reset board
+        getCurrentPlayer().resetTiles(); // Reset player tiles
+        wordsOnBoard = new HashMap<>(bWordsPrev);
+        update();
+
+    }
+
+    private void validTurn(int score){
+        getCurrentPlayer().addToScore(score);
+        board.setPrevState(); // Correct, so set new board prev state for possible future reset
+        fillTiles(getCurrentPlayer()); // Fill player's tiles who just went
+        getCurrentPlayer().setPrevTiles();
+        for(ScrabbleModelView view : views) view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
+        changePlayer(); // Change turns
+        bWordsPrev = new HashMap<>(wordsOnBoard);
+        update();
+    }
+
+    private void update(){
+        for(ScrabbleModelView view : views)
+            view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
         selectedUserTile = -1;
-
         rowsPlayed.clear();
         colsPlayed.clear();
-
-
     }
 
 
     // TODO: skipTurn function contains a lot of the same logic as an invalid turn. They can simply be combined into a helper function...
     public void skipTurn(){
-        board.reset(); // Reset board
-        getCurrentPlayer().resetTiles(); // Reset player tiles
-        wordsOnBoard = new HashMap<>(bWordsPrev);
-        selectedUserTile = -1;
-        rowsPlayed.clear();
-        colsPlayed.clear();
+        invalidTurn();
         changePlayer(); // Change turns
-        for(ScrabbleModelView view : views)
-            view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
     }
 
 

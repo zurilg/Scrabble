@@ -20,7 +20,6 @@ import java.io.File;
 public class Board {
     private BoardSquare[][] board;
     private BoardSquare[][] prevState;
-    private boolean empty;
 
     /**
      * This is the board constructor. It initializes every board square to
@@ -29,10 +28,6 @@ public class Board {
         board = new BoardSquare[ScrabbleModel.BOARD_SIZE][ScrabbleModel.BOARD_SIZE];
         prevState = new BoardSquare[ScrabbleModel.BOARD_SIZE][ScrabbleModel.BOARD_SIZE];
 
-        empty = true;
-
-
-
         // Initialize all squares as empty
         for(int i = 0; i < ScrabbleModel.BOARD_SIZE; i+=1){
             for(int j = 0; j < ScrabbleModel.BOARD_SIZE; j+=1){
@@ -40,9 +35,7 @@ public class Board {
                 prevState[i][j] = new BoardSquare(0,0);
             }
         }
-
-        initBoard(); // Correct all word and letter scores
-
+        initBoard(); // Correct all word and letter scores using data from XML
     }
 
     private void initBoard(){
@@ -93,12 +86,11 @@ public class Board {
                 board[i][j].placeTile(prevState[i][j].getTile());
     }
 
-
-
     /**
      * Returns the tile letter on the corresponding board square provided coordinates.
      *
-     * @param coordinates The coordinates of the board square to retrieve the letter from.
+     * @param r The row index
+     * @param c The column index
      * @return The letter (as a string) at the specified board coordinate.
      */
     public String getLetterAtIndex(int r, int c){
@@ -111,20 +103,10 @@ public class Board {
      * Places the provided game tile on the specified coordinates.
      *
      * @param t The tile to place on the specified coordinate.
-     * @param coordinates The coordinate of the board square to place the tile on.
+     * @param r The row index
+     * @param c The column index
      */
     public void placeTile(Tile t, int r, int c){
-        empty = false;
         board[r][c].placeTile(t);
     }
-
-    /**
-     * Returns whether the board is empty.
-     *
-     * @return Board empty (True : False)
-     */
-    public boolean isEmpty(){
-        return empty;
-    }
-
 }

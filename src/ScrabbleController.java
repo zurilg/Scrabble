@@ -23,6 +23,7 @@ public class ScrabbleController implements ActionListener{
                 break;
             case "P":
                 model.validateAndScoreBoard(playCoordinates);
+                playCoordinates.clear();
                 break;
             case "S":
                 model.skipTurn();
