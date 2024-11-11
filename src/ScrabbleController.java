@@ -26,6 +26,7 @@ public class ScrabbleController implements ActionListener{
                 break;
             case "S":
                 model.skipTurn();
+                playCoordinates.clear();
                 break;
             default:
                 System.out.println("ERROR!"); // TODO: Remove. Temporary.

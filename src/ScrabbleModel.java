@@ -31,6 +31,7 @@ public class ScrabbleModel {
     private HashSet<Integer> rowsPlayed;
     private HashSet<Integer> colsPlayed;
     private HashMap<String, Integer> wordsOnBoard;
+    private HashMap<String, Integer> bWordsPrev;
 
 
 
@@ -58,6 +59,7 @@ public class ScrabbleModel {
         colsPlayed = new HashSet<Integer>();
 
         wordsOnBoard = new HashMap<>();
+        bWordsPrev = new HashMap<>();
 
         for(Player p : players){
             p.setPrevTiles();
@@ -147,8 +149,8 @@ public class ScrabbleModel {
         int [] tileValues = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10};
         HashMap<String, Integer> allWords = new HashMap<>();
 
-        // Words state restor
-        HashMap<String, Integer> bWordsPrev = new HashMap<>(wordsOnBoard);
+        // Words state restore
+        bWordsPrev = new HashMap<>(wordsOnBoard);
         HashMap<String, Integer> wordsPlayed = new HashMap<>();
 
         // Check all rows and columns for valid data
@@ -329,8 +331,15 @@ public class ScrabbleModel {
 
     }
 
+
+    // TODO: skipTurn function contains a lot of the same logic as an invalid turn. They can simply be combined into a helper function...
     public void skipTurn(){
+        board.reset(); // Reset board
+        getCurrentPlayer().resetTiles(); // Reset player tiles
+        wordsOnBoard = new HashMap<>(bWordsPrev);
         selectedUserTile = -1;
+        rowsPlayed.clear();
+        colsPlayed.clear();
         changePlayer(); // Change turns
         for(ScrabbleModelView view : views)
             view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
