@@ -143,13 +143,15 @@ public class Player {
 
 
     public void setPrevTiles(){
+        prevTiles.clear();
         for(int i = 0; i < ScrabbleModel.NUM_PLAYER_TILES; i++)
             prevTiles.add(tileHolder.get(i));
     }
 
     public void resetTiles(){
+        tileHolder.clear();
         for(int i = 0; i < ScrabbleModel.NUM_PLAYER_TILES; i++)
-            tileHolder.set(i, prevTiles.get(i));
+            tileHolder.add(prevTiles.get(i));
 
         played = false;
     }

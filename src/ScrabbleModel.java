@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.security.Key;
 import java.util.*;
 
 
@@ -148,6 +149,7 @@ public class ScrabbleModel {
 
         // Words state restor
         HashMap<String, Integer> bWordsPrev = new HashMap<>(wordsOnBoard);
+        HashMap<String, Integer> wordsPlayed = new HashMap<>();
 
         // Check all rows and columns for valid data
         for(int r = 0; r < BOARD_SIZE; r ++){
@@ -269,10 +271,21 @@ public class ScrabbleModel {
             valid = false;
         }
 
-        if(wordsOnBoard.size() > 1){
+        for(String k : wordsOnBoard.keySet()){
+            if(bWordsPrev.containsKey(k)){
+                if((allWords.get(k) != null) && (allWords.get(k) - bWordsPrev.get(k) > 0))
+                    wordsPlayed.put(k, allWords.get(k) - bWordsPrev.get(k));
+            }
+            else if(dictionary.contains(k.toLowerCase())){
+                wordsPlayed.put(k, allWords.get(k));
+            }
+        }
+        System.out.println("!!!!!" + wordsPlayed.toString());
+
+        if(!wordsPlayed.isEmpty() && !bWordsPrev.isEmpty()){
             int largestWord = 0;
-            for(String key : allWords.keySet()){
-                if(key.length() > largestWord) largestWord = key.length();
+            for(String key : wordsPlayed.keySet()){
+                if(key.length() > largestWord) largestWord = key.strip().length();
             }
 
             System.out.println(String.format("Coord: %d    Word: %d", playCoordinates.size(), largestWord));
@@ -282,7 +295,7 @@ public class ScrabbleModel {
         }
 
         // Make sure they played within the same row or column.
-        if((colsPlayed.size() > 1 && rowsPlayed.size() != 1) || (rowsPlayed.size() > 1 && colsPlayed.size() != 1)){
+        if((colsPlayed.size() > 1 && rowsPlayed.size() > 1)){
             System.out.println("Didn't play in same spot!!!");
             valid = false;
         }
@@ -291,7 +304,7 @@ public class ScrabbleModel {
         if(!valid){
             board.reset(); // Reset board
             getCurrentPlayer().resetTiles(); // Reset player tiles
-            wordsOnBoard = bWordsPrev;
+            wordsOnBoard = new HashMap<>(bWordsPrev);
         }
         else if(getCurrentPlayer().getPlayed()){
             getCurrentPlayer().addToScore(score);
@@ -300,6 +313,7 @@ public class ScrabbleModel {
             getCurrentPlayer().setPrevTiles();
             for(ScrabbleModelView view : views) view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
             changePlayer(); // Change turns
+            bWordsPrev = new HashMap<>(wordsOnBoard);
         }
         for(ScrabbleModelView view : views)
             view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
