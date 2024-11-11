@@ -28,6 +28,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
 
     public ScrabbleModelViewFrame(){
         super("Scrabble"); // Call superclass (JFrame)
+        this.setIconImage((new ImageIcon("./S_Logo.png")).getImage());
         this.setLayout(new BorderLayout()); // Set layout as a border layout.
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Set default close operation to exit.
 
