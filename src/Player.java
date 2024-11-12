@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * Player class.
  *
@@ -8,15 +10,12 @@
  *
  * @version 11-10-2024
  */
-
-import java.util.ArrayList;
-
 public class Player {
-    private String name;
-    private int score;
-    private ArrayList<Tile> tileHolder;
-    private ArrayList<Tile> prevTiles;
-    private boolean played;
+    private final String name; // The player's name
+    private int score; // The player's overall score
+    private final ArrayList<Tile> tileHolder; // The tiles the player is currently holding
+    private final ArrayList<Tile> prevTiles; // Stores the state of tiles before player turn
+    private boolean played; // Whether a player has finished their turn
 
     /**
      * Constructor method for player. Initializes name, score, and tiles.
@@ -26,23 +25,39 @@ public class Player {
     public Player(String name){
         this.name = name;
         score = 0;
-        tileHolder = new ArrayList<Tile>(0);
-        prevTiles = new ArrayList<Tile>(7);
+        tileHolder = new ArrayList<>(0);
+        prevTiles = new ArrayList<>(7);
         played = false;
     }
 
+    /**
+     * Overridden constructor. Accepts a player object opposed to just a name.
+     *
+     * @param p The Player object to be copied.
+     */
     public Player(Player p){
         this.name = p.getName();
         this.score = p.getScore();
         this.tileHolder = p.getTiles();
         prevTiles = p.getPrevTiles();
+        this.played = p.getPlayed();
     }
 
 
+    /**
+     * Accessor method for player turn status.
+     *
+     * @return true: player finished their turn, false: player hasn't finished their turn
+     */
     public boolean getPlayed(){
         return played;
     }
 
+    /**
+     * Accessor method for a player's stored tile holder state.
+     *
+     * @return The state of the player's tile holder before their turn.
+     */
     public ArrayList<Tile> getPrevTiles(){
         return prevTiles;
     }
@@ -88,48 +103,11 @@ public class Player {
     }
 
     /**
-     * Removes the specified tile from the player's tile holder.
-     *
-     * @param t Tile to remove.
+     * @param index The index of the tile to set as used (null)
      */
-    public void removeTile(Tile t){
-        tileHolder.remove(t);
-    }
-
-    /**
-     * Removes a tile from a specified index of the players tile holder
-     *
-     * @param index Index of tile to remove
-     */
-    public void removeTileFromIndex(int index) { tileHolder.remove(index); }
-
     public void setTileAsUsed(int index) {
         tileHolder.set(index, null);
         played = true;
-    }
-
-    /**
-     * Removes and returns the tile at the end of the tile holder.
-     *
-     * @return The tile at the end of the tile holder.
-     */
-    public Tile popLastTile(){
-        Tile t;
-        if(!tileHolder.isEmpty()){
-            t = tileHolder.getLast();
-            tileHolder.remove(t);
-            return t;
-        }
-        return null;
-    }
-
-    /**
-     * Returns the tile that is currently at the end of the tile holder.
-     *
-     * @return The tile at the end of the tile holder.
-     */
-    public Tile showLastTile(){
-        return tileHolder.getLast();
     }
 
     /**
@@ -145,13 +123,18 @@ public class Player {
         return size;
     }
 
-
+    /**
+     * Stores the current state of a player's tile holder.
+     */
     public void setPrevTiles(){
         prevTiles.clear();
         for(int i = 0; i < ScrabbleModel.NUM_PLAYER_TILES; i++)
             prevTiles.add(tileHolder.get(i));
     }
 
+    /**
+     * Resets the current state of a player's tile holder to its past state.
+     */
     public void resetTiles(){
         tileHolder.clear();
         for(int i = 0; i < ScrabbleModel.NUM_PLAYER_TILES; i++)
@@ -159,7 +142,4 @@ public class Player {
 
         played = false;
     }
-
 }
-
-

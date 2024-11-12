@@ -1,12 +1,11 @@
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.security.Key;
 import java.util.*;
 
 
 /**
- * TODO: JavaDoc for Scrabble model class
+ *
  */
 public class ScrabbleModel {
     // List of views to be updated
@@ -14,21 +13,21 @@ public class ScrabbleModel {
     // Constants and macros to be used
     public static final int BOARD_SIZE = 15;
     public static final int NUM_PLAYER_TILES = 7;
-    public enum Status {ONGOING, OVER};
+    public enum Status {ONGOING, OVER}
 
     private Status status; // Store current game status
-    private Board board; // Game board
-    private TileBag tiles; // Tile bag
-    private ArrayList<Player> players; // Players
+    private final Board board; // Game board
+    private final TileBag tiles; // Tile bag
+    private final ArrayList<Player> players; // Players
     private int playerTurn; // Variable to track player turn
     private int scorelessTurns; // Keep track of number of scoreless turns
 
     private int selectedUserTile;
     // All playable words. Read from a .txt file currently.
-    private HashSet<String> dictionary; // valid words
+    private final HashSet<String> dictionary; // valid words
 
-    private HashSet<Integer> rowsPlayed;
-    private HashSet<Integer> colsPlayed;
+    private final HashSet<Integer> rowsPlayed;
+    private final HashSet<Integer> colsPlayed;
     private HashMap<String, Integer> wordsOnBoard;
     private HashMap<String, Integer> bWordsPrev;
 
@@ -42,8 +41,7 @@ public class ScrabbleModel {
         this.scorelessTurns = 0;
         this.status = Status.ONGOING;
         playerTurn = new Random().nextInt(playerNames.size()); // Pick random player to be first
-        System.out.println("RANDOM" + playerTurn);
-        this.views = new ArrayList<ScrabbleModelView>();
+        this.views = new ArrayList<>();
 
 
         dictionary = new HashSet<>();
@@ -51,13 +49,13 @@ public class ScrabbleModel {
             getWordsFromFile();
         }
         catch(Exception e){
-            System.out.println("File read error. Exception: " + e); // TODO: TEMPORARY. Replace with JOptionPane?
+            System.out.println("File read error."); // Will replace in future with
         }
 
         selectedUserTile = -1;
 
-        rowsPlayed = new HashSet<Integer>();
-        colsPlayed = new HashSet<Integer>();
+        rowsPlayed = new HashSet<>();
+        colsPlayed = new HashSet<>();
 
         wordsOnBoard = new HashMap<>();
         bWordsPrev = new HashMap<>();
@@ -71,10 +69,6 @@ public class ScrabbleModel {
         return board;
     }
 
-    public Status getStatus() {
-        return status;
-    }
-
     public Player getCurrentPlayer(){
         return this.players.get(playerTurn);
     }
@@ -84,7 +78,7 @@ public class ScrabbleModel {
     }
 
     private ArrayList<Player> initPlayers(ArrayList<String> playerNames){
-        ArrayList<Player> ps = new ArrayList<Player>(); // Initialize array list to return
+        ArrayList<Player> ps = new ArrayList<>(); // Initialize array list to return
 
         // Initialize each player name (Player1, ..., PlayerN)
         for(String name : playerNames)
@@ -141,7 +135,6 @@ public class ScrabbleModel {
 
     public void validateAndScoreBoard(ArrayList<int []> playCoordinates){
         // Validation stuff
-        boolean valid = true;
         StringBuilder soloRowLetters = new StringBuilder();
         StringBuilder soloColLetters = new StringBuilder();
 
@@ -203,7 +196,7 @@ public class ScrabbleModel {
                 if(s.length()>1){
                     // If the dictionary doesn't contain one of the words then board isn't valid.
                     if (!(dictionary.contains(s.strip().toLowerCase()))) {
-                        invalidTurn();
+                        invalidTurn(playCoordinates);
                         return;
                     }
                     else{
@@ -218,7 +211,7 @@ public class ScrabbleModel {
             for (String s : colW) {
                 if(s.length()>1){
                     if (!(dictionary.contains(s.strip().toLowerCase()))) {
-                        invalidTurn();
+                        invalidTurn(playCoordinates);
                         return;
                     } // If the dictionary doesn't contain one of the words then board isn't valid.
                     else{
@@ -230,12 +223,10 @@ public class ScrabbleModel {
 
         }
 
-        System.out.println(String.format("%s\n%s", soloRowLetters, soloColLetters));
-
         for(String key : allWords.keySet()){
             int wordScore = 0;
             if (wordsOnBoard.containsKey(key)) {
-                if(wordsOnBoard.get(key) != allWords.get(key)){
+                if(!wordsOnBoard.get(key).equals(allWords.get(key))){
                     for(int i = 0; i < allWords.get(key) - wordsOnBoard.get(key); i++){
                         for(int x = 0; x < key.length(); x++){
                             wordScore += tileValues[key.charAt(x)-65];
@@ -263,13 +254,8 @@ public class ScrabbleModel {
 
         for(String rs : rowSoloCords){
             for(String cs : colSoloCords){
-
-                if(!cs.isEmpty()){
-                    System.out.println(cs);
-                    if(!rs.isEmpty()) System.out.println(rs);
-                }
                 if(rs.equalsIgnoreCase(cs) && !cs.isEmpty()){
-                    invalidTurn();
+                    invalidTurn(playCoordinates);
                     return;
                 }
             }
@@ -277,7 +263,7 @@ public class ScrabbleModel {
 
         // If the board is empty or
         if(board.getLetterAtIndex(7,7) == null || score == 0){
-            invalidTurn();
+            invalidTurn(playCoordinates);
             return;
         }
 
@@ -290,7 +276,6 @@ public class ScrabbleModel {
                 wordsPlayed.put(k, allWords.get(k));
             }
         }
-        System.out.println("!!!!!" + wordsPlayed.toString());
 
         if(!wordsPlayed.isEmpty() && !bWordsPrev.isEmpty()){
             int largestWord = 0;
@@ -298,28 +283,29 @@ public class ScrabbleModel {
                 if(key.length() > largestWord) largestWord = key.strip().length();
             }
 
-            System.out.println(String.format("Coord: %d    Word: %d", playCoordinates.size(), largestWord));
             if(largestWord <= playCoordinates.size()){
-                invalidTurn();
+                invalidTurn(playCoordinates);
                 return;
             }
         }
 
         // Make sure they played within the same row or column.
         if((colsPlayed.size() > 1 && rowsPlayed.size() > 1)){
-            invalidTurn();
+            invalidTurn(playCoordinates);
             return;
         }
 
-        if(getCurrentPlayer().getPlayed()) validTurn(score);
+        if(getCurrentPlayer().getPlayed()){
+            validTurn(score);
+            playCoordinates.clear();
+        }
 
         for(ScrabbleModelView view : views)
             view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer(), status));
-
-        System.out.println(wordsOnBoard.toString());
     }
 
-    private void invalidTurn(){
+    private void invalidTurn(ArrayList<int[]> coords){
+        if(coords != null) coords.clear();
         if(scorelessTurns == 6) status = Status.OVER;
         board.reset(); // Reset board
         getCurrentPlayer().resetTiles(); // Reset player tiles
@@ -337,7 +323,6 @@ public class ScrabbleModel {
         changePlayer(); // Change turns
         bWordsPrev = new HashMap<>(wordsOnBoard);
         update();
-        System.out.println("Tile bag: " + tiles.returnSize());
     }
 
     private void update(){
@@ -348,12 +333,10 @@ public class ScrabbleModel {
         colsPlayed.clear();
     }
 
-
-    // TODO: skipTurn function contains a lot of the same logic as an invalid turn. They can simply be combined into a helper function...
     public void skipTurn(){
         scorelessTurns += 1;
         changePlayer(); // Change turns
-        invalidTurn();
+        invalidTurn(null);
     }
 
 
@@ -366,7 +349,7 @@ public class ScrabbleModel {
                 word = r.readLine();
             }
         } catch (Exception e) {
-            System.out.println("IOException: " + e); // TODO: Replace. JOptionPane? Needs to go in GUI part
+            System.out.println("Error when reading from file."); // Should replace eventually
         }
     }
 

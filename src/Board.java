@@ -18,11 +18,11 @@ import java.io.File;
  * @version 11-10-2024
  */
 public class Board {
-    private BoardSquare[][] board;
-    private BoardSquare[][] prevState;
+    private final BoardSquare[][] board;
+    private final BoardSquare[][] prevState;
 
     /**
-     * This is the board constructor. It initializes every board square to
+     * This is the board constructor. It initializes every board square.
      */
     public Board(){
         board = new BoardSquare[ScrabbleModel.BOARD_SIZE][ScrabbleModel.BOARD_SIZE];
@@ -62,8 +62,7 @@ public class Board {
             }
         }
         catch(Exception e){
-            System.out.println("This error shouldn't occur. XML error"); // TODO: Temporary. Remove/replace
-            e.printStackTrace();
+            System.out.println("This error shouldn't occur. XML error"); // Temporary
         }
     }
 

@@ -16,7 +16,7 @@ import static java.lang.System.exit;
 
 public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView {
     private ArrayList<ArrayList<JButton>> boardButtons;
-    private JPanel boardPanel, userButtonPanel, userPanel, players, words;
+    private JPanel boardPanel, userButtonPanel, players;
     private ArrayList<JButton> userButtons;
     private JButton submitInput, skipTurn;
     ArrayList<JLabel> playerInfo;
@@ -180,6 +180,9 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         this.setVisible(true); // Show JFrame
     }
 
+    /**
+     * @return
+     */
     private ArrayList<String> initPlayers(){
         ArrayList<String> playerNames = new ArrayList<>();
 
@@ -197,7 +200,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         for(int i = 0; i < numPlayers; i++){
             String input = "";
             while(input.isBlank()){
-                input = JOptionPane.showInputDialog(String.format("Enter player %d's name.", i+1)).toUpperCase();
+                input = JOptionPane.showInputDialog(String.format("Enter player %d's name.", i+1)).strip().toUpperCase();
                 if(input.isBlank()) JOptionPane.showMessageDialog(this, "Can't enter a blank name!");
                 if(playerNames.contains(input)){
                     JOptionPane.showMessageDialog(this, "Please enter a unique name!");
@@ -252,8 +255,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
                 playerInfo.get(i).setForeground(new Color(0x000000));
             }
         }
-
-
     }
 
     /**
