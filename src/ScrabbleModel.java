@@ -14,13 +14,14 @@ public class ScrabbleModel {
     // Constants and macros to be used
     public static final int BOARD_SIZE = 15;
     public static final int NUM_PLAYER_TILES = 7;
-    public enum Status {ONGOING, WIN};
+    public enum Status {ONGOING, OVER};
 
     private Status status; // Store current game status
     private Board board; // Game board
     private TileBag tiles; // Tile bag
     private ArrayList<Player> players; // Players
     private int playerTurn; // Variable to track player turn
+    private int scorelessTurns; // Keep track of number of scoreless turns
 
     private int selectedUserTile;
     // All playable words. Read from a .txt file currently.
@@ -38,6 +39,7 @@ public class ScrabbleModel {
         this.board.setPrevState();
         this.tiles = new TileBag();
         this.players = initPlayers(playerNames);
+        this.scorelessTurns = 0;
         this.status = Status.ONGOING;
         playerTurn = new Random().nextInt(playerNames.size()); // Pick random player to be first
         System.out.println("RANDOM" + playerTurn);
@@ -131,7 +133,7 @@ public class ScrabbleModel {
                 getCurrentPlayer().setTileAsUsed(selectedUserTile);
 
                 for(ScrabbleModelView view : views){
-                    view.handleLetterPlacement(new ScrabbleEvent(this, r, c, selectedUserTile, board, getCurrentPlayer()));
+                    view.handleLetterPlacement(new ScrabbleEvent(this, r, c, selectedUserTile, board, getCurrentPlayer(), status));
                 }
             }
         }
@@ -312,17 +314,17 @@ public class ScrabbleModel {
         if(getCurrentPlayer().getPlayed()) validTurn(score);
 
         for(ScrabbleModelView view : views)
-            view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
+            view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer(), status));
 
         System.out.println(wordsOnBoard.toString());
     }
 
     private void invalidTurn(){
+        if(scorelessTurns == 6) status = Status.OVER;
         board.reset(); // Reset board
         getCurrentPlayer().resetTiles(); // Reset player tiles
         wordsOnBoard = new HashMap<>(bWordsPrev);
         update();
-
     }
 
     private void validTurn(int score){
@@ -330,15 +332,17 @@ public class ScrabbleModel {
         board.setPrevState(); // Correct, so set new board prev state for possible future reset
         fillTiles(getCurrentPlayer()); // Fill player's tiles who just went
         getCurrentPlayer().setPrevTiles();
-        for(ScrabbleModelView view : views) view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
+        if(getCurrentPlayer().numTiles() == 0) status = Status.OVER;
+        for(ScrabbleModelView view : views) view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer(), status));
         changePlayer(); // Change turns
         bWordsPrev = new HashMap<>(wordsOnBoard);
         update();
+        System.out.println("Tile bag: " + tiles.returnSize());
     }
 
     private void update(){
         for(ScrabbleModelView view : views)
-            view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer()));
+            view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer(), status));
         selectedUserTile = -1;
         rowsPlayed.clear();
         colsPlayed.clear();
@@ -347,8 +351,9 @@ public class ScrabbleModel {
 
     // TODO: skipTurn function contains a lot of the same logic as an invalid turn. They can simply be combined into a helper function...
     public void skipTurn(){
-        invalidTurn();
+        scorelessTurns += 1;
         changePlayer(); // Change turns
+        invalidTurn();
     }
 
 

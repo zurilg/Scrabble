@@ -138,7 +138,11 @@ public class Player {
      * @return Number of tiles tile holders.
      */
     public int numTiles(){
-        return tileHolder.size();
+        int size = 0;
+        for(int i = 0; i < 7; i++){
+            if(tileHolder.get(i) != null) size += 1;
+        }
+        return size;
     }
 
 

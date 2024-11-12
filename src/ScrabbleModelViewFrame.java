@@ -12,6 +12,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import static java.lang.System.exit;
 
 public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView {
     private ArrayList<ArrayList<JButton>> boardButtons;
@@ -217,6 +218,10 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
 
     @Override
     public void updateBoard(ScrabbleEvent e){
+        if(e.getStatus() == ScrabbleModel.Status.OVER){
+            JOptionPane.showMessageDialog(this, "Game Over!");
+            exit(0);
+        }
         // Redraw board
         for(int r = 0; r < 15; r++){
             for(int c = 0; c<15; c++){
