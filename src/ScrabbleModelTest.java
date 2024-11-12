@@ -3,6 +3,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 
+/**
+ * Tests the ScrabbleModel class.
+ *
+ * Simultaneously tests word placement and word scoring as a score is produced depending on word placement.
+ */
 public class ScrabbleModelTest {
 
     private ScrabbleModel model;
@@ -108,6 +113,145 @@ public class ScrabbleModelTest {
         int expectedScore2 = initialScore2 + 6; // "HAT" = 6
 
         assertTrue((currentPlayer1.getScore() == expectedScore1) && (currentPlayer2.getScore() == expectedScore2), "The score calculation for multiple words formed in one move should be correct.");
+    }
+
+    @Test
+    public void testInvalidFirstWordPlacement() {
+        Tile tileZ = new Tile("Z", 3);
+        Tile tileA = new Tile("A", 1);
+        Tile tileT = new Tile("T", 1);
+
+        Player currentPlayer = model.getCurrentPlayer();
+
+        currentPlayer.addTileToHolder(tileZ);
+        currentPlayer.addTileToHolder(tileA);
+        currentPlayer.addTileToHolder(tileT);
+
+        // Place "BAT" horizontally at row 7
+        model.getBoard().placeTile(tileZ, 7, 7);
+        model.getBoard().placeTile(tileA, 7, 8);
+        model.getBoard().placeTile(tileT, 7, 9);
+
+        // Must set tiles as used after playing them so we know the player played
+        currentPlayer.setTileAsUsed(0);
+        currentPlayer.setTileAsUsed(1);
+        currentPlayer.setTileAsUsed(2);
+
+        ArrayList<int[]> playCoordinates = new ArrayList<>();
+        playCoordinates.add(new int[]{7, 7});
+        playCoordinates.add(new int[]{7, 8});
+        playCoordinates.add(new int[]{7, 9});
+
+        int initialScore = currentPlayer.getScore();
+        model.validateAndScoreBoard(playCoordinates);
+
+        assertEquals(0, currentPlayer.getScore(), "The score calculation for multiple words formed in one move should be correct.");
+    }
+
+    @Test
+    public void testEdgeCasePlacementOutOfBounds(){
+        Tile tileA = new Tile("A",1);
+        assertThrows(IndexOutOfBoundsException.class,()->model.getBoard().placeTile(tileA,15,15), "Placing a tile out of bounds should throw an exception.");
+    }
+
+    @Test
+    public void testInvalidSingleLetterPlacement() {
+        Tile tileZ = new Tile("Z", 3);
+
+        Player currentPlayer = model.getCurrentPlayer();
+
+        currentPlayer.addTileToHolder(tileZ);
+
+        // Place "BAT" horizontally at row 7
+        model.getBoard().placeTile(tileZ, 2, 3);
+
+        // Must set tiles as used after playing them so we know the player played
+        currentPlayer.setTileAsUsed(0);
+
+        ArrayList<int[]> playCoordinates = new ArrayList<>();
+        playCoordinates.add(new int[]{2, 3});
+
+        model.validateAndScoreBoard(playCoordinates);
+
+        assertEquals(0, currentPlayer.getScore(), "The score calculation for multiple words formed in one move should be correct.");
+    }
+
+    @Test
+    public void testInvalidSingleLetterCenterPlacement() {
+        Tile tileZ = new Tile("E", 3);
+
+        Player currentPlayer = model.getCurrentPlayer();
+
+        currentPlayer.addTileToHolder(tileZ);
+
+        // Place "BAT" horizontally at row 7
+        model.getBoard().placeTile(tileZ, 7, 7);
+
+        // Must set tiles as used after playing them so we know the player played
+        currentPlayer.setTileAsUsed(0);
+
+        ArrayList<int[]> playCoordinates = new ArrayList<>();
+        playCoordinates.add(new int[]{7, 7});
+
+        model.validateAndScoreBoard(playCoordinates);
+
+        assertEquals(0, currentPlayer.getScore(), "The score calculation for multiple words formed in one move should be correct.");
+    }
+
+    @Test
+    public void testValidFirstInvalidSecond() {
+        Tile tileC = new Tile("C", 3);
+        Tile tileH = new Tile("Z", 1);
+        Tile tileA = new Tile("A", 1);
+        Tile tileT = new Tile("T", 1);
+
+        // FIRST PLAYER PLAYS CAT
+        Player currentPlayer1 = model.getCurrentPlayer();
+
+        currentPlayer1.addTileToHolder(tileC);
+        currentPlayer1.addTileToHolder(tileA);
+        currentPlayer1.addTileToHolder(tileT);
+
+        // Place "BAT" horizontally at row 7
+        model.getBoard().placeTile(tileC, 7, 6);
+        model.getBoard().placeTile(tileA, 7, 7);
+        model.getBoard().placeTile(tileT, 7, 8);
+
+        // Must set tiles as used after playing them so we know the player played
+        currentPlayer1.setTileAsUsed(0);
+        currentPlayer1.setTileAsUsed(1);
+        currentPlayer1.setTileAsUsed(2);
+
+        ArrayList<int[]> playCoordinates = new ArrayList<>();
+        playCoordinates.add(new int[]{7, 7});
+        playCoordinates.add(new int[]{7, 8});
+        playCoordinates.add(new int[]{7, 9});
+
+        int initialScore1 = currentPlayer1.getScore();
+        model.validateAndScoreBoard(playCoordinates);
+        int expectedScore1 = initialScore1 + 5; // "CAT" = 5
+
+        // SECOND PLAYER TO PLAY PLAYS "HAT"
+        Player currentPlayer2 = model.getCurrentPlayer();
+
+        currentPlayer2.addTileToHolder(tileH);
+        currentPlayer2.addTileToHolder(tileT);
+
+        // Place "BAT" horizontally at row 7
+        model.getBoard().placeTile(tileH, 6, 7);
+        model.getBoard().placeTile(tileT, 8, 7);
+
+        // Must set tiles as used after playing them so we know the player played
+        currentPlayer2.setTileAsUsed(0);
+        currentPlayer2.setTileAsUsed(1);
+
+        playCoordinates.clear();
+        playCoordinates.add(new int[]{6, 7});
+        playCoordinates.add(new int[]{8, 7});
+
+        model.validateAndScoreBoard(playCoordinates);
+
+        assertTrue((currentPlayer1.getScore() == expectedScore1) && (currentPlayer2.getScore() == 0), "The score calculation for multiple words formed in one move should be correct.");
     }
 
 }
