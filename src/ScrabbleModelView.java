@@ -12,7 +12,7 @@
  * @author Abdul Aziz Al-Sibakhi
  * @author Redah Eliwa
  *
- * @version 11-11-2024
+ * @version 11-12-2024
  */
 public interface ScrabbleModelView {
     /**

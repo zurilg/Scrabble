@@ -1,56 +1,38 @@
-/**
- * Scrabble Model class
- * This class is responsible for handling all the game logic after the player has made the move,
- * including the validity of the move and the score the player gained.
- *
- * Scrabble Model he class has an instance of all the other models of Scrabble and handles the interactions between
- * them.
- *
- * @author Zuri Lane-Griffore
- * @author Mohammad Ahmadi
- * @author Abdul Aziz Al-Sibakhi
- * @author Redah Eliwa
- *
- * @version 11-11-2024
- */
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.security.Key;
 import java.util.*;
 
+
+/**
+ * TODO: JDoc
+ */
 public class ScrabbleModel {
     // List of views to be updated
     private final List<ScrabbleModelView> views;
     // Constants and macros to be used
     public static final int BOARD_SIZE = 15;
     public static final int NUM_PLAYER_TILES = 7;
-    public enum Status {ONGOING, OVER};
+    public enum Status {ONGOING, OVER}
 
     private Status status; // Store current game status
-    private Board board; // Game board
-    private TileBag tiles; // Tile bag
-    private ArrayList<Player> players; // Players
+    private final Board board; // Game board
+    private final TileBag tiles; // Tile bag
+    private final ArrayList<Player> players; // Players
     private int playerTurn; // Variable to track player turn
     private int scorelessTurns; // Keep track of number of scoreless turns
 
     private int selectedUserTile;
     // All playable words. Read from a .txt file currently.
-    private HashSet<String> dictionary; // valid words
+    private final HashSet<String> dictionary; // valid words
 
-    private HashSet<Integer> rowsPlayed;
-    private HashSet<Integer> colsPlayed;
+    private final HashSet<Integer> rowsPlayed;
+    private final HashSet<Integer> colsPlayed;
     private HashMap<String, Integer> wordsOnBoard;
     private HashMap<String, Integer> bWordsPrev;
 
 
-    /**
-     * Constructor method for ScrabbleModel
-     * Initializes the board, the tile bag, dictionary of valid words, HashMaps of words on the board
-     * previous words, HashSets of rows and columns played and the players.
-     * Order of players is randomly chosen.
-     * @param playerNames An ArrayList of Strings that holds all the names of all the players in the game
-     */
+
     public ScrabbleModel(ArrayList<String> playerNames){
         this.board = new Board();
         this.board.setPrevState();
@@ -59,18 +41,21 @@ public class ScrabbleModel {
         this.scorelessTurns = 0;
         this.status = Status.ONGOING;
         playerTurn = new Random().nextInt(playerNames.size()); // Pick random player to be first
-        //System.out.println("RANDOM" + playerTurn);
-        this.views = new ArrayList<ScrabbleModelView>();
+        this.views = new ArrayList<>();
+
+
         dictionary = new HashSet<>();
         try{
             getWordsFromFile();
         }
         catch(Exception e){
-            System.out.println("File read error. Exception: " + e); // TODO: TEMPORARY. Replace with JOptionPane?
+            System.out.println("File read error."); // Will replace in future with
         }
+
         selectedUserTile = -1;
-        rowsPlayed = new HashSet<Integer>();
-        colsPlayed = new HashSet<Integer>();
+
+        rowsPlayed = new HashSet<>();
+        colsPlayed = new HashSet<>();
 
         wordsOnBoard = new HashMap<>();
         bWordsPrev = new HashMap<>();
@@ -80,45 +65,20 @@ public class ScrabbleModel {
         }
     }
 
-    /**
-     * Return the current state of the board.
-     * @return The board
-     */
     public Board getBoard() {
         return board;
     }
 
-    /**
-     * Getter method for current status of the game.
-     * @return The status of the game
-     */
-    public Status getStatus() {
-        return status;
-    }
-
-    /**
-     * Returns the current player that is playing a turn.
-     * @return The player playing their turn.
-     */
     public Player getCurrentPlayer(){
         return this.players.get(playerTurn);
     }
 
-    /**
-     * Add an instance of ScrabbleModelView to the array list of ScrabbleModelViews.
-     * @param view Array list of ScrabbleModelViews
-     */
     public void addScrabbleView(ScrabbleModelViewFrame view){
         this.views.add(view);
     }
 
-    /**
-     * Initialize all the players in the game and store them in an array list.
-     * @param playerNames ArrayList of the names of the players.
-     * @return ArrayList of the player objects representing the players playing the game.
-     */
     private ArrayList<Player> initPlayers(ArrayList<String> playerNames){
-        ArrayList<Player> ps = new ArrayList<Player>(); // Initialize array list to return
+        ArrayList<Player> ps = new ArrayList<>(); // Initialize array list to return
 
         // Initialize each player name (Player1, ..., PlayerN)
         for(String name : playerNames)
@@ -131,10 +91,6 @@ public class ScrabbleModel {
         return ps; // Return players
     }
 
-    /**
-     * Fill the tile holders of the player.
-     * @param p The player whose tile holder is to be filled.
-     */
     private void fillTiles(Player p){
         // If the player's tile holder is empty then add tile objects
         if(tiles.returnSize() != 0 && p.getTiles().size() < NUM_PLAYER_TILES){
@@ -150,18 +106,11 @@ public class ScrabbleModel {
         }
     }
 
-    /**
-     * Change player to next player to play their turn.
-     */
     private void changePlayer(){
         if(playerTurn == players.size()-1) playerTurn = 0;
         else playerTurn++;
     }
 
-    /**
-     * Select a tile to be placed on the board.
-     * @param r Index of tile to be placed.
-     */
     public void handleUserTile(int r){
         if(r < getCurrentPlayer().getTiles().size()){
             if(getCurrentPlayer().getTiles().get(r) != null)
@@ -169,11 +118,6 @@ public class ScrabbleModel {
         }
     }
 
-    /**
-     * Place a tile on the board.
-     * @param r Row index
-     * @param c Column index
-     */
     public void handleBoardSquare(int r, int c){
         if(selectedUserTile >= 0 && selectedUserTile < NUM_PLAYER_TILES){
             if(Objects.equals(board.getLetterAtIndex(r, c), null)){
@@ -189,13 +133,8 @@ public class ScrabbleModel {
         }
     }
 
-    /**
-     * Validate a players move and add the score if the move made is valid.
-     * @param playCoordinates ArrayList of coordinates of the newly placed tiles.
-     */
     public void validateAndScoreBoard(ArrayList<int []> playCoordinates){
         // Validation stuff
-        boolean valid = true;
         StringBuilder soloRowLetters = new StringBuilder();
         StringBuilder soloColLetters = new StringBuilder();
 
@@ -257,7 +196,7 @@ public class ScrabbleModel {
                 if(s.length()>1){
                     // If the dictionary doesn't contain one of the words then board isn't valid.
                     if (!(dictionary.contains(s.strip().toLowerCase()))) {
-                        invalidTurn();
+                        invalidTurn(playCoordinates);
                         return;
                     }
                     else{
@@ -272,7 +211,7 @@ public class ScrabbleModel {
             for (String s : colW) {
                 if(s.length()>1){
                     if (!(dictionary.contains(s.strip().toLowerCase()))) {
-                        invalidTurn();
+                        invalidTurn(playCoordinates);
                         return;
                     } // If the dictionary doesn't contain one of the words then board isn't valid.
                     else{
@@ -284,12 +223,10 @@ public class ScrabbleModel {
 
         }
 
-        //System.out.println(String.format("%s\n%s", soloRowLetters, soloColLetters));
-
         for(String key : allWords.keySet()){
             int wordScore = 0;
             if (wordsOnBoard.containsKey(key)) {
-                if(wordsOnBoard.get(key) != allWords.get(key)){
+                if(!wordsOnBoard.get(key).equals(allWords.get(key))){
                     for(int i = 0; i < allWords.get(key) - wordsOnBoard.get(key); i++){
                         for(int x = 0; x < key.length(); x++){
                             wordScore += tileValues[key.charAt(x)-65];
@@ -317,13 +254,8 @@ public class ScrabbleModel {
 
         for(String rs : rowSoloCords){
             for(String cs : colSoloCords){
-
-                if(!cs.isEmpty()){
-                    // System.out.println(cs);
-                    if(!rs.isEmpty()) System.out.println(rs);
-                }
                 if(rs.equalsIgnoreCase(cs) && !cs.isEmpty()){
-                    invalidTurn();
+                    invalidTurn(playCoordinates);
                     return;
                 }
             }
@@ -331,7 +263,7 @@ public class ScrabbleModel {
 
         // If the board is empt
         if(board.getLetterAtIndex(7,7) == null || score == 0){
-            invalidTurn();
+            invalidTurn(playCoordinates);
             return;
         }
 
@@ -344,7 +276,6 @@ public class ScrabbleModel {
                 wordsPlayed.put(k, allWords.get(k));
             }
         }
-        //System.out.println("!!!!!" + wordsPlayed.toString());
 
         if(!wordsPlayed.isEmpty() && !bWordsPrev.isEmpty()){
             int largestWord = 0;
@@ -352,33 +283,29 @@ public class ScrabbleModel {
                 if(key.length() > largestWord) largestWord = key.strip().length();
             }
 
-            // System.out.println(String.format("Coord: %d    Word: %d", playCoordinates.size(), largestWord));
             if(largestWord <= playCoordinates.size()){
-                invalidTurn();
+                invalidTurn(playCoordinates);
                 return;
             }
         }
 
         // Make sure they played within the same row or column.
         if((colsPlayed.size() > 1 && rowsPlayed.size() > 1)){
-            invalidTurn();
+            invalidTurn(playCoordinates);
             return;
         }
 
-        if(getCurrentPlayer().getPlayed()) validTurn(score);
+        if(getCurrentPlayer().getPlayed()){
+            validTurn(score);
+            playCoordinates.clear();
+        }
 
         for(ScrabbleModelView view : views)
             view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer(), status));
-
-        //System.out.println(wordsOnBoard.toString());
     }
 
-    /**
-     * Sets a move as invalid.
-     * Resets the players tiles and returns board to previous state.
-     * If 6 scoreless turns have been made, change the game status as over.
-     */
-    private void invalidTurn(){
+    private void invalidTurn(ArrayList<int[]> coords){
+        if(coords != null) coords.clear();
         if(scorelessTurns == 6) status = Status.OVER;
         board.reset(); // Reset board
         getCurrentPlayer().resetTiles(); // Reset player tiles
@@ -386,12 +313,6 @@ public class ScrabbleModel {
         update();
     }
 
-    /**
-     * Sets a move as valid.
-     * Add to the players total score and updates the board.
-     * If the player has 0 tiles left and tile bad is empty change the status of the game to over.
-     * @param score The score the player achieved from the move
-     */
     private void validTurn(int score){
         getCurrentPlayer().addToScore(score);
         board.setPrevState(); // Correct, so set new board prev state for possible future reset
@@ -402,12 +323,8 @@ public class ScrabbleModel {
         changePlayer(); // Change turns
         bWordsPrev = new HashMap<>(wordsOnBoard);
         update();
-        //System.out.println("Tile bag: " + tiles.returnSize());
     }
 
-    /**
-     * Updates calls the views in the ArrayList to update the board.
-     */
     private void update(){
         for(ScrabbleModelView view : views)
             view.updateBoard(new ScrabbleEvent(this, 0, 0, selectedUserTile, board, getCurrentPlayer(), status));
@@ -416,21 +333,13 @@ public class ScrabbleModel {
         colsPlayed.clear();
     }
 
-    /**
-     * Skip the turn and change turns.
-     * Marks move as scoreless.
-     */
-    // TODO: skipTurn function contains a lot of the same logic as an invalid turn. They can simply be combined into a helper function...
     public void skipTurn(){
         scorelessTurns += 1;
         changePlayer(); // Change turns
-        invalidTurn();
+        invalidTurn(null);
     }
 
-    /**
-     * Read the dictionary file and store the valid words in an ArrayList.
-     * @throws FileNotFoundException
-     */
+
     private void getWordsFromFile() throws FileNotFoundException {
         BufferedReader r = new BufferedReader(new FileReader("./Words.txt"));
         try {
@@ -440,14 +349,11 @@ public class ScrabbleModel {
                 word = r.readLine();
             }
         } catch (Exception e) {
-            System.out.println("IOException: " + e); // TODO: Replace. JOptionPane? Needs to go in GUI part
+            System.out.println("Error when reading from file."); // Should replace eventually
         }
     }
 
-    /**
-     * Getter method for the ArrayList of players
-     * @return ArrayList of players
-     */
+
     public ArrayList<Player> getPlayers(){ return players; }
 
 }
