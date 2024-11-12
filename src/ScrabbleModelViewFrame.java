@@ -1,4 +1,3 @@
-
 /**
  * ScrabbleModelViewFrame class and main class of the Scrabble game.
  * ScrabbleModelViewFrame displays a GUI-based Scrabble game.

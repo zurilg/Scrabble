@@ -319,7 +319,7 @@ public class ScrabbleModel {
             for(String cs : colSoloCords){
 
                 if(!cs.isEmpty()){
-                   // System.out.println(cs);
+                    // System.out.println(cs);
                     if(!rs.isEmpty()) System.out.println(rs);
                 }
                 if(rs.equalsIgnoreCase(cs) && !cs.isEmpty()){
@@ -352,7 +352,7 @@ public class ScrabbleModel {
                 if(key.length() > largestWord) largestWord = key.strip().length();
             }
 
-           // System.out.println(String.format("Coord: %d    Word: %d", playCoordinates.size(), largestWord));
+            // System.out.println(String.format("Coord: %d    Word: %d", playCoordinates.size(), largestWord));
             if(largestWord <= playCoordinates.size()){
                 invalidTurn();
                 return;
