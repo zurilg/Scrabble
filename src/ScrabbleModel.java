@@ -329,7 +329,7 @@ public class ScrabbleModel {
             }
         }
 
-        // If the board is empty or
+        // If the board is empt
         if(board.getLetterAtIndex(7,7) == null || score == 0){
             invalidTurn();
             return;
