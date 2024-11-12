@@ -119,4 +119,35 @@ public class Board {
     public void placeTile(Tile t, int r, int c){
         board[r][c].placeTile(t);
     }
+
+    public String toString(){
+        StringBuilder strBoard = new StringBuilder();
+        for(int i = 0; i < 15; i++){
+            strBoard.append("     -------------------------------------------------------------------------------------------------------------------------\n");
+            StringBuilder squareSpecs = new StringBuilder("     ");
+            StringBuilder squareLetters;
+            if(i > 8) { squareLetters = new StringBuilder(" " + (i + 1) + "  "); }
+            else { squareLetters = new StringBuilder("  " + (i + 1) + "  "); }
+            StringBuilder squarePoints = new StringBuilder("     ");
+            for(int j = 0; j < 15; j++){
+                // Get squareSpecsLine
+                if(board[i][j].getWordScore() != 0){ squareSpecs.append("|  ").append(board[i][j].getWordScore()).append(" W  "); }
+                else if(board[i][j].getLetterScore() != 0){ squareSpecs.append("|  ").append(board[i][j].getLetterScore()).append(" L  "); }
+                else { squareSpecs.append("|       "); }
+
+                // Get tile character line
+                if(board[i][j].getLetter() != null){ squareLetters.append("|   ").append(board[i][j].getLetter()).append("   "); }
+                else { squareLetters.append("|       "); }
+
+                // Get tile point line
+                if(board[i][j].getLetterPoint() != -1){ squarePoints.append("|   ").append(board[i][j].getLetterPoint()).append("   "); }
+                else { squarePoints.append("|       "); }
+
+                if(j == 14){ squareSpecs.append("|\n"); squareLetters.append("|\n"); squarePoints.append("|\n"); }
+            }
+            strBoard.append(squareSpecs).append(squareLetters).append(squarePoints);
+            if(i == 14){ strBoard.append("     ----A-------B-------C-------D-------E-------F-------G-------H-------I-------J-------K-------L-------M-------N-------O----\n"); }
+        }
+        return strBoard.toString();
+    }
 }
