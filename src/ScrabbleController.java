@@ -1,37 +1,35 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
 /**
- * Scrabble Controller class
+ * Scrabble Controller class.
  *
  * This class acts as the controller in Scrabbles model-view-controller architecture. It is responsible
  * for handling the interactions between frame and the model.
  *
  * It listens to user actions and processes them as commands for the model to execute.
  *
- * @author Zuri Lane-Griffore
- * @author Mohammad Ahmadi
- * @author Abdul Aziz Al-Sibakhi
- * @author Redah Eliwa
+ * @author Zuri Lane-Griffore (101241678)
+ * @author Mohammad Ahmadi (101267874)
+ * @author Abdul Aziz Al-Sibakhi (101246056)
+ * @author Redah Eliwa (101273466)
  *
  * @version 11-12-2024
  */
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
 public class ScrabbleController implements ActionListener{
     ScrabbleModel model;
-
-    //coordinates of tiles played during current turn.
     ArrayList<int []> playCoordinates;
 
     /**
      * Constructor method for ScrabbleController.
      * Initializes an instance of ScrabbleModel and an ArrayList of the coordinates of the tiles played
      * during the current turn.
-     * @param model An instance of the ScrabbleModel to handle game logic
+     * @param model The model object created by the model view frame.
      */
     public ScrabbleController(ScrabbleModel model){
-        this.model = model;
-        playCoordinates = new ArrayList<>();
+        this.model = model; // Share the model with the view frame
+        playCoordinates = new ArrayList<>(); // Store the coordinates played to share with model
     }
 
     /**
@@ -52,14 +50,13 @@ public class ScrabbleController implements ActionListener{
                 break;
             case "P":
                 model.validateAndScoreBoard(playCoordinates);
-                playCoordinates.clear();
                 break;
             case "S":
                 model.skipTurn();
                 playCoordinates.clear();
                 break;
             default:
-                System.out.println("ERROR!"); // TODO: Remove. Temporary.
+                break; // Temporary
         }
     }
 }

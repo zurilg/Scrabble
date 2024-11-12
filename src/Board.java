@@ -1,5 +1,6 @@
 /**
  * Board class.
+ *
  * Model class that represents the Scrabble board
  *
  * @author Zuri Lane-Griffore (101241678)
@@ -19,11 +20,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import java.io.File;
 public class Board {
-    private final BoardSquare[][] board;
-    private final BoardSquare[][] prevState;
+    private BoardSquare[][] board;
+    private BoardSquare[][] prevState;
 
     /**
-     * This is the board constructor. It initializes every board square.
+     * This is the board constructor. It initializes every board square to 0 score.
      */
     public Board(){
         board = new BoardSquare[ScrabbleModel.BOARD_SIZE][ScrabbleModel.BOARD_SIZE];
@@ -65,7 +66,8 @@ public class Board {
             }
         }
         catch(Exception e){
-            System.out.println("This error shouldn't occur. XML error"); // Temporary
+            System.out.println("This error shouldn't occur. XML error"); // TODO: Temporary. Remove/replace
+            e.printStackTrace();
         }
     }
 

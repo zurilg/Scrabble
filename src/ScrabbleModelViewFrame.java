@@ -19,6 +19,7 @@
  *
  * @version 11-12-2024
  */
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -229,7 +230,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         return playerNames;
     }
     /**
-     * Method to handle the players tile placement
+     * Handles a player placing a tile on the board. Sets the color and text appropriately.
      * @param e The scrabble event that requires action
      */
     @Override
