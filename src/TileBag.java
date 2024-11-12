@@ -56,14 +56,6 @@ public class TileBag {
         return pickedTile;
     }
 
-    /**
-     * Provided with a tile, put it back in the bag.
-     *
-     * @param tile Tile to go back into the bag.
-     */
-    public void returnTile(Tile tile){
-        bag.add(tile);
-    }
 
     /**
      * Return the size of the bag.

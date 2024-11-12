@@ -1,14 +1,6 @@
-// Imports to be able to read xml file
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.w3c.dom.Element;
-import java.io.File;
-
 /**
  * Board class.
+ * Model class that represents the Scrabble board
  *
  * @author Zuri Lane-Griffore (101241678)
  * @author Mohammad Ahmadi (101267874)
@@ -17,6 +9,15 @@ import java.io.File;
  *
  * @version 11-10-2024
  */
+
+// Imports to be able to read xml file
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+import java.io.File;
 public class Board {
     private final BoardSquare[][] board;
     private final BoardSquare[][] prevState;
@@ -37,7 +38,9 @@ public class Board {
         }
         initBoard(); // Correct all word and letter scores using data from XML
     }
-
+    /**
+     * Reads premium squares from an XML file and assigns them to the board squares.
+     */
     private void initBoard(){
         try {
             File xmlFile = new File("./BoardSquareInfo.xml");
@@ -96,6 +99,12 @@ public class Board {
         return board[r][c].getLetter();
     }
 
+    /**
+     * Returns the BoardSquare object at the specified index
+     * @param r Row where the board square desired is
+     * @param c Column where the board square desired is
+     * @return the BoardSquare object specified by the indexes
+     */
     public BoardSquare getSqAtIndex(int r, int c){ return board[r][c]; }
 
     /**

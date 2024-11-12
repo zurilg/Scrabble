@@ -1,5 +1,17 @@
+
 /**
- * TODO: Write description. Scrabble's main class...
+ * ScrabbleModelViewFrame class and main class of the Scrabble game.
+ * ScrabbleModelViewFrame displays a GUI-based Scrabble game.
+ * It acts as the frame in Scrabbles model-view-controller architecture. It handles player actions
+ * including playing and skipping a turn. Updates the display accordingly after each turn.
+ *
+ * Uses a JFrame to display the board, players, and the tiles.
+ *
+ * The class implements the ScrabbleModelView interface to handle events related to letter placement
+ * and board updates.
+ *
+ * Also includes functionality for initializing players, managing game controls, and updating the game
+ * state on the UI.
  *
  * @author Zuri Lane-Griffore (101241678)
  * @author Mohammad Ahmadi (101267874)
@@ -8,7 +20,6 @@
  *
  * @version 11-10-2024
  */
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -27,6 +38,11 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
 
     private ScrabbleModel model;
 
+    /**
+     * Constructor method for ScrabbleModelViewFrame()
+     * Initializes the games UI and an instance of ScrabbleModel.
+     * Adds a logo to the Scrabble game.
+     */
     public ScrabbleModelViewFrame(){
         super("Scrabble"); // Call superclass (JFrame)
         this.setIconImage((new ImageIcon("./S_Logo.png")).getImage());
@@ -181,7 +197,9 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
     }
 
     /**
-     * @return
+     * Initializes the players by prompting the user to type the number of players and their names.
+     * Ensures the number of players is valid and the names are unique.
+     * @return The ArrayList of player names.
      */
     private ArrayList<String> initPlayers(){
         ArrayList<String> playerNames = new ArrayList<>();
@@ -211,14 +229,20 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         }
         return playerNames;
     }
-
+    /**
+     * Method to handle the players tile placement
+     * @param e The scrabble event that requires action
+     */
     @Override
     public void handleLetterPlacement(ScrabbleEvent e){
         boardSqLabels.get(e.getR()).get(e.getC())[1].setText(userButtons.get(e.getSelectedTile()).getText());
         userButtons.get(e.getSelectedTile()).setText(" ");
         userButtons.get(e.getSelectedTile()).setBackground(new Color(0xB0B0B0));
     }
-
+    /**
+     * Method to update the board after a players turn.
+     * @param e The scrabble event that requires action
+     */
     @Override
     public void updateBoard(ScrabbleEvent e){
         if(e.getStatus() == ScrabbleModel.Status.OVER){
