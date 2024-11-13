@@ -35,7 +35,8 @@ Must include the dictionary text file in the same directory as the JAR file.
 - Tiles in a player's tile holder currently don't show their point value. Although, when a player plays a tile, it displays the letter value once on the board. 
 - Bonuses are organized and ready to be implemented, although the scoring currently doesn't account for bonus board squares. The scoring only accounts for the sum of the letter scores of a word.
 - The official scrabble end-of-game is not currently implemented. Currently, if there are 6 scoreless turns or a player has 0 tiles remaining, then the game ends. 
-- This may be a cosmetic issue to some people, but we find the game is as playable without them. But the game does not currently have coordinates for the rows and columns. Although, the bonus square colors already help guide a player. 
+- This may be a cosmetic issue to some people, but we find the game is as playable without them. But the game does not currently have coordinates for the rows and columns. Although, the bonus square colors already help guide a player.
+- When in late stages of the game, multiple misbehaviours start to occur. Sometimes correct placements are treated as invalid. Sometimes certain letters can't be placed on the board. It takes quite a long time for these errors to occur (very late stages of the game), but they do occur eventually. We believe our future refactoring and optimization will solve these problems.
 
 ## Credits
 
