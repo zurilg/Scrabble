@@ -41,16 +41,20 @@ public class ScrabbleController implements ActionListener{
     public void actionPerformed(ActionEvent e){
         String[] commandParam = e.getActionCommand().split(",");
         switch(commandParam[0]){
+            // User places a selected tile from their tile holder on to a board square.
             case "B":
                 model.handleBoardSquare(Integer.parseInt(commandParam[1]), Integer.parseInt(commandParam[2]));
                 playCoordinates.add(new int[]{Integer.parseInt(commandParam[1]), Integer.parseInt(commandParam[2])});
                 break;
+            // User selects a tile from their tile holder to place.
             case "U":
                 model.handleUserTile(Integer.parseInt(commandParam[1]));
                 break;
+            // Player presses "Play!"
             case "P":
                 model.validateAndScoreBoard(playCoordinates);
                 break;
+            // Player presses "Skip Turn"
             case "S":
                 model.skipTurn();
                 playCoordinates.clear();

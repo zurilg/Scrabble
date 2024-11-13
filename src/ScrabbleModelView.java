@@ -7,10 +7,10 @@
  * The interface includes methods for handling tile placements and updating the game board
  * based on the actions in the model.
  *
- * @author Zuri Lane-Griffore
- * @author Mohammad Ahmadi
- * @author Abdul Aziz Al-Sibakhi
- * @author Redah Eliwa
+ * @author Zuri Lane-Griffore (101241678)
+ * @author Mohammad Ahmadi (101267874)
+ * @author Abdul Aziz Al-Sibakhi (101246056)
+ * @author Redah Eliwa (101273466)
  *
  * @version 11-12-2024
  */

@@ -6,6 +6,13 @@ import java.util.ArrayList;
 /**
  * Tests the ScrabbleModel class.
  * Simultaneously tests word placement and word scoring as a score is produced depending on word placement.
+ *
+ * @author Zuri Lane-Griffore (101241678)
+ * @author Mohammad Ahmadi (101267874)
+ * @author Abdul Aziz Al-Sibakhi (101246056)
+ * @author Redah Eliwa (101273466)
+ *
+ * @version 11-12-2024
  */
 public class ScrabbleModelTest {
 
@@ -30,33 +37,32 @@ public class ScrabbleModelTest {
      */
     @Test
     public void testFirstWordPlacement() {
+        // Create tiles to be used.
         Tile tileB = new Tile("B", 3);
         Tile tileA = new Tile("A", 1);
         Tile tileT = new Tile("T", 1);
-
+        // Get the current player (can't just play with player1). Must follow player order.
         Player currentPlayer = model.getCurrentPlayer();
-
+        // Add necessary tiles to current player's tile holder
         currentPlayer.addTileToHolder(tileB);
         currentPlayer.addTileToHolder(tileA);
         currentPlayer.addTileToHolder(tileT);
-
         // Place "BAT" horizontally at row 7
         model.getBoard().placeTile(tileB, 7, 7);
         model.getBoard().placeTile(tileA, 7, 8);
         model.getBoard().placeTile(tileT, 7, 9);
-
-        // Must set tiles as used after playing them so we know the player played
+        // Must set tiles as used after playing them, so we know the player played
         currentPlayer.setTileAsUsed(0);
         currentPlayer.setTileAsUsed(1);
         currentPlayer.setTileAsUsed(2);
-
+        // Initialize the coordinates played by the player. This info is provided by view usually.
         ArrayList<int[]> playCoordinates = new ArrayList<>();
         playCoordinates.add(new int[]{7, 7});
         playCoordinates.add(new int[]{7, 8});
         playCoordinates.add(new int[]{7, 9});
-
+        // Get players initial score, validate word, get their expected score.
         int initialScore = currentPlayer.getScore();
-        model.validateAndScoreBoard(playCoordinates);
+        model.validateAndScoreBoard(playCoordinates); // Validate and score word played
         int expectedScore = initialScore + 5; // "BAT"
 
         assertEquals(expectedScore, currentPlayer.getScore(), "The score calculation for multiple words formed in one move should be correct.");
@@ -80,7 +86,7 @@ public class ScrabbleModelTest {
         currentPlayer1.addTileToHolder(tileA);
         currentPlayer1.addTileToHolder(tileT);
 
-        // Place "BAT" horizontally at row 7
+        // Place "CAT" horizontally at row 7
         model.getBoard().placeTile(tileC, 7, 6);
         model.getBoard().placeTile(tileA, 7, 7);
         model.getBoard().placeTile(tileT, 7, 8);
@@ -99,7 +105,7 @@ public class ScrabbleModelTest {
         model.validateAndScoreBoard(playCoordinates);
         int expectedScore1 = initialScore1 + 5; // "CAT" = 5
 
-        // SECOND PLAYER TO PLAY PLAYS "HAT"
+        // SECOND PLAYER TO PLAY PLAYS "HAT" VERTICALLY
         Player currentPlayer2 = model.getCurrentPlayer();
 
         currentPlayer2.addTileToHolder(tileH);
@@ -109,7 +115,7 @@ public class ScrabbleModelTest {
         model.getBoard().placeTile(tileH, 6, 7);
         model.getBoard().placeTile(tileT, 8, 7);
 
-        // Must set tiles as used after playing them so we know the player played
+        // Must set tiles as used after playing them, so we know the player played
         currentPlayer2.setTileAsUsed(0);
         currentPlayer2.setTileAsUsed(1);
 
@@ -139,12 +145,12 @@ public class ScrabbleModelTest {
         currentPlayer.addTileToHolder(tileA);
         currentPlayer.addTileToHolder(tileT);
 
-        // Place "BAT" horizontally at row 7
+        // Place "ZAT" horizontally at row 7
         model.getBoard().placeTile(tileZ, 7, 7);
         model.getBoard().placeTile(tileA, 7, 8);
         model.getBoard().placeTile(tileT, 7, 9);
 
-        // Must set tiles as used after playing them so we know the player played
+        // Must set tiles as used after playing them, so we know the player played
         currentPlayer.setTileAsUsed(0);
         currentPlayer.setTileAsUsed(1);
         currentPlayer.setTileAsUsed(2);
@@ -205,10 +211,10 @@ public class ScrabbleModelTest {
 
         currentPlayer.addTileToHolder(tileZ);
 
-        // Place "BAT" horizontally at row 7
+        // Place "E" in the center
         model.getBoard().placeTile(tileZ, 7, 7);
 
-        // Must set tiles as used after playing them so we know the player played
+        // Must set tiles as used after playing them, so we know the player played
         currentPlayer.setTileAsUsed(0);
 
         ArrayList<int[]> playCoordinates = new ArrayList<>();
@@ -237,12 +243,12 @@ public class ScrabbleModelTest {
         currentPlayer1.addTileToHolder(tileA);
         currentPlayer1.addTileToHolder(tileT);
 
-        // Place "BAT" horizontally at row 7
+        // Place "CAT" horizontally at row 7
         model.getBoard().placeTile(tileC, 7, 6);
         model.getBoard().placeTile(tileA, 7, 7);
         model.getBoard().placeTile(tileT, 7, 8);
 
-        // Must set tiles as used after playing them so we know the player played
+        // Must set tiles as used after playing them, so we know the player played
         currentPlayer1.setTileAsUsed(0);
         currentPlayer1.setTileAsUsed(1);
         currentPlayer1.setTileAsUsed(2);

@@ -11,8 +11,8 @@
 
 public class BoardSquare {
     private Tile t;
-    private int letterScore;
-    private int wordScore;
+    private final int letterScore;
+    private final int wordScore;
 
     /**
      * Constructor for BoardSquare.
@@ -70,15 +70,5 @@ public class BoardSquare {
     public String getLetter(){
         if(t == null) return null;
         return t.getChar();
-    }
-
-    /**
-     * Returns the point value of the letter on the board square.
-     *
-     * @return The point value of the letter of the tile on the board square.
-     */
-    public int getLetterPoint(){
-        if(t == null) return -1;
-        return t.getValue();
     }
 }

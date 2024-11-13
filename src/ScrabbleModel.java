@@ -12,10 +12,10 @@ import java.util.*;
  * Scrabble Model he class has an instance of all the other models of Scrabble and handles the interactions between
  * them.
  *
- * @author Zuri Lane-Griffore
- * @author Mohammad Ahmadi
- * @author Abdul Aziz Al-Sibakhi
- * @author Redah Eliwa
+ * @author Zuri Lane-Griffore (101241678)
+ * @author Mohammad Ahmadi (101267874)
+ * @author Abdul Aziz Al-Sibakhi (101246056)
+ * @author Redah Eliwa (101273466)
  *
  * @version 11-12-2024
  */
@@ -52,32 +52,31 @@ public class ScrabbleModel {
      * @param playerNames An ArrayList of Strings that holds all the names of all the players in the game
      */
     public ScrabbleModel(ArrayList<String> playerNames){
-        this.board = new Board();
-        this.board.setPrevState();
-        this.tiles = new TileBag();
-        this.players = initPlayers(playerNames);
-        this.scorelessTurns = 0;
-        this.status = Status.ONGOING;
+        this.board = new Board(); // Create a new board object
+        this.board.setPrevState(); // Set previous board states TODO: Might be repetitive? States are already set to empty?
+        this.tiles = new TileBag(); // Create a new tile bag filled with 100 tiles
+        this.players = initPlayers(playerNames); // Initialize each player using the helper function
+        this.scorelessTurns = 0; // Scoreless turns initially equal to zero
+        this.status = Status.ONGOING; // Status initially as ongoing
         playerTurn = new Random().nextInt(playerNames.size()); // Pick random player to be first
-        this.views = new ArrayList<>();
-
-
-        dictionary = new HashSet<>();
+        this.views = new ArrayList<>(); // List of views TODO: Needed? Do we ever have more than one view?
+        dictionary = new HashSet<>(); // Hash set of words. The dictionary needed is just unique keys.
         try{
-            getWordsFromFile();
+            getWordsFromFile(); // Fill the dictionary (hash set) with words stores in a .txt file
         }
         catch(Exception e){
-            System.out.println("File read error."); // Will replace in future with
+            System.out.println("File read error."); // TODO: replace in future with some sort of GUI message?
         }
 
-        selectedUserTile = -1;
+        selectedUserTile = -1; // User hasn't selected a tile yet. When selected user tile = -1, user hasn't selected a tile.
 
-        rowsPlayed = new HashSet<>();
+        rowsPlayed = new HashSet<>(); // Keep track of the # of rows a player has played in TODO: might be repetitive... Already getting array list with this sort of info...
         colsPlayed = new HashSet<>();
 
-        wordsOnBoard = new HashMap<>();
-        bWordsPrev = new HashMap<>();
+        wordsOnBoard = new HashMap<>(); // Stores all the words on the board and how many occurrences there are
+        bWordsPrev = new HashMap<>(); // Stores previous state of the words on the board. Useful for finding what words a player has played.
 
+        // Set players' previous tile states prior to beginning game.
         for(Player p : players){
             p.setPrevTiles();
         }
@@ -147,17 +146,18 @@ public class ScrabbleModel {
      * Change player to next player to play their turn.
      */
     private void changePlayer(){
-        if(playerTurn == players.size()-1) playerTurn = 0;
-        else playerTurn++;
+        if(playerTurn == players.size()-1) playerTurn = 0; // Wrap around
+        else playerTurn++; // Next player
     }
     /**
      * Select a tile to be placed on the board.
      * @param r Index of tile to be placed.
      */
     public void handleUserTile(int r){
+        // Validate tile clicked on
         if(r < getCurrentPlayer().getTiles().size()){
             if(getCurrentPlayer().getTiles().get(r) != null)
-                selectedUserTile = r;
+                selectedUserTile = r; // Set index of selected user tile
         }
     }
     /**
@@ -166,13 +166,15 @@ public class ScrabbleModel {
      * @param c Column index
      */
     public void handleBoardSquare(int r, int c){
+        // Check player has selected a valid tile
         if(selectedUserTile >= 0 && selectedUserTile < NUM_PLAYER_TILES){
+            // Check if the selected board square is empty
             if(Objects.equals(board.getLetterAtIndex(r, c), null)){
-                board.placeTile(getCurrentPlayer().getTiles().get(selectedUserTile), r, c);
-                rowsPlayed.add(r);
-                colsPlayed.add(c);
-                getCurrentPlayer().setTileAsUsed(selectedUserTile);
-
+                board.placeTile(getCurrentPlayer().getTiles().get(selectedUserTile), r, c); // Place the tile
+                rowsPlayed.add(r); // Add to what rows a player has played in
+                colsPlayed.add(c); // Add to what columns a player has played in
+                getCurrentPlayer().setTileAsUsed(selectedUserTile); // Set the current players tile holder square as empty. Can be refilled.
+                // Update view
                 for(ScrabbleModelView view : views){
                     view.handleLetterPlacement(new ScrabbleEvent(this, r, c, selectedUserTile, board, getCurrentPlayer(), status));
                 }
@@ -184,13 +186,12 @@ public class ScrabbleModel {
      * @param playCoordinates ArrayList of coordinates of the newly placed tiles.
      */
     public void validateAndScoreBoard(ArrayList<int []> playCoordinates){
-        // Validation stuff
-        StringBuilder soloRowLetters = new StringBuilder();
+        StringBuilder soloRowLetters = new StringBuilder(); // Allows for easy appending of strings
         StringBuilder soloColLetters = new StringBuilder();
 
         // Scoring stuff
         int score = 0;
-        int [] tileValues = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10};
+        int [] tileValues = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10}; // TODO: Replace with macro developed.
         HashMap<String, Integer> allWords = new HashMap<>();
 
         // Words state restore
@@ -209,7 +210,6 @@ public class ScrabbleModel {
                     rowWords.append(board.getLetterAtIndex(r, c));
 
                     // Find solo letters
-
                     if(c == 0){
                         if(board.getLetterAtIndex(r, c+1) == null) soloRowLetters.append(String.format("%d%d:", r, c));
                     }

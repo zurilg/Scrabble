@@ -6,10 +6,10 @@
  * Holds details about the players actions during their turn, including the selected tile and its index
  * and the status of the game.
  *
- * @author Zuri Lane-Griffore
- * @author Mohammad Ahmadi
- * @author Abdul Aziz Al-Sibakhi
- * @author Redah Eliwa
+ * @author Zuri Lane-Griffore (101241678)
+ * @author Mohammad Ahmadi (101267874)
+ * @author Abdul Aziz Al-Sibakhi (101246056)
+ * @author Redah Eliwa (101273466)
  *
  * @version 11-12-2024
  */
