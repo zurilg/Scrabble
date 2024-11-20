@@ -295,8 +295,10 @@ public class PlayerAI extends Player{
             }
 
             int score = model.validateAndScoreBoard(playCoordinates);
-            System.out.println("CALLED A VALID TURN");
+
             model.validTurn(score);
+
+
         }
     }
 
@@ -345,10 +347,14 @@ public class PlayerAI extends Player{
     private int[] findBlanks(){
         int[] blanks = {0, -1, -1}; // Initially haven't found any blanks. 0 found, index -1, index -1
         for(int i = 0; i < TILE_HOLDER_SIZE; i++){
-            if(getTile(i).getChar().charAt(0) == ' '){
-                blanks[0] += 1;
-                for(int k = 1; k < blanks.length; k++) if(blanks[k] == -1) blanks[k] = i;
+            if(getTile(i).getChar()!=null){
+                if(getTile(i).getChar().charAt(0) == ' '){
+                    blanks[0] += 1;
+                    for(int k = 1; k < blanks.length; k++) if(blanks[k] == -1) blanks[k] = i;
+                }
+
             }
+
         }
         return blanks;
     }

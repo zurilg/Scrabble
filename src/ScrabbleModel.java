@@ -256,14 +256,21 @@ public class ScrabbleModel {
     }
 
     public void validTurn(int score){
+        if(score == 0){
+            invalidTurn();
+            return;
+        }
         getCurrentPlayer().addToScore(score);
         board.saveState(); // Correct, so set new board prev state for possible future reset
         fillPlayerTiles(getCurrentPlayer()); // Fill player's tiles who just went
         getCurrentPlayer().setPrevTiles();
         if(getCurrentPlayer().numTiles() == 0) status = Status.OVER;
         changePlayer(); // Change turns
-        update();
+
         checkAI();
+        update();
+
+
     }
 
     private void update(){
