@@ -1,66 +1,42 @@
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.util.HashSet;
 
-/**
- * Scrabble Controller class.
- *
- * This class acts as the controller in Scrabbles model-view-controller architecture. It is responsible
- * for handling the interactions between frame and the model.
- *
- * It listens to user actions and processes them as commands for the model to execute.
- *
- * @author Zuri Lane-Griffore (101241678)
- * @author Mohammad Ahmadi (101267874)
- * @author Abdul Aziz Al-Sibakhi (101246056)
- * @author Redah Eliwa (101273466)
- *
- * @version 11-12-2024
- */
-public class ScrabbleController implements ActionListener{
+public class ScrabbleController implements ActionListener {
     ScrabbleModel model;
-    ArrayList<int []> playCoordinates;
-
-    /**
-     * Constructor method for ScrabbleController.
-     * Initializes an instance of ScrabbleModel and an ArrayList of the coordinates of the tiles played
-     * during the current turn.
-     * @param model The model object created by the model view frame.
-     */
+    HashSet<int []> playCoordinates;
     public ScrabbleController(ScrabbleModel model){
-        this.model = model; // Share the model with the view frame
-        playCoordinates = new ArrayList<>(); // Store the coordinates played to share with model
+        this.model = model;
+        playCoordinates = new HashSet<>();
     }
-
-    /**
-     * Processes an event triggered by the view and delegates the command to the appropriate
-     * ScrabbleModel method.
-     * @param e the event to be processed
-     */
     @Override
     public void actionPerformed(ActionEvent e){
         String[] commandParam = e.getActionCommand().split(",");
-        switch(commandParam[0]){
-            // User places a selected tile from their tile holder on to a board square.
+        switch (commandParam[0]){
             case "B":
-                model.handleBoardSquare(Integer.parseInt(commandParam[1]), Integer.parseInt(commandParam[2]));
+                model.handleBoardPlacement(Integer.parseInt(commandParam[1]), Integer.parseInt(commandParam[2]));
                 playCoordinates.add(new int[]{Integer.parseInt(commandParam[1]), Integer.parseInt(commandParam[2])});
                 break;
-            // User selects a tile from their tile holder to place.
             case "U":
-                model.handleUserTile(Integer.parseInt(commandParam[1]));
+                model.handleTileSelection(Integer.parseInt(commandParam[1]));
                 break;
-            // Player presses "Play!"
             case "P":
-                model.validateAndScoreBoard(playCoordinates);
-                break;
-            // Player presses "Skip Turn"
-            case "S":
-                model.skipTurn();
+                int score = model.validateAndScoreBoard(playCoordinates);
                 playCoordinates.clear();
+                if(score == 0) model.invalidTurn();
+                else model.validTurn(score);
+                //playCoordinates.clear();
                 break;
-            default:
-                break; // Temporary
+            case "R":
+                break;
+            case "S":
+                playCoordinates.clear();
+                model.skipTurn();
+                break;
         }
+    }
+
+    public void clearPlayCoordinates(){
+        playCoordinates.clear();
     }
 }

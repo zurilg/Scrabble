@@ -1,46 +1,47 @@
-/**
- * Board class.
- *
- * Model class that represents the Scrabble board
- *
- * @author Zuri Lane-Griffore (101241678)
- * @author Mohammad Ahmadi (101267874)
- * @author Abdul Aziz Al-Sibakhi (101246056)
- * @author Redah Eliwa (101273466)
- *
- * @version 11-12-2024
- */
-
-// Imports to be able to read xml file
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
-import java.io.File;
-public class Board {
-    private BoardSquare[][] board; // Stores the current state of the board
-    private BoardSquare[][] prevState; // Stores the previous state of the board
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-    /**
-     * This is the board constructor. It initializes every board square to 0 score.
-     */
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
+
+public class Board {
+    public static final int BOARD_SIZE = 15;
+
+    private BoardSquare[][] board;
+    private BoardSquare[][] prevState;
+
     public Board(){
-        board = new BoardSquare[ScrabbleModel.BOARD_SIZE][ScrabbleModel.BOARD_SIZE]; // Array of board squares (since static)
-        prevState = new BoardSquare[ScrabbleModel.BOARD_SIZE][ScrabbleModel.BOARD_SIZE];
+        board = new BoardSquare[BOARD_SIZE][BOARD_SIZE];
+        prevState = new BoardSquare[BOARD_SIZE][BOARD_SIZE];
         // Initialize all squares as empty
-        for(int i = 0; i < ScrabbleModel.BOARD_SIZE; i+=1){
-            for(int j = 0; j < ScrabbleModel.BOARD_SIZE; j+=1){
-                board[i][j] = new BoardSquare(0,0); // Empty board square
-                prevState[i][j] = new BoardSquare(0,0);
+        for(int r = 0; r < BOARD_SIZE; r+=1){
+            for(int c = 0; c < BOARD_SIZE; c+=1){
+                board[r][c] = new BoardSquare(1,1); // Empty board square
+                prevState[r][c] = new BoardSquare(1,1);
             }
         }
         initBoard(); // Correct all word and letter scores using data from XML
     }
-    /**
-     * Reads premium squares from an XML file and assigns them to the board squares.
-     */
+
+    public BoardSquare getSqAtIndex(int r, int c){ return board[r][c]; }
+
+    public void saveState(){
+        // Iterate through all saved board squares and set their states equal to the current board.
+        for(int r = 0; r<=14; r+=1)
+            for(int c = 0; c<=14; c+=1)
+                prevState[r][c].placeTile(board[r][c].getTile());
+    }
+
+    public void reset(){
+        // Iterate through all board squares and set their states equal to the previously stored states.
+        for(int i = 0; i<=14; i+=1)
+            for(int j = 0; j<=14; j+=1)
+                board[i][j].placeTile(prevState[i][j].getTile());
+    }
+
     private void initBoard(){
         try {
             File xmlFile = new File("./BoardSquareInfo.xml"); // Open the XML that holds the board square bonus info
@@ -60,63 +61,11 @@ public class Board {
                     int letterScore = Integer.parseInt(e.getElementsByTagName("letterScore").item(0).getTextContent()); // Get letter score
                     // Recreate each empty board square with the attributes obtained from XML file.
                     board[Integer.parseInt(coordinates[0])][Integer.parseInt(coordinates[1])] = new BoardSquare(letterScore, wordScore);
+                    prevState[Integer.parseInt(coordinates[0])][Integer.parseInt(coordinates[1])] = new BoardSquare(letterScore, wordScore);
                 }
             }
         }
-        catch(Exception e){
-            System.out.println("This error shouldn't occur. XML error"); // TODO: Temporary. Remove/replace
-            e.printStackTrace();
-        }
+        catch(Exception e){ ScrabbleModelViewFrame.fileReadError("Error occurred when trying to read from 'BoardSquareInfo.xml'."); }
     }
 
-
-    /**
-     * Saves the current state of the board for future reset purposes.
-     */
-    public void setPrevState(){
-        // Iterate through all saved board squares and set their states equal to the current board.
-        for(int i = 0; i<=14; i+=1)
-            for(int j = 0; j<=14; j+=1)
-                prevState[i][j].placeTile(board[i][j].getTile());
-    }
-
-    /**
-     * Resets board back to state previously saved.
-     */
-    public void reset(){
-        // Iterate through all board squares and set their states equal to the previously stored states.
-        for(int i = 0; i<=14; i+=1)
-            for(int j = 0; j<=14; j+=1)
-                board[i][j].placeTile(prevState[i][j].getTile());
-    }
-
-    /**
-     * Returns the tile letter on the corresponding board square provided coordinates.
-     *
-     * @param r The row index
-     * @param c The column index
-     * @return The letter (as a string) at the specified board coordinate.
-     */
-    public String getLetterAtIndex(int r, int c){
-        return board[r][c].getLetter();
-    }
-
-    /**
-     * Returns the BoardSquare object at the specified index
-     * @param r Row where the board square desired is
-     * @param c Column where the board square desired is
-     * @return the BoardSquare object specified by the indexes
-     */
-    public BoardSquare getSqAtIndex(int r, int c){ return board[r][c]; }
-
-    /**
-     * Places the provided game tile on the specified coordinates.
-     *
-     * @param t The tile to place on the specified coordinate.
-     * @param r The row index
-     * @param c The column index
-     */
-    public void placeTile(Tile t, int r, int c){
-        board[r][c].placeTile(t);
-    }
 }

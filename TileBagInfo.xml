@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tileBagInfo>
+	<tile t = " ">
+		<points>0</points>
+		<frequency>2</frequency>
+	</tile>
+	<tile t = "A">
+		<points>1</points>
+		<frequency>9</frequency>
+	</tile>
+	<tile t = "B">
+		<points>3</points>
+		<frequency>2</frequency>
+	</tile>
+	<tile t = "C">
+		<points>3</points>
+		<frequency>2</frequency>
+	</tile>
+	<tile t = "D">
+		<points>2</points>
+		<frequency>4</frequency>
+	</tile>
+	<tile t = "E">
+		<points>1</points>
+		<frequency>12</frequency>
+	</tile>
+	<tile t = "F">
+		<points>4</points>
+		<frequency>2</frequency>
+	</tile>
+	<tile t = "G">
+		<points>2</points>
+		<frequency>3</frequency>
+	</tile>
+	<tile t = "H">
+		<points>4</points>
+		<frequency>2</frequency>
+	</tile>
+	<tile t = "I">
+		<points>1</points>
+		<frequency>9</frequency>
+	</tile>
+	<tile t = "J">
+		<points>8</points>
+		<frequency>1</frequency>
+	</tile>
+	<tile t = "K">
+		<points>5</points>
+		<frequency>1</frequency>
+	</tile>
+	<tile t = "L">
+		<points>1</points>
+		<frequency>4</frequency>
+	</tile>
+	<tile t = "M">
+		<points>3</points>
+		<frequency>2</frequency>
+	</tile>
+	<tile t = "N">
+		<points>1</points>
+		<frequency>6</frequency>
+	</tile>
+	<tile t = "O">
+		<points>1</points>
+		<frequency>8</frequency>
+	</tile>
+	<tile t = "P">
+		<points>3</points>
+		<frequency>2</frequency>
+	</tile>
+	<tile t = "Q">
+		<points>10</points>
+		<frequency>1</frequency>
+	</tile>
+	<tile t = "R">
+		<points>1</points>
+		<frequency>6</frequency>
+	</tile>
+	<tile t = "S">
+		<points>1</points>
+		<frequency>4</frequency>
+	</tile>
+	<tile t = "T">
+		<points>1</points>
+		<frequency>6</frequency>
+	</tile>
+	<tile t = "U">
+		<points>1</points>
+		<frequency>4</frequency>
+	</tile>
+	<tile t = "V">
+		<points>4</points>
+		<frequency>2</frequency>
+	</tile>
+	<tile t = "W">
+		<points>4</points>
+		<frequency>2</frequency>
+	</tile>
+	<tile t = "X">
+		<points>8</points>
+		<frequency>1</frequency>
+	</tile>
+	<tile t = "Y">
+		<points>4</points>
+		<frequency>2</frequency>
+	</tile>
+	<tile t = "Z">
+		<points>10</points>
+		<frequency>1</frequency>
+	</tile>
+</tileBagInfo>

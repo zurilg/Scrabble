@@ -34,6 +34,15 @@ public class Tile {
     }
 
     /**
+     * Mutator for the tile's letter. Used for blank tiles.
+     *
+     * @param character The character the player decides to set the blank tile to.
+     */
+    public void setChar(String character){
+        this.character = character;
+    }
+
+    /**
      * Accessor for the tile's point value.
      *
      * @return The point value associated with the tile.
