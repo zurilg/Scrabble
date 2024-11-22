@@ -45,24 +45,71 @@ public class ScrabbleModel {
     }
 
     // Basic accessors (getters)
-    public Board getBoard() { return board; }
-    public ArrayList<Player> getPlayers() { return players; }
-    public int getPlayerTurn() { return playerTurn; }
-    public Player getCurrentPlayer() { return players.get(playerTurn); }
-    public HashSet<String> getDictionary(){ return dictionary; }
+    public Board getBoard() { return board; } // Returns the Scrabble game's board.
+    public Status getStatus(){
+        return status;
+    } // Returns the current status of the Scrabble game.
+    public int getPlayerTurn() { return playerTurn; } // Gets the index of the current player's turn.
+    public ArrayList<Player> getPlayers() { return players; } // Returns all players.
+    public HashSet<String> getDictionary(){ return dictionary; } // Returns the entire dictionary (all 10,000 words).
+    public String getWordsPlayed(){ return wordsOnBoard.toString(); }
 
+    // Basic methods
+    public void addScrabbleView(ScrabbleModelViewFrame view){ this.views.add(view); } // Used to add view to update.
+    public Player getCurrentPlayer() { return players.get(playerTurn); } // Returns the current player object
+    private void fillPlayerTiles(Player p){ for(int i = 0; i < Player.TILE_HOLDER_SIZE; i++) if(p.getTile(i) == null) p.addTile(i, tileBag.popTile()); }
+    public boolean checkAI(){ return getCurrentPlayer() instanceof PlayerAI; } // Checks to see if it's the computer's turn
 
+    // Method to update views
+    private void update(){
+        for(ScrabbleModelView view : views) view.updateBoard();
+        selectedUserTile = -1;
+    }
+
+    // Method used to iterate through player turns
+    private void changePlayer(){
+        if(playerTurn == players.size()-1) playerTurn = 0; // Wrap around
+        else playerTurn++; // Next player
+    }
+    // Method to see whether it's the first turn.
+    private boolean firstTurn(){
+        for(Player p : players) if(p.getScore() != 0) return false; // If a player has a score, then obviously not first turn.
+        return true;
+    }
+    // Method to find the largest word out of the words a player has successfully played.
+    private int getLargestWordLength(ArrayList<String> wordsFound){
+        int max = 0;
+        for(String s : wordsFound) if(s.length() > max) max = s.length();
+        return max;
+    }
+    // Update HashMap that keeps track of what words are on the board and how many times they occur.
+    private void updateWordsOnBoard(ArrayList<String> wordsPlayed){
+        for(String word : wordsPlayed){
+            if(wordsOnBoard.containsKey(word)) wordsOnBoard.put(word, wordsOnBoard.get(word) + 1);
+            else wordsOnBoard.put(word, 1);
+        }
+    }
+
+    // These methods help handle the click/place aspect of the game. Very important, yet simple.
+    public void handleTileSelection(int index){ if(getCurrentPlayer().getTile(index) != null) selectedUserTile = index; } // Player selects tile
+    public void handleBoardPlacement(int r, int c){
+        if((selectedUserTile >= 0 && selectedUserTile < Player.TILE_HOLDER_SIZE) && board.getSqAtIndex(r, c).getTile() == null){
+            board.getSqAtIndex(r, c).placeTile(getCurrentPlayer().popTile(selectedUserTile));
+            for(ScrabbleModelView view : views) view.handleLetterPlacement(new ScrabbleEvent.TilePlacement(this, r, c, selectedUserTile));
+            selectedUserTile = -1;
+        }
+    }
+
+    // This method initialized both AI and human players using information provided from new game start sequence.
     public void initPlayers(ArrayList<String> humanNames, int numAI){
         // These arrays are used to initialize AI player names with sophisticated names.
         String[] namesAI = {"Megatron", "McLovin", "Quandale Dingle", "Billy Earl", "Kermit"};
         boolean[] availableNamesAI = {true, true, true, true, true};
-
         // Add human players. If their name is the same as an AI name, mark that AI name as unavailable.
         for(String name: humanNames){
             players.add(new Player(name));
             for(int i = 0; i < namesAI.length; i++) if(name.equalsIgnoreCase(namesAI[i])) availableNamesAI[i] = false;
         }
-
         // Initialize AI players (if any). Add them to player array list with one of the available names.
         for(int i = 0; i < numAI; i++){
             boolean added = false;
@@ -76,10 +123,8 @@ public class ScrabbleModel {
                 }
             }
         }
-
         // Randomize player order.
         Collections.shuffle(players);
-
         // Fill each player's tiles
         for(Player p : players) {
             fillPlayerTiles(p); // Give each player 7 tiles from the tile bag
@@ -87,30 +132,13 @@ public class ScrabbleModel {
         }
     }
 
-    public void checkAI(){ if(getCurrentPlayer() instanceof PlayerAI) ((PlayerAI) getCurrentPlayer()).determineMove(this);}
-
-    private void fillPlayerTiles(Player p){ for(int i = 0; i < Player.TILE_HOLDER_SIZE; i++) if(p.getTile(i) == null) p.addTile(i, tileBag.popTile()); }
-
-    private void changePlayer(){
-        if(playerTurn == players.size()-1) playerTurn = 0; // Wrap around
-        else playerTurn++; // Next player
-    }
-
-    public void handleTileSelection(int index){
-        if(getCurrentPlayer().getTile(index) != null) selectedUserTile = index;
-    }
-
-    public void handleBoardPlacement(int r, int c){
-        if((selectedUserTile >= 0 && selectedUserTile < Player.TILE_HOLDER_SIZE) && board.getSqAtIndex(r, c).getTile() == null){
-            board.getSqAtIndex(r, c).placeTile(getCurrentPlayer().popTile(selectedUserTile));
-            for(ScrabbleModelView view : views) view.handleLetterPlacement(new ScrabbleEvent.TilePlacement(this, r, c, selectedUserTile));
-            selectedUserTile = -1;
-        }
-    }
-
+    // *** VALIDATE AND SCORE BOARD - VERY IMPORTANT METHOD ***
+    // Deems whether a play is valid and returns a score accordingly. Score == 0 -> Invalid. Score >= 1 -> Valid.
     public int validateAndScoreBoard(HashSet<int []> playCoordinates){
+        //for(int[] c : playCoordinates) System.out.println(String.format("PLAY COORDINATE: %d %d", c[0], c[1]));
+        if(getCurrentPlayer() instanceof PlayerAI) if(!allValid()) return 0;
         int turnScore = 0;
-        ArrayList<String> wordsPlayed = new ArrayList<>();
+        ArrayList<String> wordsPlayed = new ArrayList<>(){};
         // Make sure that the coordinates provided are valid and that the center square is filled
         //for(int[] coords : playCoordinates) System.out.println(String.format("%d %d", coords[0], coords[1]));
         int coordCheckResult = checkCoordinates(playCoordinates);
@@ -202,23 +230,44 @@ public class ScrabbleModel {
             //System.out.printf("\nINVALID DUE TO WORD PLAY LW %d PC %d\n", getLargestWordLength(wordsPlayed), playCoordinates.size());
             return 0;
         }
-
-        //playCoordinates.clear();
+        //System.out.println("SCORE " + turnScore);
+        //for(String w : wordsPlayed) System.out.println(w);
         updateWordsOnBoard(wordsPlayed);
+        wordsPlayed.clear();
+        playCoordinates.clear();
         return turnScore;
     }
 
-    private boolean firstTurn(){
-        for(Player p : players) if(p.getScore() != 0) return false;
-        return true;
+    // *** VALIDATE AND SCORE BOARD - SEVERAL (ALSO IMPORTANT) HELPER METHODS ***
+    // Player chooses to skip their turn.
+    public void skipTurn(){
+        scorelessTurns += 1;
+        invalidTurn(); // Invalidate current player's turn.
+        changePlayer(); // Change player turns.
+        update(); // Update view once player turn changes.
+    }
+    // Players turn was invalid. Reset previous states.
+    public void invalidTurn(){
+        if(scorelessTurns == 6) status = Status.OVER;
+        board.reset(); // Reset board
+        getCurrentPlayer().resetTileHolder(); // Reset player tiles
+        for(int i = 0; i < Player.TILE_HOLDER_SIZE; i++) if(getCurrentPlayer().getTile(i).getValue() == 0) getCurrentPlayer().getTile(i).setChar(" "); // Reset blank tiles
+        update(); // Update view.
     }
 
-    private int getLargestWordLength(ArrayList<String> wordsFound){
-        int max = 0;
-        for(String s : wordsFound) if(s.length() > max) max = s.length();
-        return max;
+    public void validTurn(int score){
+        System.out.println("VALID TURN");
+        getCurrentPlayer().addToScore(score);
+        board.saveState(); // Correct, so set new board prev state for possible future reset
+        fillPlayerTiles(getCurrentPlayer()); // Fill player's tiles who just went
+        getCurrentPlayer().setPrevTiles();
+        if(getCurrentPlayer().numTiles() == 0) status = Status.OVER;
+        scorelessTurns = 0;
+        changePlayer(); // Change turns
+        update(); // Update views
     }
 
+    // Makes sure the play coordinates are valid and determines whether the word is a row word or column word.
     private int checkCoordinates(HashSet<int []> playCoordinates){
         if(playCoordinates.isEmpty()) return 0;
 
@@ -229,64 +278,11 @@ public class ScrabbleModel {
             colNums.add(coords[1]);
         }
         if(rowNums.size() > 1 && colNums.size() > 1) return 0; // Can only play in one row or one column
-        if(rowNums.size() == 1) return 1;
-        return 2;
-    }
-
-    private void updateWordsOnBoard(ArrayList<String> wordsPlayed){
-        for(String word : wordsPlayed){
-            if(wordsOnBoard.containsKey(word)) wordsOnBoard.put(word, wordsOnBoard.get(word) + 1);
-            else wordsOnBoard.put(word, 1);
-        }
-    }
-
-    public void skipTurn(){
-        scorelessTurns += 1;
-        changePlayer(); // Change turns
-        invalidTurn();
-        checkAI();
-    }
-
-    public void invalidTurn(){
-        if(scorelessTurns == 6) status = Status.OVER;
-        board.reset(); // Reset board
-        getCurrentPlayer().resetTileHolder(); // Reset player tiles
-        for(int i = 0; i < Player.TILE_HOLDER_SIZE; i++) if(getCurrentPlayer().getTile(i).getValue() == 0) getCurrentPlayer().getTile(i).setChar(" "); // Reset blank tiles
-        update();
-    }
-
-    public void validTurn(int score){
-        if(score == 0){
-            invalidTurn();
-            return;
-        }
-        getCurrentPlayer().addToScore(score);
-        board.saveState(); // Correct, so set new board prev state for possible future reset
-        fillPlayerTiles(getCurrentPlayer()); // Fill player's tiles who just went
-        getCurrentPlayer().setPrevTiles();
-        if(getCurrentPlayer().numTiles() == 0) status = Status.OVER;
-        changePlayer(); // Change turns
-
-        checkAI();
-        update();
-
-
-    }
-
-    private void update(){
-        for(ScrabbleModelView view : views) {
-            view.updateBoard();
-        }
-        selectedUserTile = -1;
-
-    }
-
-    public Status getStatus(){
-        return status;
+        return rowNums.size() == 1 ?  1 : 2; // Row word (1), column word (2)
     }
 
 
-    public void addScrabbleView(ScrabbleModelViewFrame view){ this.views.add(view); }
+
 
     /**
      * Read the dictionary file and store the valid words in an ArrayList. Very minor, yet important part of the overall code.
@@ -301,4 +297,59 @@ public class ScrabbleModel {
             }
         } catch(Exception e){ ScrabbleModelViewFrame.fileReadError("Error occurred when trying to read from 'Words.txt'."); }
     }
+
+
+    private boolean allValid(){
+        StringBuilder rowWords = new StringBuilder();
+        StringBuilder colWords = new StringBuilder();
+        ArrayList<ArrayList<int[]>> rowWordCoordinates = new ArrayList<>();
+        ArrayList<ArrayList<int[]>> colWordCoordinates = new ArrayList<>();
+        for(int r = 0; r < Board.BOARD_SIZE; r++){
+            ArrayList<int[]> rowCoords = new ArrayList<>();
+            ArrayList<int[]> colCoords = new ArrayList<>();
+            boolean end = false;
+            for(int c = 0; c < Board.BOARD_SIZE; c++){
+                // Get row words
+                if(board.getSqAtIndex(r,c).getTile() != null){
+                    rowWords.append(board.getSqAtIndex(r,c).getTile().getChar());
+                    rowCoords.add(new int[]{r, c});
+                }
+                else {
+                    if(!rowCoords.isEmpty()){
+                        rowWordCoordinates.add((ArrayList<int[]>) rowCoords.clone());
+                        rowCoords.clear();
+                        end = true;
+                    }
+                    if(end){
+                        rowWords.append(",");
+                        end = false;
+                    }
+                }
+                // Get column words
+                if(board.getSqAtIndex(c,r).getTile() != null){
+                    colWords.append(board.getSqAtIndex(c,r).getTile().getChar());
+                    colCoords.add(new int[]{r, c});
+                }
+                else {
+                    if(!colCoords.isEmpty()){
+                        colWordCoordinates.add((ArrayList<int[]>) colCoords.clone());
+                        colCoords.clear();
+                        end = true;
+                    }
+                    if(end) {
+                        colWords.append(",");
+                        end = false;
+                    }
+                }
+            }
+        }
+
+        String[] rw = rowWords.toString().split(",");
+        String[] cw = colWords.toString().split(",");
+
+        for(String word : rw) if(!dictionary.contains(word)) return false;
+        for(String word : cw) if(!dictionary.contains(word)) return false;
+        return true;
+    }
 }
+

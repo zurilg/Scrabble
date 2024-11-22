@@ -23,6 +23,9 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
     private JLabel[][] playerInfo; // N Player x 2
     private JPanel playersPanel;
 
+    // Attributes of the words played panel (west panel).
+    private JLabel wp;
+    private JPanel wordPlay;
 
     public ScrabbleModelViewFrame(){
         // Initialize basic frame aspects
@@ -30,7 +33,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
-        this.setSize(new Dimension(925, 825));
+        this.setSize(new Dimension(1025, 825));
         this.setLocationRelativeTo(null); // Center on screen
 
         // Initialize model
@@ -53,13 +56,15 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         // Initialize players panel
         drawPlayerInfo();
 
+        // Initialize word play panel
+        drawWordPlay();
+
         // Finish frame initialization. Add content to the frame. Set as visible
         this.add(boardPanel, BorderLayout.CENTER);
         this.add(userPanel, BorderLayout.SOUTH);
         this.add(playersPanel, BorderLayout.EAST);
+        this.add(wordPlay, BorderLayout.WEST);
         this.setVisible(true);
-
-        model.checkAI();
     }
 
     private void drawButtonPanel(){
@@ -235,6 +240,20 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         }
     }
 
+    private void drawWordPlay(){
+        wordPlay = new JPanel();
+        wordPlay.setBackground(new Color(0x7E583D));
+        wordPlay.setPreferredSize(new Dimension(100, 100));
+        wp = new JLabel();
+        wp.setEnabled(false);
+        wp.setFocusable(false);
+
+        wordPlay.add(wp);
+    }
+    private void redrawWordsPlayed(String words){
+        wp.setText(words);
+    }
+
     private void initPlayers(){
         ArrayList<String> playerNames = new ArrayList<>();
         int numHuman = 0;
@@ -303,6 +322,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         drawBoardButtons();
         redrawTileHolder();
         redrawPlayerInfo();
+        redrawWordsPlayed(model.getWordsPlayed());
         sc.clearPlayCoordinates();
     }
 
