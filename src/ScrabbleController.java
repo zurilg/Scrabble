@@ -50,17 +50,19 @@ public class ScrabbleController implements ActionListener {
         System.out.println("\n\nNUMBER OF AI PLAYS " + plays.size());
         // Points per play
         ArrayList<Integer> playScores = new ArrayList<>();
-        // Go through each play, pla
+        // Go through each play, record the score of each play.
         for(ArrayList<int[]> play : plays){
             int[] blanks = ((PlayerAI) model.getCurrentPlayer()).findBlanks();
             for(int[] playInfo : play){
-                if(playInfo[0] >= 65){
+                int tile = playInfo[0];
+                if(tile >= 65){
                     model.getCurrentPlayer().getTile(blanks[blanks[0]]).setChar(String.valueOf((char)playInfo[0]));
-                    playInfo[0] = blanks[blanks[0]];
+                    tile = blanks[blanks[0]];
                     blanks[0] -= 1;
                 }
-                if(playInfo[0] != -1){
-                    model.handleTileSelection(playInfo[0]);
+                if(tile != -1){
+                    System.out.println(String.format("PLAY: %s, %d, %d", model.getCurrentPlayer().getTile(tile).getChar(), playInfo[1], playInfo[2]));
+                    model.handleTileSelection(tile);
                     model.handleBoardPlacement(playInfo[1], playInfo[2]);
                     playCoordinates.add(new int[]{playInfo[1], playInfo[2]});
                 }
@@ -71,25 +73,39 @@ public class ScrabbleController implements ActionListener {
                 System.out.println("\nCOORDINATES PLAYED:");
                 for(int[] c : playCoordinates) System.out.printf("%d %d, ", c[0], c[1]);
             }
-            playScores.add(model.validateAndScoreBoard(playCoordinates));
+            playScores.add(playScore);
             model.invalidTurn();
             playCoordinates.clear();
         }
-
+        // Sort the scores into ascending. Need the original indexes, so we sort the original indexes with the scores.
         ArrayList<Integer> sortedIndexes = sortScores(playScores);
+        for(int score : playScores) System.out.println(score);
+
+        if(playScores.getFirst() == 0) {
+            System.out.println("!!! NO POSSIBLE PLAYS FOUND AT ALL !!!");
+            model.skipTurn();
+            return;
+        }
+        // AI Player hasn't played an actual turn yet
         boolean played = false;
         System.out.println("INDEX SIZE" + sortedIndexes.size());
+        // Go from the highest scoring index to the lowest and try to play each one.
         for(int index : sortedIndexes){
-            System.out.println("FINAL AI PLAY ATTEMPT");
+            System.out.println("PLAY ATTEMPT");
             int[] blanks = ((PlayerAI) model.getCurrentPlayer()).findBlanks();
+            System.out.println(String.format("BLANKS INFO: %d, %d, %d", blanks[0], blanks[1], blanks[2]));
             for(int[] playInfo : plays.get(index)){
+                System.out.println(String.format("Play Info: %d %d %d", playInfo[0], playInfo[1], playInfo[2]));
                 if(playInfo.length > 0){
                     if(playInfo[0] >= 65){
+                        System.out.println("BLANKSJFLSKJDFK");
                         model.getCurrentPlayer().getTile(blanks[blanks[0]]).setChar(String.valueOf((char)playInfo[0]));
+                        playInfo[0] = blanks[blanks[0]];
                         blanks[0] -= 1;
                     }
                     if(playInfo[0] != -1){
                         model.handleTileSelection(playInfo[0]);
+                        System.out.println(String.format("Tile: %s Place: %d %d", model.getCurrentPlayer().getTile(playInfo[0]).getChar(), playInfo[1], playInfo[2]));
                         model.handleBoardPlacement(playInfo[1], playInfo[2]);
                         playCoordinates.add(new int[]{playInfo[1], playInfo[2]});
                     }
@@ -120,7 +136,7 @@ public class ScrabbleController implements ActionListener {
         for(int i = 0; i < scores.size() - 1; i++){
             swap = false;
             for(int j = 0; j < scores.size()-i-1; j++){
-                if(scores.get(j) > scores.get(j+1)){
+                if(scores.get(j) < scores.get(j+1)){
                     int temp = scores.get(j+1);
                     scores.set(j+1, scores.get(j));
                     scores.set(j, temp);

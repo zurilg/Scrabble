@@ -52,7 +52,6 @@ public class ScrabbleModel {
     public int getPlayerTurn() { return playerTurn; } // Gets the index of the current player's turn.
     public ArrayList<Player> getPlayers() { return players; } // Returns all players.
     public HashSet<String> getDictionary(){ return dictionary; } // Returns the entire dictionary (all 10,000 words).
-    public String getWordsPlayed(){ return wordsOnBoard.toString(); }
 
     // Basic methods
     public void addScrabbleView(ScrabbleModelViewFrame view){ this.views.add(view); } // Used to add view to update.

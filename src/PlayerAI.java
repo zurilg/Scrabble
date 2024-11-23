@@ -63,7 +63,7 @@ public class PlayerAI extends Player{
             for(int i = 0; i < rw.length; i++) {
                 ArrayList<String> possiblePlays = new ArrayList<>();  // Keeps track of all possible plays for rw[i]
                 for (String word : dictionary) {
-                    if (word.contains(rw[i]) && !word.equals(rw[i]) && (word.length() <= TILE_HOLDER_SIZE + rw[i].length()) && i < rowWordCoordinates.size()) {
+                    if (word.contains(rw[i]) && !word.equals(rw[i]) && (word.length() <= TILE_HOLDER_SIZE + rw[i].length()) && i == rowWordCoordinates.size()) {
                         ArrayList<int[]> rowPlay = checkResources(word, rw[i], rowWordCoordinates.get(i), true);
                         if(rowPlay != null){
                             boolean valid = true;
@@ -82,7 +82,7 @@ public class PlayerAI extends Player{
             for(int i = 0; i < cw.length; i++) {
                 ArrayList<String> possiblePlays = new ArrayList<>();  // Keeps track of all possible plays for rw[i]
                 for (String word : dictionary) {
-                    if (word.contains(cw[i]) && !word.equals(cw[i]) && (word.length() <= TILE_HOLDER_SIZE + cw[i].length())) {
+                    if (word.contains(cw[i]) && !word.equals(cw[i]) && (word.length() <= TILE_HOLDER_SIZE + cw[i].length()) && word.length() > 1) {
                         ArrayList<int[]> colPlay = checkResources(word, cw[i], colWordCoordinates.get(i), false);
                         if(colPlay != null) {
                             boolean valid = true;
@@ -130,7 +130,7 @@ public class PlayerAI extends Player{
                     }
                 }
                 if(correctIndex){
-                    for(int k = 0; k < wordOnBoard.length(); k++){
+                    for(int k = 0; k < wordOnBoard.length() && k < w.length(); k++){
                         w.setCharAt(j + k, '-');
                         play.set(j, new int[]{-1, coords.get(k)[0], coords.get(k)[1]}); // -1 indicates tile is already on the board at the given coordinates
                     }
