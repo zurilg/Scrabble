@@ -134,27 +134,18 @@ public class ScrabbleModel {
     // *** VALIDATE AND SCORE BOARD - VERY IMPORTANT METHOD ***
     // Deems whether a play is valid and returns a score accordingly. Score == 0 -> Invalid. Score >= 1 -> Valid.
     public int validateAndScoreBoard(HashSet<int []> playCoordinates){
-        //for(int[] c : playCoordinates) System.out.println(String.format("PLAY COORDINATE: %d %d", c[0], c[1]));
-        if(getCurrentPlayer() instanceof PlayerAI){
-            if(!allValid()){
-                System.out.println("HERE 420 69");
-                return 0;
-            }
-        }
+        if(getCurrentPlayer() instanceof PlayerAI) if(!allValid()) return 0;
+
         int turnScore = 0;
         ArrayList<String> wordsPlayed = new ArrayList<>(){};
         // Make sure that the coordinates provided are valid and that the center square is filled
-        //for(int[] coords : playCoordinates) System.out.println(String.format("%d %d", coords[0], coords[1]));
         int coordCheckResult = checkCoordinates(playCoordinates);
-        if(coordCheckResult == 0 || board.getSqAtIndex(7, 7).getTile() == null) {
-            //System.out.println("INVALID DUE TO COORDINATE CHECK");
-            return turnScore;
-        }
+        if(coordCheckResult == 0 || board.getSqAtIndex(7, 7).getTile() == null) return turnScore;
+
 
         // Hunt all solo letters. If a coordinate placed doesn't have any neighbors, illegal placement.
         HashSet<boolean[]> neighborCheck = new HashSet<>();
         for(int[] coord : playCoordinates){
-            //System.out.println(String.format("PLAY COORDINATES %d %d ", coord[0], coord[1]));
             boolean[] c = {true, true, true, true}; // Check for each neighbor. True if there. False if not there.
             // +/- 1 for the row
             if(coord[0] + 1 < Board.BOARD_SIZE && coord[1] < Board.BOARD_SIZE) if(board.getSqAtIndex(coord[0] + 1, coord[1]).getTile() == null) c[0] = false;
@@ -169,10 +160,7 @@ public class ScrabbleModel {
             neighborCheck.add(c);
         }
         // If there is a single coordinate placed with no neighbors, invalid.
-        if(neighborCheck.contains(new boolean[]{false, false, false, false})){
-            //System.out.println("INVALID DUE TO SOLO");
-            return turnScore;
-        }
+        if(neighborCheck.contains(new boolean[]{false, false, false, false})) return turnScore;
 
         // Must iterate through this entire process twice. Once for row word(s) and once for column word(s).
         for(int j = 0; j < 2; j++) {
@@ -204,7 +192,6 @@ public class ScrabbleModel {
                             break;
                         }
                     }
-                    //System.out.println(playedCoord);
                     if(!playedCoord){
                         wordScore += board.getSqAtIndex(beginningCoordinate[0], beginningCoordinate[1]).getTile().getValue();
                     }
@@ -212,12 +199,9 @@ public class ScrabbleModel {
                     else break;
                     playedCoord = false;
                 }
-                //System.out.println(word);
                 // Check if word is valid (in the dictionary). If not, return a score of 0.
-                if (!dictionary.contains(word.toString())){
-                    //System.out.println("INVALID DUE TO NOT IN DICTIONARY");
-                    return turnScore;
-                }
+                if (!dictionary.contains(word.toString())) return turnScore;
+
 
                 // If length of word is greater than 1 (not just a letter), then score it
                 if(word.length() > 1){
@@ -232,10 +216,6 @@ public class ScrabbleModel {
         if((firstTurn() && (getLargestWordLength(wordsPlayed) != playCoordinates.size())) || (!firstTurn() && (getLargestWordLength(wordsPlayed) <= playCoordinates.size()))){
             return 0;
         }
-
-        System.out.println("TURN SCORE: " + turnScore);
-        for(String s : wordsPlayed) System.out.print(s + " ");
-        System.out.println("\n");
 
         updateWordsOnBoard(wordsPlayed);
         wordsPlayed.clear();
@@ -261,7 +241,6 @@ public class ScrabbleModel {
     }
 
     public void validTurn(int score){
-        System.out.println("VALID TURN"); // TODO: remove
         getCurrentPlayer().addToScore(score); // Add the turn score to the current player
         if(getCurrentPlayer().numTiles() == 0 && tileBag.size() >= 7) getCurrentPlayer().addToScore(50); // If they played 7 tiles, reward with bonus 50 points.
         board.saveState(); // Correct, so set new board prev state for possible future reset
@@ -318,6 +297,8 @@ public class ScrabbleModel {
                 if(board.getSqAtIndex(c,r).getTile() != null) colWords.append(board.getSqAtIndex(c,r).getTile().getChar());
                 else colWords.append(" ");
             }
+            rowWords.append(" ");
+            colWords.append(" ");
         }
 
         String[] rw = rowWords.toString().split(" ");
@@ -325,14 +306,8 @@ public class ScrabbleModel {
         for(int i = 0; i < rw.length; i++) rw[i] = rw[i].replace(" ", "");
         for(int i = 0; i < cw.length; i++) cw[i] = cw[i].replace(" ", "");
 
-        for(String word : rw) if(!dictionary.contains(word) && word.length() >= 2){
-            System.out.println("DOESNT CONTAIN: " + word);
-            return false;
-        }
-        for(String word : cw) if(!dictionary.contains(word) && word.length() >= 2){
-            System.out.println("DOESNT CONTAIN: " + word);
-            return false;
-        }
+        for(String word : rw) if(!dictionary.contains(word) && word.length() >= 2) return false;
+        for(String word : cw) if(!dictionary.contains(word) && word.length() >= 2) return false;
         return true;
     }
 

@@ -1,15 +1,42 @@
 import java.util.*;
 
+/**
+ * AI Player class.
+ * Represents a player in the game whose turn is computer generated. Subclass of the Player class.
+ * Provides the functionalities to help determine an AI player's turn.
+ *
+ * @author Zuri Lane-Griffore (101241678)
+ * @author Mohammad Ahmadi (101267874)
+ * @author Abdul Aziz Al-Sibakhi (101246056)
+ * @author Redah Eliwa (101273466)
+ *
+ * @version 11-24-2024
+ */
 public class PlayerAI extends Player{
+    /**
+     * Constructs a new AI player.
+     *
+     * @param name The AI player's name.
+     */
     public PlayerAI(String name){
         super(name);
     }
 
-    // Outer array list -> represents the collection of all possible plays.
-    // Inner array lists -> each one represents a possible set of plays.
-    // Plays consist of multiple tile placements (integer arrays) that have the form [Tile Holder Index, Board Row, Board Column]
+
+    /**
+     * Determines valid plays (if any) for the AI player according to their tile holder and provided game elements.
+     *
+     * @param board The current board state.
+     * @param dictionary All valid words.
+     * @return All possible plays.
+     */
     public ArrayList<ArrayList<int[]>> getValidPlays(Board board, HashSet<String> dictionary){
+        // Outer array list -> represents the collection of all possible plays.
+        // Inner array lists -> each one represents a possible set of plays.
+        // Plays consist of multiple tile placements (integer arrays) that have the form [Tile Holder Index, Board Row, Board Column]
         ArrayList<ArrayList<int[]>> plays = new ArrayList<>();
+
+        // If it's not the first play --> complex algorithm
         if(board.getSqAtIndex(7, 7).getTile() != null){
             // First, we need to read all the words off of the board.
             StringBuilder rowWords = new StringBuilder();
@@ -97,8 +124,8 @@ public class PlayerAI extends Player{
             return plays;
         }
 
+        // If first turn --> simple play from center
         else{
-            System.out.println("HERE");
             for(int i = 0; i < TILE_HOLDER_SIZE; i++){
                 ArrayList<String> words = new ArrayList<>();
                 for(String word : dictionary) if(word.contains(getTile(i).getChar()) && word.length() <= TILE_HOLDER_SIZE && word.length() > 1) words.add(word);
@@ -136,7 +163,6 @@ public class PlayerAI extends Player{
                     if(complete){
                         int c = 7;
                         for(int z = 0; z < w.length(); z++){
-                            System.out.println(STR."COMPLETE WORD: \{word}");
                             play.add(new int[]{order[z], 7, c});
                             c++; // increment column since playing row word
                         }
@@ -149,6 +175,16 @@ public class PlayerAI extends Player{
         }
     }
 
+    /**
+     * Provides a play (if any) that has a possibility of being valid.
+     * Determines whether there's a possible play based on the AI player's tiles and other attributes provided.
+     *
+     * @param word A word from the dictionary with a possibility of being played.
+     * @param wordOnBoard The word on the board that derived the word from the dictionary.
+     * @param coords The coordinates of the word that's already on the board.
+     * @param wordType True if a row word, False if a column word
+     * @return A play in the form of {[Tile Index in Tile Holder, Row, Column], [i, r, c] ...}
+     */
     private ArrayList<int[]> checkResources(String word, String wordOnBoard, ArrayList<int[]> coords, boolean wordType) {
         ArrayList<int[]> play = new ArrayList<>();
         for(int z = 0; z < word.length(); z++) play.add(new int[]{});
@@ -213,6 +249,11 @@ public class PlayerAI extends Player{
         return play;
     }
 
+    /**
+     * Determines whether the AI player has any blank tiles and provides their indexes.
+     *
+     * @return The number of blank tiles and their indexes. Form [Number of Blanks, Index of Blank1, Index of Blank2]
+     */
     public int[] findBlanks(){
         int[] blanks = {0, -1, -1}; // Initially haven't found any blanks. 0 found, index -1, index -1
         for(int i = 0; i < TILE_HOLDER_SIZE; i++){

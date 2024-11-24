@@ -14,4 +14,6 @@ public class ScrabbleEvent{
         public int getC(){ return c; }
         public int getSelectedTile(){ return selectedTile; }
     }
+
+    // Inner classes are used for easy implementation of different types of scrabble events (sub/inner classes).
 }

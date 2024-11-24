@@ -51,7 +51,6 @@ public class ScrabbleController implements ActionListener {
         // Go through each play, record the score of each play.
         for(ArrayList<int[]> play : plays){
             int[] blanks = ((PlayerAI) model.getCurrentPlayer()).findBlanks();
-            System.out.println("\n--------------------");
             // Get each specific placement. [Tile Index, Row, Column]
             for(int[] playInfo : play){
                 int tile = playInfo[0];
@@ -63,7 +62,6 @@ public class ScrabbleController implements ActionListener {
                     }
                 }
                 if(tile != -1){
-                    System.out.printf("%s, %d, %d  ||  ", model.getCurrentPlayer().getTile(tile).getChar(), playInfo[1], playInfo[2]);
                     model.handleTileSelection(tile);
                     model.handleBoardPlacement(playInfo[1], playInfo[2]);
                     playCoordinates.add(new int[]{playInfo[1], playInfo[2]});
@@ -78,12 +76,10 @@ public class ScrabbleController implements ActionListener {
         ArrayList<Integer> sortedIndexes = sortScores(playScores);
 
         if(playScores.isEmpty()){
-            System.out.println("COUNT NOT FIND ANY PLAYS AT ALL");
             model.skipTurn();
             return;
         }
         if(playScores.getFirst() == 0) {
-            System.out.println("ALL PLAYS ENDED UP BEING 0");
             model.skipTurn();
             return;
         }
@@ -99,7 +95,6 @@ public class ScrabbleController implements ActionListener {
                     blanks[0] -= 1;
                 }
                 if(playInfo[0] != -1){
-                    System.out.println(String.format("FINAL PLAY: %s, %d, %d", model.getCurrentPlayer().getTile(playInfo[0]).getChar(), playInfo[1], playInfo[2]));
                     model.handleTileSelection(playInfo[0]);
                     model.handleBoardPlacement(playInfo[1], playInfo[2]);
                     playCoordinates.add(new int[]{playInfo[1], playInfo[2]});
