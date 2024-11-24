@@ -265,7 +265,7 @@ public class ScrabbleModel {
         scorelessTurns = 0; // They scored, so reset scorelessTurns
         changePlayer(); // Change turns
         update(); // Update views
-        System.out.println(wordsOnBoard.toString()); // TODO: remove
+        System.out.println(); // TODO: remove
     }
 
     // Makes sure the play coordinates are valid and determines whether the word is a row word or column word.

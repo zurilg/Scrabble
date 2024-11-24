@@ -116,6 +116,7 @@ public class PlayerAI extends Player{
                             w.setCharAt(s, '-');
                             claimed[i] = true;
                             order[s] = i;
+                            break;
                         }
                     }
                     // Find remaining tiles
