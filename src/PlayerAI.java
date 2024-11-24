@@ -122,7 +122,7 @@ public class PlayerAI extends Player{
                     }
                 }
                 if(correctIndex){
-                    for(int k = 0; k < wordOnBoard.length() && k < w.length(); k++){
+                    for(int k = 0; k < wordOnBoard.length() && k < w.length() && k < coords.size(); k++){
                         w.setCharAt(j + k, '-');
                         play.set(j, new int[]{-1, coords.get(k)[0], coords.get(k)[1]}); // -1 indicates tile is already on the board at the given coordinates
                     }
