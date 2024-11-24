@@ -100,6 +100,52 @@ public class PlayerAI extends Player{
         }
 
         else{
+            System.out.println("HERE");
+            for(int i = 0; i < TILE_HOLDER_SIZE; i++){
+                ArrayList<String> words = new ArrayList<>();
+                for(String word : dictionary) if(word.contains(getTile(i).getChar()) && word.length() <= TILE_HOLDER_SIZE && word.length() > 1) words.add(word);
+                for(String word : words){
+                    ArrayList<int[]> play = new ArrayList<>(word.length());
+                    // Used to keep track of tile/word comparisons
+                    StringBuilder w = new StringBuilder(word);
+                    boolean[] claimed = new boolean[TILE_HOLDER_SIZE];
+                    int[] order = new int[word.length()];
+                    // Find the tile
+                    for(int s = 0; s < word.length(); s++){
+                        if(word.charAt(s) == getTile(i).getChar().charAt(0)) {
+                            w.setCharAt(s, '-');
+                            claimed[i] = true;
+                            order[s] = i;
+                        }
+                    }
+                    // Find remaining tiles
+                    for(int s = 0; s < word.length(); s++){
+                        if(w.charAt(s) != '-'){
+                            for(int k = 0; k < TILE_HOLDER_SIZE; k++){
+                                if(w.charAt(s) == getTile(k).getChar().charAt(0) && !claimed[k]){
+                                    w.setCharAt(s, '-');
+                                    claimed[k] = true;
+                                    order[s] = k;
+                                }
+                            }
+                        }
+                    }
+                    // Check if we have the complete word
+                    boolean complete = true;
+                    for(int s = 0; s < word.length(); s++) if(w.charAt(s) != '-') complete = false;
+                    // If we found complete word, return that play just playing from middle to the right.
+                    if(complete){
+                        int c = 7;
+                        for(int z = 0; z < w.length(); z++){
+                            System.out.println("COMPLETE WORD: " + word);
+                            play.add(new int[]{order[z], 7, c});
+                            c++; // increment column since playing row word
+                        }
+                        plays.add(play);
+                        return plays;
+                    }
+                }
+            }
             return null;
         }
     }
@@ -132,7 +178,6 @@ public class PlayerAI extends Player{
                     if(coordinate[0] < 0 || coordinate[1] < 0){
                         return null; // Make sure not out of bounds.
                     }
-
                     break;
                 }
             }
@@ -179,7 +224,6 @@ public class PlayerAI extends Player{
                 }
 
             }
-
         }
         return blanks;
     }

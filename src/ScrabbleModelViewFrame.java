@@ -58,6 +58,8 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         this.add(userPanel, BorderLayout.SOUTH);
         this.add(playersPanel, BorderLayout.EAST);
         this.setVisible(true);
+
+        while(model.checkAI()) sc.playAI();
     }
 
     private void drawButtonPanel(){
