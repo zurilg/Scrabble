@@ -5,21 +5,21 @@ import java.util.*;
 
 public class ScrabbleModel {
     // Constants and enumerations
-    public enum Status {ONGOING, OVER};
+    public enum Status {ONGOING, OVER}
     public static final int MAX_PLAYERS = 4;
     public static final int MIN_PLAYERS = 2;
     // List of observers
     ArrayList<ScrabbleModelView> views;
     // Class attributes
-    private Board board; // The scrabble game board
+    private final Board board; // The scrabble game board
     private Status status; // The scrabble game status
     private int playerTurn; // Index of player in players whose turn it is
-    private TileBag tileBag; // The scrabble game tile bag
+    private final TileBag tileBag; // The scrabble game tile bag
     private int scorelessTurns; // The number of scoreless turns to help update game status.
     private int selectedUserTile; //
-    private ArrayList<Player> players;
+    private final ArrayList<Player> players;
     private final HashSet<String> dictionary; // All valid words. Read from a .txt file.
-    private HashMap<String, Integer> wordsOnBoard; // All words currently on the board and number of occurrences
+    private final HashMap<String, Integer> wordsOnBoard; // All words currently on the board and number of occurrences
 
 
     public ScrabbleModel(){
@@ -135,7 +135,12 @@ public class ScrabbleModel {
     // Deems whether a play is valid and returns a score accordingly. Score == 0 -> Invalid. Score >= 1 -> Valid.
     public int validateAndScoreBoard(HashSet<int []> playCoordinates){
         //for(int[] c : playCoordinates) System.out.println(String.format("PLAY COORDINATE: %d %d", c[0], c[1]));
-        if(getCurrentPlayer() instanceof PlayerAI) if(!allValid()) return 0;
+        if(getCurrentPlayer() instanceof PlayerAI){
+            if(!allValid()){
+                System.out.println("HERE 420 69");
+                return 0;
+            }
+        }
         int turnScore = 0;
         ArrayList<String> wordsPlayed = new ArrayList<>(){};
         // Make sure that the coordinates provided are valid and that the center square is filled
@@ -215,7 +220,6 @@ public class ScrabbleModel {
                 }
 
                 // If length of word is greater than 1 (not just a letter), then score it
-                //System.out.println(word.toString().length());
                 if(word.length() > 1){
                     wordsPlayed.add(word.toString());
                     turnScore += wordScore * wordBonus;
@@ -226,11 +230,13 @@ public class ScrabbleModel {
 
         // Check that word play makes sense. If it's the first turn, then amount of tiles played should equal the largest word played. Otherwise, largest word played should be larger than number of tiles played.
         if((firstTurn() && (getLargestWordLength(wordsPlayed) != playCoordinates.size())) || (!firstTurn() && (getLargestWordLength(wordsPlayed) <= playCoordinates.size()))){
-            //System.out.printf("\nINVALID DUE TO WORD PLAY LW %d PC %d\n", getLargestWordLength(wordsPlayed), playCoordinates.size());
             return 0;
         }
-        //System.out.println("SCORE " + turnScore);
-        //for(String w : wordsPlayed) System.out.println(w);
+
+        System.out.println("TURN SCORE: " + turnScore);
+        for(String s : wordsPlayed) System.out.print(s + " ");
+        System.out.println("\n");
+
         updateWordsOnBoard(wordsPlayed);
         wordsPlayed.clear();
         playCoordinates.clear();
@@ -265,7 +271,6 @@ public class ScrabbleModel {
         scorelessTurns = 0; // They scored, so reset scorelessTurns
         changePlayer(); // Change turns
         update(); // Update views
-        System.out.println(); // TODO: remove
     }
 
     // Makes sure the play coordinates are valid and determines whether the word is a row word or column word.
@@ -304,48 +309,30 @@ public class ScrabbleModel {
         StringBuilder rowWords = new StringBuilder();
         StringBuilder colWords = new StringBuilder();
         for(int r = 0; r < Board.BOARD_SIZE; r++){
-            ArrayList<int[]> rowCoords = new ArrayList<>();
-            ArrayList<int[]> colCoords = new ArrayList<>();
-            boolean end = false;
             for(int c = 0; c < Board.BOARD_SIZE; c++){
                 // Get row words
-                if(board.getSqAtIndex(r,c).getTile() != null){
-                    rowWords.append(board.getSqAtIndex(r,c).getTile().getChar());
-                    rowCoords.add(new int[]{r, c});
-                }
-                else {
-                    if(!rowCoords.isEmpty()){
-                        rowCoords.clear();
-                        end = true;
-                    }
-                    if(end){
-                        rowWords.append(",");
-                        end = false;
-                    }
-                }
+                if(board.getSqAtIndex(r,c).getTile() != null) rowWords.append(board.getSqAtIndex(r,c).getTile().getChar());
+                else rowWords.append(" ");
+
                 // Get column words
-                if(board.getSqAtIndex(c,r).getTile() != null){
-                    colWords.append(board.getSqAtIndex(c,r).getTile().getChar());
-                    colCoords.add(new int[]{r, c});
-                }
-                else {
-                    if(!colCoords.isEmpty()){
-                        colCoords.clear();
-                        end = true;
-                    }
-                    if(end) {
-                        colWords.append(",");
-                        end = false;
-                    }
-                }
+                if(board.getSqAtIndex(c,r).getTile() != null) colWords.append(board.getSqAtIndex(c,r).getTile().getChar());
+                else colWords.append(" ");
             }
         }
 
-        String[] rw = rowWords.toString().split(",");
-        String[] cw = colWords.toString().split(",");
+        String[] rw = rowWords.toString().split(" ");
+        String[] cw = colWords.toString().split(" ");
+        for(int i = 0; i < rw.length; i++) rw[i] = rw[i].replace(" ", "");
+        for(int i = 0; i < cw.length; i++) cw[i] = cw[i].replace(" ", "");
 
-        for(String word : rw) if(!dictionary.contains(word)) return false;
-        for(String word : cw) if(!dictionary.contains(word)) return false;
+        for(String word : rw) if(!dictionary.contains(word) && word.length() >= 2){
+            System.out.println("DOESNT CONTAIN: " + word);
+            return false;
+        }
+        for(String word : cw) if(!dictionary.contains(word) && word.length() >= 2){
+            System.out.println("DOESNT CONTAIN: " + word);
+            return false;
+        }
         return true;
     }
 

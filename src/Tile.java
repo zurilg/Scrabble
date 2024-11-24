@@ -11,7 +11,7 @@
 
 public class Tile {
     private String character;
-    private int value;
+    private final int value;
 
     /**
      * Tile constructor method. Creates a new tile with the provided attributes.

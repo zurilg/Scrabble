@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import static java.lang.System.exit;
 
 public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView {
-    private ScrabbleModel model;
-    private ScrabbleController sc;
+    private final ScrabbleModel model;
+    private final ScrabbleController sc;
     private int numPlayers;
 
     // Attributes of the board display (center panel)
@@ -16,7 +16,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
     // Attributes of user panel (south panel)
     private JButton[] tileHolder;
     private JLabel[][] tileLabels; // 7 x 2 labels. Tile character and points
-    private JButton play, replace, skip;
     private JPanel userPanel; // Panel with 1 x 10 grid layout to hold all user play option buttons.
 
     // Attributes of the players names, points, and current player display (east panel)
@@ -64,13 +63,13 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
 
     private void drawButtonPanel(){
         // Initialize play button
-        play = new JButton("Play!");
+        JButton play = new JButton("Play!");
         play.addActionListener(sc);
         play.setActionCommand("P");
         play.setBackground(new Color(0xB6D38D));
         play.setFocusable(false);
         // Initialize replace button
-        replace = new JButton();
+        JButton replace = new JButton();
         replace.setLayout(new GridLayout(2, 1));
         JLabel r = new JLabel("Replace");
         JLabel t = new JLabel("Tiles");
@@ -85,7 +84,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         replace.setBackground(new Color(0xFFC53B));
 
         // Initialize skip button
-        skip = new JButton("Skip Turn");
+        JButton skip = new JButton("Skip Turn");
         skip.setBackground(new Color(0xE16161));
         skip.addActionListener(sc);
         skip.setActionCommand("S");
@@ -171,7 +170,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         // Set current player's name to bright color
         playerInfo[model.getPlayerTurn()][0].setForeground(new Color(0xFF0000));
         // Find index of previous player
-        int prevTurn = 0;
+        int prevTurn;
         if(model.getPlayerTurn() == 0) prevTurn = numPlayers - 1;
         else prevTurn = model.getPlayerTurn() - 1;
         // Update previous player's visuals
@@ -237,8 +236,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
 
     private void initPlayers(){
         ArrayList<String> playerNames = new ArrayList<>();
-        int numHuman = 0;
-        int numAI = 0;
+        int numHuman;
         // Get number of players and number of human players
         numPlayers = getPlayerNumInput(ScrabbleModel.MIN_PLAYERS, ScrabbleModel.MAX_PLAYERS, String.format("Enter the number of players (%d-%d).", ScrabbleModel.MIN_PLAYERS, ScrabbleModel.MAX_PLAYERS));
         numHuman = getPlayerNumInput(1, numPlayers, String.format("Enter the number of human players (1-%d).", numPlayers));

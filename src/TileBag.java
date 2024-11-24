@@ -20,7 +20,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 public class TileBag {
-    private ArrayList<Tile> bag;
+    private final ArrayList<Tile> bag;
     /**
      * TileBag constructor method. Fills the bag with the 100 game tiles.
      */

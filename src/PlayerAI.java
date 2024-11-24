@@ -60,7 +60,6 @@ public class PlayerAI extends Player{
             String[] cw = colWords.toString().split(",");
 
             for(int i = 0; i < rw.length; i++) {
-                ArrayList<String> possiblePlays = new ArrayList<>();  // Keeps track of all possible plays for rw[i]
                 for (String word : dictionary) {
                     if (word.contains(rw[i]) && !word.equals(rw[i]) && (word.length() <= TILE_HOLDER_SIZE + rw[i].length()) && i < rowWordCoordinates.size()) {
                         ArrayList<int[]> rowPlay = checkResources(word, rw[i], rowWordCoordinates.get(i), true);
@@ -79,7 +78,6 @@ public class PlayerAI extends Player{
             }
 
             for(int i = 0; i < cw.length; i++) {
-                ArrayList<String> possiblePlays = new ArrayList<>();  // Keeps track of all possible plays for rw[i]
                 for (String word : dictionary) {
                     if (word.contains(cw[i]) && !word.equals(cw[i]) && (word.length() <= TILE_HOLDER_SIZE + cw[i].length()) && word.length() > 1 && i < colWordCoordinates.size()) {
                         ArrayList<int[]> colPlay = checkResources(word, cw[i], colWordCoordinates.get(i), false);
@@ -138,7 +136,7 @@ public class PlayerAI extends Player{
                     if(complete){
                         int c = 7;
                         for(int z = 0; z < w.length(); z++){
-                            System.out.println("COMPLETE WORD: " + word);
+                            System.out.println(STR."COMPLETE WORD: \{word}");
                             play.add(new int[]{order[z], 7, c});
                             c++; // increment column since playing row word
                         }
