@@ -56,7 +56,7 @@ public class ScrabbleModel {
     // Basic methods
     public void addScrabbleView(ScrabbleModelViewFrame view){ this.views.add(view); } // Used to add view to update.
     public Player getCurrentPlayer() { return players.get(playerTurn); } // Returns the current player object
-    private void fillPlayerTiles(Player p){ for(int i = 0; i < Player.TILE_HOLDER_SIZE; i++) if(p.getTile(i) == null) p.addTile(i, tileBag.popTile()); }
+    private void fillPlayerTiles(Player p){ for(int i = 0; i < Player.TILE_HOLDER_SIZE; i++) if(p.getTile(i) == null) if(tileBag.size() > 0) p.addTile(i, tileBag.popTile()); }
     public boolean checkAI(){ return getCurrentPlayer() instanceof PlayerAI; } // Checks to see if it's the computer's turn
 
     // Method to update views
@@ -250,20 +250,22 @@ public class ScrabbleModel {
         if(scorelessTurns == 6) status = Status.OVER;
         board.reset(); // Reset board
         getCurrentPlayer().resetTileHolder(); // Reset player tiles
-        for(int i = 0; i < Player.TILE_HOLDER_SIZE; i++) if(getCurrentPlayer().getTile(i).getValue() == 0) getCurrentPlayer().getTile(i).setChar(" "); // Reset blank tiles
+        for(int i = 0; i < Player.TILE_HOLDER_SIZE; i++) if(getCurrentPlayer().getTile(i) != null) if(getCurrentPlayer().getTile(i).getValue() == 0) getCurrentPlayer().getTile(i).setChar(" "); // Reset blank tiles
         update(); // Update view.
     }
 
     public void validTurn(int score){
-        System.out.println("VALID TURN");
-        getCurrentPlayer().addToScore(score);
+        System.out.println("VALID TURN"); // TODO: remove
+        getCurrentPlayer().addToScore(score); // Add the turn score to the current player
+        if(getCurrentPlayer().numTiles() == 0 && tileBag.size() >= 7) getCurrentPlayer().addToScore(50); // If they played 7 tiles, reward with bonus 50 points.
         board.saveState(); // Correct, so set new board prev state for possible future reset
-        fillPlayerTiles(getCurrentPlayer()); // Fill player's tiles who just went
-        getCurrentPlayer().setPrevTiles();
-        if(getCurrentPlayer().numTiles() == 0) status = Status.OVER;
-        scorelessTurns = 0;
+        fillPlayerTiles(getCurrentPlayer()); // Fill current player's tiles
+        getCurrentPlayer().setPrevTiles(); // Set prev state since turn was correct
+        if(getCurrentPlayer().numTiles() == 0) status = Status.OVER; // If they don't have any tiles left, then the game is over.
+        scorelessTurns = 0; // They scored, so reset scorelessTurns
         changePlayer(); // Change turns
         update(); // Update views
+        System.out.println(wordsOnBoard.toString()); // TODO: remove
     }
 
     // Makes sure the play coordinates are valid and determines whether the word is a row word or column word.
@@ -301,8 +303,6 @@ public class ScrabbleModel {
     private boolean allValid(){
         StringBuilder rowWords = new StringBuilder();
         StringBuilder colWords = new StringBuilder();
-        ArrayList<ArrayList<int[]>> rowWordCoordinates = new ArrayList<>();
-        ArrayList<ArrayList<int[]>> colWordCoordinates = new ArrayList<>();
         for(int r = 0; r < Board.BOARD_SIZE; r++){
             ArrayList<int[]> rowCoords = new ArrayList<>();
             ArrayList<int[]> colCoords = new ArrayList<>();
@@ -315,7 +315,6 @@ public class ScrabbleModel {
                 }
                 else {
                     if(!rowCoords.isEmpty()){
-                        rowWordCoordinates.add((ArrayList<int[]>) rowCoords.clone());
                         rowCoords.clear();
                         end = true;
                     }
@@ -331,7 +330,6 @@ public class ScrabbleModel {
                 }
                 else {
                     if(!colCoords.isEmpty()){
-                        colWordCoordinates.add((ArrayList<int[]>) colCoords.clone());
                         colCoords.clear();
                         end = true;
                     }
@@ -349,6 +347,29 @@ public class ScrabbleModel {
         for(String word : rw) if(!dictionary.contains(word)) return false;
         for(String word : cw) if(!dictionary.contains(word)) return false;
         return true;
+    }
+
+    public String gameResults(){
+        boolean[] playedOut = new boolean[players.size()];
+        int[] remainingTilesSum = new int[players.size()];
+
+        for(int i = 0; i < players.size(); i++){
+            if(players.get(i).numTiles() == 0) playedOut[i] = true;
+            else{
+                for(int t = 0; t < Player.TILE_HOLDER_SIZE; t++) if(players.get(i).getTile(t) != null) remainingTilesSum[i] += players.get(i).getTile(t).getValue();
+                players.get(i).addToScore(-1 * remainingTilesSum[i]);
+            }
+        }
+
+        for(int i = 0; i < players.size(); i++) if(playedOut[i]) players.get(i).addToScore(Arrays.stream(remainingTilesSum).sum());
+
+        StringBuilder results = new StringBuilder();
+        results.append(String.format("%30s%30s%30s%30s", "Name", "Tile Remainder", "Bonus", "Final Score\n"));
+        for(int i = 0; i < players.size(); i++){
+            results.append(String.format("%30s%30s%30s%30s\n", players.get(i).getName(), remainingTilesSum[i], playedOut[i] ? Arrays.stream(remainingTilesSum).sum() : 0, players.get(i).getScore()));
+        }
+
+        return results.toString();
     }
 }
 

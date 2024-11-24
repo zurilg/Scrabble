@@ -14,6 +14,4 @@ public class ScrabbleEvent{
         public int getC(){ return c; }
         public int getSelectedTile(){ return selectedTile; }
     }
-
-
 }

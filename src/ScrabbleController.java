@@ -27,14 +27,14 @@ public class ScrabbleController implements ActionListener {
                 if(score == 0) model.invalidTurn();
                 else model.validTurn(score);
                 playCoordinates.clear();
-                if(model.checkAI()) playAI();
+                while(model.checkAI()) playAI();
                 break;
             case "R":
                 break;
             case "S":
                 playCoordinates.clear();
                 model.skipTurn();
-                if(model.checkAI()) playAI();
+                while(model.checkAI()) playAI();
                 break;
         }
     }
@@ -46,75 +46,61 @@ public class ScrabbleController implements ActionListener {
     public void playAI(){
         // Available plays according to AI player
         ArrayList<ArrayList<int[]>> plays = ((PlayerAI) model.getCurrentPlayer()).getValidPlays(model.getBoard(), model.getDictionary());
-
-        System.out.println("\n\nNUMBER OF AI PLAYS " + plays.size());
         // Points per play
         ArrayList<Integer> playScores = new ArrayList<>();
         // Go through each play, record the score of each play.
         for(ArrayList<int[]> play : plays){
             int[] blanks = ((PlayerAI) model.getCurrentPlayer()).findBlanks();
+            // Get each specific placement. [Tile Index, Row, Column]
             for(int[] playInfo : play){
                 int tile = playInfo[0];
                 if(tile >= 65){
-                    model.getCurrentPlayer().getTile(blanks[blanks[0]]).setChar(String.valueOf((char)playInfo[0]));
-                    tile = blanks[blanks[0]];
-                    blanks[0] -= 1;
+                    if(model.getCurrentPlayer().getTile(blanks[blanks[0]]) != null){
+                        model.getCurrentPlayer().getTile(blanks[blanks[0]]).setChar(String.valueOf((char)tile));
+                        tile = blanks[blanks[0]];
+                        blanks[0] -= 1;
+                    }
                 }
                 if(tile != -1){
-                    System.out.println(String.format("PLAY: %s, %d, %d", model.getCurrentPlayer().getTile(tile).getChar(), playInfo[1], playInfo[2]));
                     model.handleTileSelection(tile);
                     model.handleBoardPlacement(playInfo[1], playInfo[2]);
                     playCoordinates.add(new int[]{playInfo[1], playInfo[2]});
                 }
             }
             int playScore = model.validateAndScoreBoard(playCoordinates);
-            if(playScore != 0 && !playCoordinates.isEmpty()){
-                System.out.println(String.format("PLAY SCORE: %d", playScore));
-                System.out.println("\nCOORDINATES PLAYED:");
-                for(int[] c : playCoordinates) System.out.printf("%d %d, ", c[0], c[1]);
-            }
             playScores.add(playScore);
             model.invalidTurn();
             playCoordinates.clear();
         }
         // Sort the scores into ascending. Need the original indexes, so we sort the original indexes with the scores.
         ArrayList<Integer> sortedIndexes = sortScores(playScores);
-        for(int score : playScores) System.out.println(score);
 
+        if(playScores.isEmpty()){
+            model.skipTurn();
+            return;
+        }
         if(playScores.getFirst() == 0) {
-            System.out.println("!!! NO POSSIBLE PLAYS FOUND AT ALL !!!");
             model.skipTurn();
             return;
         }
         // AI Player hasn't played an actual turn yet
         boolean played = false;
-        System.out.println("INDEX SIZE" + sortedIndexes.size());
         // Go from the highest scoring index to the lowest and try to play each one.
         for(int index : sortedIndexes){
-            System.out.println("PLAY ATTEMPT");
             int[] blanks = ((PlayerAI) model.getCurrentPlayer()).findBlanks();
-            System.out.println(String.format("BLANKS INFO: %d, %d, %d", blanks[0], blanks[1], blanks[2]));
             for(int[] playInfo : plays.get(index)){
-                System.out.println(String.format("Play Info: %d %d %d", playInfo[0], playInfo[1], playInfo[2]));
-                if(playInfo.length > 0){
-                    if(playInfo[0] >= 65){
-                        System.out.println("BLANKSJFLSKJDFK");
-                        model.getCurrentPlayer().getTile(blanks[blanks[0]]).setChar(String.valueOf((char)playInfo[0]));
-                        playInfo[0] = blanks[blanks[0]];
-                        blanks[0] -= 1;
-                    }
-                    if(playInfo[0] != -1){
-                        model.handleTileSelection(playInfo[0]);
-                        System.out.println(String.format("Tile: %s Place: %d %d", model.getCurrentPlayer().getTile(playInfo[0]).getChar(), playInfo[1], playInfo[2]));
-                        model.handleBoardPlacement(playInfo[1], playInfo[2]);
-                        playCoordinates.add(new int[]{playInfo[1], playInfo[2]});
-                    }
+                if (playInfo[0] >= 65) {
+                    model.getCurrentPlayer().getTile(blanks[blanks[0]]).setChar(String.valueOf((char) playInfo[0]));
+                    playInfo[0] = blanks[blanks[0]];
+                    blanks[0] -= 1;
+                }
+                if(playInfo[0] != -1){
+                    model.handleTileSelection(playInfo[0]);
+                    model.handleBoardPlacement(playInfo[1], playInfo[2]);
+                    playCoordinates.add(new int[]{playInfo[1], playInfo[2]});
                 }
             }
-            System.out.println("\nCOORDINATES PLAYED:");
-            for(int[] c : playCoordinates) System.out.printf("%d %d, ", c[0], c[1]);
             int turnScore = model.validateAndScoreBoard(playCoordinates);
-            System.out.println("AI TURN SCORE " + turnScore);
 
             if(turnScore > 0){
                 model.validTurn(turnScore);
@@ -125,7 +111,6 @@ public class ScrabbleController implements ActionListener {
         }
 
         if(!played) model.skipTurn();
-        if(model.checkAI()) playAI();
     }
 
     private ArrayList<Integer> sortScores(ArrayList<Integer> scores){

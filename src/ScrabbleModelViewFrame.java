@@ -295,7 +295,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
     @Override
     public void updateBoard(){
         if(model.getStatus() == ScrabbleModel.Status.OVER) {
-            JOptionPane.showMessageDialog(this, "Game Over!");
+            JOptionPane.showMessageDialog(this, model.gameResults());
             exit(0);
         }
         drawBoardButtons();

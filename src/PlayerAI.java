@@ -9,7 +9,6 @@ public class PlayerAI extends Player{
     // Inner array lists -> each one represents a possible set of plays.
     // Plays consist of multiple tile placements (integer arrays) that have the form [Tile Holder Index, Board Row, Board Column]
     public ArrayList<ArrayList<int[]>> getValidPlays(Board board, HashSet<String> dictionary){
-        //System.out.println("CALLED VALID PLAYS");
         ArrayList<ArrayList<int[]>> plays = new ArrayList<>();
         if(board.getSqAtIndex(7, 7).getTile() != null){
             // First, we need to read all the words off of the board.
@@ -29,7 +28,7 @@ public class PlayerAI extends Player{
                     }
                     else {
                         if(!rowCoords.isEmpty()){
-                            rowWordCoordinates.add((ArrayList<int[]>) rowCoords.clone());
+                            rowWordCoordinates.add(new ArrayList<>(rowCoords));
                             rowCoords.clear();
                             end = true;
                         }
@@ -41,11 +40,11 @@ public class PlayerAI extends Player{
                     // Get column words
                     if(board.getSqAtIndex(c,r).getTile() != null){
                         colWords.append(board.getSqAtIndex(c,r).getTile().getChar());
-                        colCoords.add(new int[]{r, c});
+                        colCoords.add(new int[]{c, r});
                     }
                     else {
                         if(!colCoords.isEmpty()){
-                            colWordCoordinates.add((ArrayList<int[]>) colCoords.clone());
+                            colWordCoordinates.add(new ArrayList<>(colCoords));
                             colCoords.clear();
                             end = true;
                         }
@@ -63,7 +62,7 @@ public class PlayerAI extends Player{
             for(int i = 0; i < rw.length; i++) {
                 ArrayList<String> possiblePlays = new ArrayList<>();  // Keeps track of all possible plays for rw[i]
                 for (String word : dictionary) {
-                    if (word.contains(rw[i]) && !word.equals(rw[i]) && (word.length() <= TILE_HOLDER_SIZE + rw[i].length()) && i == rowWordCoordinates.size()) {
+                    if (word.contains(rw[i]) && !word.equals(rw[i]) && (word.length() <= TILE_HOLDER_SIZE + rw[i].length()) && i < rowWordCoordinates.size()) {
                         ArrayList<int[]> rowPlay = checkResources(word, rw[i], rowWordCoordinates.get(i), true);
                         if(rowPlay != null){
                             boolean valid = true;
@@ -82,7 +81,7 @@ public class PlayerAI extends Player{
             for(int i = 0; i < cw.length; i++) {
                 ArrayList<String> possiblePlays = new ArrayList<>();  // Keeps track of all possible plays for rw[i]
                 for (String word : dictionary) {
-                    if (word.contains(cw[i]) && !word.equals(cw[i]) && (word.length() <= TILE_HOLDER_SIZE + cw[i].length()) && word.length() > 1) {
+                    if (word.contains(cw[i]) && !word.equals(cw[i]) && (word.length() <= TILE_HOLDER_SIZE + cw[i].length()) && word.length() > 1 && i < colWordCoordinates.size()) {
                         ArrayList<int[]> colPlay = checkResources(word, cw[i], colWordCoordinates.get(i), false);
                         if(colPlay != null) {
                             boolean valid = true;
@@ -95,13 +94,6 @@ public class PlayerAI extends Player{
                             if (valid) plays.add(colPlay);
                         }
                     }
-                }
-            }
-            for(ArrayList<int[]> play : plays){
-                System.out.println("\nPlay: ");
-                for(int[] tilePlacement : play){
-                    if(tilePlacement.length == 0) System.out.print(" ??? | ");
-                    else System.out.printf("TH %d, R %d, C %d | ", tilePlacement[0], tilePlacement[1], tilePlacement[2]);
                 }
             }
             return plays;
@@ -151,10 +143,12 @@ public class PlayerAI extends Player{
             int[] tempCoord = new int[]{coordinate[0], coordinate[1]};
             for (int j = 0; j < word.length(); j++) {
                 if(tempCoord[0] > 14 || tempCoord[1] > 14) return null; // Make sure not out of bounds.
-                if (getTile(i).getChar().charAt(0) == word.charAt(j)) {
-                    w.setCharAt(j, '-');
-                    play.set(j, new int[]{i, tempCoord[0], tempCoord[1]});
-                    break;
+                if(getTile(i) != null){
+                    if (getTile(i).getChar().charAt(0) == word.charAt(j)) {
+                        w.setCharAt(j, '-');
+                        play.set(j, new int[]{i, tempCoord[0], tempCoord[1]});
+                        break;
+                    }
                 }
                 if(wordType) tempCoord[1] += 1;
                 else tempCoord[0] += 1;
@@ -178,7 +172,7 @@ public class PlayerAI extends Player{
     public int[] findBlanks(){
         int[] blanks = {0, -1, -1}; // Initially haven't found any blanks. 0 found, index -1, index -1
         for(int i = 0; i < TILE_HOLDER_SIZE; i++){
-            if(getTile(i).getChar()!=null){
+            if(getTile(i)!=null){
                 if(getTile(i).getChar().charAt(0) == ' '){
                     blanks[0] += 1;
                     for(int k = 1; k < blanks.length; k++) if(blanks[k] == -1) blanks[k] = i;
@@ -189,5 +183,4 @@ public class PlayerAI extends Player{
         }
         return blanks;
     }
-
 }
