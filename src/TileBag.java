@@ -1,3 +1,12 @@
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Random;
 /**
  * TileBag class.
  *
@@ -6,19 +15,8 @@
  * @author Abdul Aziz Al-Sibakhi (101246056)
  * @author Redah Eliwa (101273466)
  *
- * @version 11-12-2024
+ * @version 11-24-2024
  */
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Random;
 public class TileBag {
     private final ArrayList<Tile> bag;
     /**
@@ -28,7 +26,6 @@ public class TileBag {
         bag = new ArrayList<>();
         fillBag();
     }
-
     /**
      * Remove a random tile from the bag and return it.
      *
@@ -41,14 +38,14 @@ public class TileBag {
         bag.remove(randIndex);
         return pickedTile;
     }
-
     /**
+     * NOT CURRENTLY USED. Will be used to replace player's tiles.
+     *
      * @param t The tile to return to the bag
      */
     public void returnTile(Tile t){
         bag.add(t);
     }
-
     /**
      * Return the size of the bag.
      *
@@ -57,7 +54,6 @@ public class TileBag {
     public int size(){
         return bag.size();
     }
-
     /**
      * Fill the bag with 100 game tiles using info from xml file.
      */
@@ -68,7 +64,6 @@ public class TileBag {
             Document doc = docBuilder.parse(xmlFile); // Parse through XML file content and save as a document object
             doc.getDocumentElement().normalize(); // Normalize so it can be structured as nodes
             NodeList nodeList = doc.getElementsByTagName("tile"); // Create node list using normalized doc content
-
             // Iterate through each element node and add its attributes to the board squares
             for(int i = 0; i < nodeList.getLength(); i++){
                 Node node = nodeList.item(i); // Get node at index i
@@ -85,5 +80,4 @@ public class TileBag {
         }
         catch(Exception e){ ScrabbleModelViewFrame.fileReadError("Error occurred when trying to read from 'TileBagInfo.xml'."); }
     }
-
 }

@@ -6,13 +6,11 @@
  * @author Abdul Aziz Al-Sibakhi (101246056)
  * @author Redah Eliwa (101273466)
  *
- * @version 11-12-2024
+ * @version 11-24-2024
  */
-
 public class Tile {
     private String character;
     private final int value;
-
     /**
      * Tile constructor method. Creates a new tile with the provided attributes.
      *
@@ -23,7 +21,6 @@ public class Tile {
         this.character = character;
         this.value = value;
     }
-
     /**
      * Accessor for the tile's letter.
      *
@@ -32,7 +29,6 @@ public class Tile {
     public String getChar(){
         return this.character;
     }
-
     /**
      * Mutator for the tile's letter. Used for blank tiles.
      *
@@ -41,7 +37,6 @@ public class Tile {
     public void setChar(String character){
         this.character = character;
     }
-
     /**
      * Accessor for the tile's point value.
      *

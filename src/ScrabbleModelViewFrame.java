@@ -2,18 +2,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import static java.lang.System.exit;
-
 /**
  * ScrabbleModelViewFrame class and main class of the Scrabble game.
  * ScrabbleModelViewFrame displays a GUI-based Scrabble game.
  * It acts as the frame in Scrabbles model-view-controller architecture. It handles player actions
  * including playing and skipping a turn. Updates the display accordingly after each turn.
- *
  * Uses a JFrame to display the board, players, and the tiles.
- *
  * The class implements the ScrabbleModelView interface to handle events related to letter placement
  * and board updates.
- *
  * Also includes functionality for initializing players, managing game controls, and updating the game
  * state on the UI.
  *
@@ -22,7 +18,7 @@ import static java.lang.System.exit;
  * @author Abdul Aziz Al-Sibakhi (101246056)
  * @author Redah Eliwa (101273466)
  *
- * @version 11-12-2024
+ * @version 11-24-2024
  */
 public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView {
     private final ScrabbleModel model;
@@ -42,7 +38,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
     // Attributes of the players names, points, and current player display (east panel)
     private JLabel[][] playerInfo; // N Player x 2
     private JPanel playersPanel;
-
     /**
      * Constructor method for ScrabbleModelViewFrame()
      * Initializes the games UI and an instance of ScrabbleModel.
@@ -84,7 +79,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
 
         while(model.checkAI()) sc.playAI();
     }
-
     /**
      * Initializes elements of the user Tile Holder button panel.
      */
@@ -145,7 +139,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         userPanel.add(replace);
         userPanel.add(skip);
     }
-
     /**
      * Updates elements of the user Tile Holder button panel.
      */
@@ -165,7 +158,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
             }
         }
     }
-
     /**
      * Initializes elements of the player info (name, scores, turn) panel.
      */
@@ -199,7 +191,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
             playersPanel.add(playerInfoDisplay);
         }
     }
-
     /**
      * Updates elements of the player info (name, scores, turn) panel.
      */
@@ -214,7 +205,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         playerInfo[prevTurn][0].setForeground(new Color(0x000000));
         playerInfo[prevTurn][1].setText(String.format("Score: %d", model.getPlayers().get(prevTurn).getScore()));
     }
-
     /**
      * Initializes elements of the board square button panel.
      */
@@ -239,7 +229,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
             }
         }
     }
-
     /**
      * Updates elements of the board square button panel.
      */
@@ -277,7 +266,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
             }
         }
     }
-
     /**
      * Gets input from user for number of players and human player names.
      * Provides player info gathered from user to the model.
@@ -306,8 +294,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         // Initialize players in model using info provided. Number of AI players = numPlayers - numHuman
         model.initPlayers(playerNames, numPlayers - numHuman);
     }
-
-
     /**
      * Gets a user for an integer input within a specific range.
      *
@@ -327,7 +313,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         }
         return num;
     }
-
     /**
      * Invoked when a necessary program file is not present.
      *
@@ -337,7 +322,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         JOptionPane.showMessageDialog(null, message, "File Error", JOptionPane.ERROR_MESSAGE);
         System.exit(0);
     }
-
     /**
      * Prompts and gets user input for a blank tile that has been placed.
      *
@@ -347,7 +331,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         String[] alpha = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
         return JOptionPane.showInputDialog(null, "Choose letter to replace blank.", "Set Blank Tile", JOptionPane.PLAIN_MESSAGE, null, alpha, alpha[0]).toString();
     }
-
     /**
      * Handles the logic behind a player placing a tile on the board.
      *
@@ -363,7 +346,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         tileHolder[e.getSelectedTile()].setBackground(new Color(0x444343));
         tileHolder[e.getSelectedTile()].setEnabled(false);
     }
-
     /**
      * Method used to update the board after a players turn.
      * Ends the game if game status is over. Initiates end of game process and displays game results.
@@ -379,7 +361,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         redrawPlayerInfo();
         sc.clearPlayCoordinates();
     }
-
     /**
      * Scrabble's main method.
      * Instantiates a new instance of the model view frame.

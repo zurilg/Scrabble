@@ -3,13 +3,39 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+/**
+ * Scrabble Controller class.
+ * This class acts as the controller in Scrabbles model-view-controller architecture. It is responsible
+ * for handling the interactions between frame and the model.
+ * It listens for user actions and processes them as commands for the model to execute.
+ * Assists in the decision-making processing and execution of AI player turns.
+ *
+ * @author Zuri Lane-Griffore (101241678)
+ * @author Mohammad Ahmadi (101267874)
+ * @author Abdul Aziz Al-Sibakhi (101246056)
+ * @author Redah Eliwa (101273466)
+ *
+ * @version 11-24-2024
+ */
 public class ScrabbleController implements ActionListener {
     ScrabbleModel model;
     HashSet<int []> playCoordinates;
+    /**
+     * Constructor method for ScrabbleController.
+     * Initializes an instance of ScrabbleModel and an ArrayList of the coordinates of the tiles played
+     * during the current turn.
+     * @param model The model object created by the model view frame.
+     */
     public ScrabbleController(ScrabbleModel model){
         this.model = model;
         playCoordinates = new HashSet<>();
     }
+    /**
+     * Processes an event triggered by the view and delegates the command to the appropriate
+     * ScrabbleModel method.
+     * Initiates AI play following human play.
+     * @param e The event to be processed.
+     */
     @Override
     public void actionPerformed(ActionEvent e){
         String[] commandParam = e.getActionCommand().split(",");
@@ -37,11 +63,15 @@ public class ScrabbleController implements ActionListener {
                 break;
         }
     }
-
+    /**
+     * Clears play coordinates.
+     */
     public void clearPlayCoordinates(){
         playCoordinates.clear();
     }
-
+    /**
+     * Determines and executes AI player turns.
+     */
     public void playAI(){
         // Available plays according to AI player
         ArrayList<ArrayList<int[]>> plays = ((PlayerAI) model.getCurrentPlayer()).getValidPlays(model.getBoard(), model.getDictionary());
@@ -112,7 +142,12 @@ public class ScrabbleController implements ActionListener {
 
         if(!played) model.skipTurn();
     }
-
+    /**
+     * Sorts play scores in descending order.
+     *
+     * @param scores Unsorted array list of play scores.
+     * @return Sorted array list of play scores.
+     */
     private ArrayList<Integer> sortScores(ArrayList<Integer> scores){
         ArrayList<Integer> sortedIndexes = new ArrayList<>();
         for(int i = 0; i < scores.size(); i++) sortedIndexes.add(i);

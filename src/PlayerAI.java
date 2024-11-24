@@ -1,5 +1,4 @@
 import java.util.*;
-
 /**
  * AI Player class.
  * Represents a player in the game whose turn is computer generated. Subclass of the Player class.
@@ -21,8 +20,6 @@ public class PlayerAI extends Player{
     public PlayerAI(String name){
         super(name);
     }
-
-
     /**
      * Determines valid plays (if any) for the AI player according to their tile holder and provided game elements.
      *
@@ -174,7 +171,6 @@ public class PlayerAI extends Player{
             return null;
         }
     }
-
     /**
      * Provides a play (if any) that has a possibility of being valid.
      * Determines whether there's a possible play based on the AI player's tiles and other attributes provided.
@@ -248,7 +244,6 @@ public class PlayerAI extends Player{
         for(int[] o : play){ if(o.length == 0) return null; }
         return play;
     }
-
     /**
      * Determines whether the AI player has any blank tiles and provides their indexes.
      *
