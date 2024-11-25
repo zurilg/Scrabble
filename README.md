@@ -3,9 +3,9 @@ Scrabble, Version 2.0, *License*: MIT (see bottom of README for full license des
 
 ## Description
 - A GUI-based version of the popular board game Scrabble.
-- User may choose how many players they wish to play with. 
-- Players can be human or AI.
+- User may choose how many players they wish to play with. Players can be human or AI.
 - The game functions by allowing the player to place a word on the board using the randomly assigned tiles at their disposal. Once the player makes the move, the inner game logic ensures that it is valid. The game decides the validity of the move by checking whether or not the placed word is in the database of valid words and by checking if the placed word is connected to existing tiles on the board and is not isolated. If valid, the points gained from that move are added to the player's score. If the move is not valid, the placed tiles are returned to the player, and they must make another move. Players also have the option to skip their turn if they choose to. 
+- The AI players follow the simple strategy of playing the highest scoring move. It does this by reading the entire dictionary and checking the entire board for valid moves. Once it finds the valid moves the controller will sort the moves based on their score and play the one with the highest score.
 - The game adheres to a majority of the original Scrabble rules.
 - This project is made up of 4 different milestones. Milestone 3, described here, focuses on implementing AI players, blank tiles, and premium squares. 
   
@@ -36,7 +36,7 @@ Must include the dictionary text file in the same directory as the JAR file.
 - Due to the nature of Scrabble and the limited dictionary, the game may occasionally reach a deadlock state. This occurs when no valid moves are possible with the remaining tiles, making it impossible to complete the game. This can happen early on due to how AI and human players make their moves.
 - Currently players cannot redraw the tiles in their tile holder. 
 - This may be a cosmetic issue to some people, but we find the game is as playable without them. But the game does not currently have coordinates for the rows and columns. Although, the bonus square colors already help guide a player.
-- Another cosmetic issue is that the end of game stats messages are not lined up perfectly.
+- Another cosmetic issue is that the end of game stats messages is not lined up perfectly.
 ## Credits
 
 - Mohammad Ahmadi (101267874)
