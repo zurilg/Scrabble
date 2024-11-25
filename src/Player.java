@@ -1,13 +1,25 @@
-import java.util.ArrayList;
-
+/**
+ * Player class.
+ * Represents a player in the Scrabble game, including their name, score, and tile holder.
+ *
+ * @author Zuri Lane-Griffore (101241678)
+ * @author Mohammad Ahmadi (101267874)
+ * @author Abdul Aziz Al-Sibakhi (101246056)
+ * @author Redah Eliwa (101273466)
+ *
+ * @version 11-24-2024
+ */
 public class Player {
     public static final int TILE_HOLDER_SIZE = 7;
-
     private String name;
     private int score;
     private Tile[] tileHolder;
     private Tile[] prevTiles;
-
+    /**
+     * Constructor method for player. Initializes name, score, and tiles.
+     *
+     * @param name The player's chosen name.
+     */
     public Player(String name){
         this.name = name;
         score = 0;
@@ -20,11 +32,23 @@ public class Player {
 
     }
 
+    /**
+     * Returns tile in tile holder at specified index.
+     *
+     * @param index Index of tile in tile holder.
+     * @return The tile at specified index.
+     */
     public Tile getTile(int index){
         if(index >=0 && index < TILE_HOLDER_SIZE) return tileHolder[index]; // If index range is correct, return tile at that index in tile holder.
         return null; // Out of bounds.
     }
 
+    /**
+     * Removes and returns the tile at the specified index in the tile holder.
+     *
+     * @param index The index of the desired tile in the tile holder.
+     * @return The removed tile.
+     */
     public Tile popTile(int index){
         Tile t = null;
         if(index >=0 && index <= TILE_HOLDER_SIZE){
@@ -33,19 +57,44 @@ public class Player {
         }
         return t; // Return null if that tile holder slot is empty or range is invalid. Otherwise, return tile at that index.
     }
-
+    /**
+     * Adds the provided tile to the tile holder at the specified index.
+     *
+     * @param index The index at which to add the tile.
+     * @param t The tile to add.
+     */
     public void addTile(int index, Tile t){ tileHolder[index] = t; }
-
+    /**
+     * Stores the current state of a player's tile holder.
+     */
     public void setPrevTiles(){ System.arraycopy(tileHolder, 0, prevTiles, 0, Player.TILE_HOLDER_SIZE); }
-
+    /**
+     * Resets the current state of a player's tile holder to its past state.
+     */
     public void resetTileHolder(){ System.arraycopy(prevTiles, 0, tileHolder, 0, Player.TILE_HOLDER_SIZE); }
-
+    /**
+     * Adds turn score to player's total score.
+     *
+     * @param s The score obtained during the player's turn.
+     */
     public void addToScore(int s){ score += s; }
-
+    /**
+     * Accessor method for player name.
+     *
+     * @return name
+     */
     public String getName(){ return name; }
-
+    /**
+     * Accessor method for player score.
+     *
+     * @return score
+     */
     public int getScore(){ return score; }
-
+    /**
+     * Returns the number of tiles that are currently in a player's tile holder.
+     *
+     * @return Number of tiles tile holders.
+     */
     public int numTiles(){
         int num = 0;
         for(Tile t : tileHolder) if(t != null) num++;

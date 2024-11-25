@@ -2,17 +2,27 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
-
+/**
+ * Board class.
+ * Model class that represents the Scrabble board
+ *
+ * @author Zuri Lane-Griffore (101241678)
+ * @author Mohammad Ahmadi (101267874)
+ * @author Abdul Aziz Al-Sibakhi (101246056)
+ * @author Redah Eliwa (101273466)
+ *
+ * @version 11-24-2024
+ */
 public class Board {
     public static final int BOARD_SIZE = 15;
-
-    private BoardSquare[][] board;
-    private BoardSquare[][] prevState;
-
+    private final BoardSquare[][] board;
+    private final BoardSquare[][] prevState;
+    /**
+     * This is the board constructor. It initializes every board square to empty.
+     */
     public Board(){
         board = new BoardSquare[BOARD_SIZE][BOARD_SIZE];
         prevState = new BoardSquare[BOARD_SIZE][BOARD_SIZE];
@@ -25,23 +35,35 @@ public class Board {
         }
         initBoard(); // Correct all word and letter scores using data from XML
     }
-
+    /**
+     * Accessor method to get the board square at a specified index.
+     *
+     * @param r Row coordinate.
+     * @param c Column coordinate.
+     * @return Board square at specified coordinates.
+     */
     public BoardSquare getSqAtIndex(int r, int c){ return board[r][c]; }
-
+    /**
+     * Saves the current state of the board for future reset purposes.
+     */
     public void saveState(){
         // Iterate through all saved board squares and set their states equal to the current board.
         for(int r = 0; r<=14; r+=1)
             for(int c = 0; c<=14; c+=1)
                 prevState[r][c].placeTile(board[r][c].getTile());
     }
-
+    /**
+     * Resets board back to state previously saved.
+     */
     public void reset(){
         // Iterate through all board squares and set their states equal to the previously stored states.
         for(int i = 0; i<=14; i+=1)
             for(int j = 0; j<=14; j+=1)
                 board[i][j].placeTile(prevState[i][j].getTile());
     }
-
+    /**
+     * Reads premium squares from an XML file and assigns them to the board squares.
+     */
     private void initBoard(){
         try {
             File xmlFile = new File("./BoardSquareInfo.xml"); // Open the XML that holds the board square bonus info
@@ -67,5 +89,4 @@ public class Board {
         }
         catch(Exception e){ ScrabbleModelViewFrame.fileReadError("Error occurred when trying to read from 'BoardSquareInfo.xml'."); }
     }
-
 }

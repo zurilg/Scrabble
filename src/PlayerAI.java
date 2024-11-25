@@ -257,7 +257,6 @@ public class PlayerAI extends Player{
                     blanks[0] += 1;
                     for(int k = 1; k < blanks.length; k++) if(blanks[k] == -1) blanks[k] = i;
                 }
-
             }
         }
         return blanks;
