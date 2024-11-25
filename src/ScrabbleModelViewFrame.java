@@ -47,6 +47,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         super("Scrabble"); // Call super class (JFrame)
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setIconImage((new ImageIcon("./S_Logo.png")).getImage()); // Add icon / game logo
         this.setResizable(false);
         this.setSize(new Dimension(925, 825));
         this.setLocationRelativeTo(null); // Center on screen
