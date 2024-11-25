@@ -36,7 +36,7 @@ Must include the dictionary text file in the same directory as the JAR file.
 - Due to the nature of Scrabble and the limited dictionary, the game may occasionally reach a deadlock state. This occurs when no valid moves are possible with the remaining tiles, making it impossible to complete the game. This can happen early on due to how AI and human players make their moves.
 - Currently players cannot redraw the tiles in their tile holder. 
 - This may be a cosmetic issue to some people, but we find the game is as playable without them. But the game does not currently have coordinates for the rows and columns. Although, the bonus square colors already help guide a player.
-- Another cosmetic issue is that the end of game stats messages is not lined up perfectly.
+- Another cosmetic issue is that the end of game stats messages are not lined up perfectly.
 ## Credits
 
 - Mohammad Ahmadi (101267874)
