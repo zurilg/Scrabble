@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 /**
  * BoardSquare class.
  *
@@ -8,7 +10,7 @@
  *
  * @version 11-24-2024
  */
-public class BoardSquare {
+public class BoardSquare implements Serializable {
     private Tile t;
     private int wordScore;
     private int letterScore;

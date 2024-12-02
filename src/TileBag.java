@@ -5,6 +5,7 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 /**
@@ -17,7 +18,7 @@ import java.util.Random;
  *
  * @version 11-24-2024
  */
-public class TileBag {
+public class TileBag implements Serializable {
     private final ArrayList<Tile> bag;
     /**
      * TileBag constructor method. Fills the bag with the 100 game tiles.
@@ -59,7 +60,7 @@ public class TileBag {
      */
     private void fillBag(){
         try {
-            File xmlFile = new File("./TileBagInfo.xml"); // Open the XML that holds the info for all 100 tiles
+            File xmlFile = new File("./GameAssets/TileBagInfo.xml"); // Open the XML that holds the info for all 100 tiles
             DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder(); // Create a document builder
             Document doc = docBuilder.parse(xmlFile); // Parse through XML file content and save as a document object
             doc.getDocumentElement().normalize(); // Normalize so it can be structured as nodes

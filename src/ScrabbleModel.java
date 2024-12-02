@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.Serializable;
 import java.util.*;
 /**
  * Scrabble Model class.
@@ -16,7 +17,7 @@ import java.util.*;
  *
  * @version 11-24-2024
  */
-public class ScrabbleModel {
+public class ScrabbleModel implements Serializable {
     // Constants and enumerations
     public enum Status {ONGOING, OVER}
     public static final int MAX_PLAYERS = 4;
@@ -346,7 +347,7 @@ public class ScrabbleModel {
      * Read the dictionary file and store the valid words in an ArrayList. Very minor, yet important part of the overall code.
      */
     private void getDictionaryFromFile() throws FileNotFoundException {
-        BufferedReader r = new BufferedReader(new FileReader("./Words.txt"));
+        BufferedReader r = new BufferedReader(new FileReader("./GameAssets/Words.txt"));
         try {
             String word = r.readLine();
             while (word != null) {

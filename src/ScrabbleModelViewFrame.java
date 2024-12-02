@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.*;
 import java.util.ArrayList;
 import static java.lang.System.exit;
 /**
@@ -21,7 +22,7 @@ import static java.lang.System.exit;
  * @version 11-24-2024
  */
 public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView {
-    private final ScrabbleModel model;
+    private ScrabbleModel model;
     private final ScrabbleController sc;
     private int numPlayers;
 
@@ -38,6 +39,11 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
     // Attributes of the players names, points, and current player display (east panel)
     private JLabel[][] playerInfo; // N Player x 2
     private JPanel playersPanel;
+
+    // Attributes of the menu bars for loading/saving games and for iterating through turns
+    private JMenuBar menuBar;
+    private JMenu game, buddies;
+    private JMenuItem save, load, add, remove;
     /**
      * Constructor method for ScrabbleModelViewFrame()
      * Initializes the games UI and an instance of ScrabbleModel.
@@ -47,20 +53,39 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         super("Scrabble"); // Call super class (JFrame)
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setIconImage((new ImageIcon("./S_Logo.png")).getImage()); // Add icon / game logo
+        this.setIconImage((new ImageIcon("./GameAssets/Pictures/S_Logo.png")).getImage()); // Add icon / game logo
         this.setResizable(false);
         this.setSize(new Dimension(925, 825));
         this.setLocationRelativeTo(null); // Center on screen
 
+        // NEED TO FIGURE OUT IF NEW GAME OR LOADING OLD GAME
+        String[] playerGameOptions = {"New Game", "Load Game"};
+        int playerGameLoadChoice = JOptionPane.showOptionDialog(null, "Would you like to start a new game or load a previously saved one?", "Scrabble", 0, 2, new ImageIcon("./GameAssets/Pictures/S_Icon.png"), playerGameOptions, playerGameOptions[0]);
+        System.out.println(playerGameLoadChoice); //TODO: remove
+
         // Initialize model
         model = new ScrabbleModel();
         model.addScrabbleView(this);
+        switch(playerGameLoadChoice){
+            // Player decides to start a new game or has to start new game. No old games to load.
+            case 0:
+                Object[] options = {"Traditional", "New Wave", "No Bonus"};
+                String bonusSelection = JOptionPane.showInputDialog(null, "Choose", "Menu", JOptionPane.PLAIN_MESSAGE, null, options, options[0]).toString();
+                if(!bonusSelection.equals(options[2])) model.getBoard().initBoard(bonusSelection.replace(" ", ""));
+                // Initialize players
+                initPlayers();
+                break;
+            case 1:
+
+                break;
+
+            default:
+                System.exit(0);
+                break;
+        }
 
         // Initialize controller
         sc = new ScrabbleController(model);
-
-        // Initialize players
-        initPlayers();
 
         // Initialize board buttons and add them to their panel. Once that's finished, draw them.
         initBoardButtons();
@@ -80,6 +105,33 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
 
         while(model.checkAI()) sc.playAI();
     }
+
+    public void loadGame(String fileName){ model = load(fileName); }
+    public void saveGame(String fileName){
+        save(fileName, model);
+    }
+    static ScrabbleModel load(String fileName){
+        fileName = String.format("./GameAssets/SavedGames/%s.bin", fileName);
+        try{
+            ObjectInputStream is = new ObjectInputStream(new FileInputStream(fileName));
+            Object o = is.readObject();
+            return (ScrabbleModel) o;
+        } catch (ClassNotFoundException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static void save(String fileName, ScrabbleModel m){
+        fileName = String.format("./GameAssets/SavedGames/%s.bin", fileName);
+        try{
+            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(fileName));
+            os.writeObject(m);
+            os.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Initializes elements of the user Tile Holder button panel.
      */

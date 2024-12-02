@@ -5,6 +5,8 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.io.Serializable;
+
 /**
  * Board class.
  * Model class that represents the Scrabble board
@@ -16,7 +18,7 @@ import java.io.File;
  *
  * @version 11-24-2024
  */
-public class Board {
+public class Board implements Serializable {
     public static final int BOARD_SIZE = 15;
     private final BoardSquare[][] board;
     private final BoardSquare[][] prevState;
@@ -33,7 +35,6 @@ public class Board {
                 prevState[r][c] = new BoardSquare(1,1);
             }
         }
-        initBoard(); // Correct all word and letter scores using data from XML
     }
     /**
      * Accessor method to get the board square at a specified index.
@@ -64,9 +65,9 @@ public class Board {
     /**
      * Reads premium squares from an XML file and assigns them to the board squares.
      */
-    private void initBoard(){
+    public void initBoard(String bonusType){
         try {
-            File xmlFile = new File("./BoardSquareInfo.xml"); // Open the XML that holds the board square bonus info
+            File xmlFile = new File(String.format("./GameAssets/BoardLayouts/%s.xml", bonusType)); // Open the XML that holds the board square bonus info
             DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder(); // Create a document builder
             Document doc = docBuilder.parse(xmlFile); // Parse through XML file content and save as a document object
             doc.getDocumentElement().normalize(); // Normalize so it can be structured as nodes

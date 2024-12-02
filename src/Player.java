@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 /**
  * Player class.
  * Represents a player in the Scrabble game, including their name, score, and tile holder.
@@ -9,7 +11,7 @@
  *
  * @version 11-24-2024
  */
-public class Player {
+public class Player implements Serializable {
     public static final int TILE_HOLDER_SIZE = 7;
     private String name;
     private int score;

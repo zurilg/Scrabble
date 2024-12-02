@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 /**
  * Tile class.
  *
@@ -8,7 +10,7 @@
  *
  * @version 11-24-2024
  */
-public class Tile {
+public class Tile implements Serializable {
     private String character;
     private final int value;
     /**
