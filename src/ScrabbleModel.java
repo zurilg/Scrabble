@@ -396,7 +396,10 @@ public class ScrabbleModel implements Serializable {
      */
     public String gameResults(boolean gameFileDeleted){
         boolean[] playedOut = new boolean[players.size()];
+        int[] ogScores = new int[players.size()];
         int[] remainingTilesSum = new int[players.size()];
+
+        for(int i = 0; i < players.size(); i++) ogScores[i] = players.get(i).getScore();
 
         for(int i = 0; i < players.size(); i++){
             if(players.get(i).numTiles() == 0) playedOut[i] = true;
@@ -410,9 +413,9 @@ public class ScrabbleModel implements Serializable {
 
         StringBuilder results = new StringBuilder();
         results.append("<html><body>GAME RESULTS:<table border='1' style='border-collapse:collapse;'>");
-        results.append("<tr><th>Name</th><th>Tile Remainder</th><th>Bonus</th><th>Final Score</th></tr>");
+        results.append("<tr><th>Name</th><th>Score</th><th>Tile Remainder</th><th>Bonus</th><th>Final Score</th></tr>");
         for(int i = 0; i < players.size(); i++){
-            results.append(String.format("<tr><td>%s</td><td>%d</td><td>%d</td><td>%d</td></tr>", players.get(i).getName(), remainingTilesSum[i], playedOut[i] ? Arrays.stream(remainingTilesSum).sum() : 0, players.get(i).getScore()));
+            results.append(String.format("<tr><td>%s</td><td align=\"right\">%d</td><td align=\"right\">-%d</td><td align=\"right\">%d</td><td align=\"right\">%d</td></tr>", players.get(i).getName(), ogScores[i], remainingTilesSum[i], playedOut[i] ? Arrays.stream(remainingTilesSum).sum() : 0, players.get(i).getScore()));
         }
         results.append(String.format("</table>\n\n%s</body></html>", gameFileDeleted ? "Note: Game file deleted." : ""));
         return results.toString();

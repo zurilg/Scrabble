@@ -1,7 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.util.ArrayList;
+
 import static java.lang.System.exit;
 /**
  * ScrabbleModelViewFrame class and main class of the Scrabble game.
@@ -55,7 +58,15 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         // Initialize basic frame aspects
         super("Scrabble"); // Call super class (JFrame)
         this.setLayout(new BorderLayout());
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                int saveGame = JOptionPane.showConfirmDialog(null, "Would you like to save ongoing game before exiting?", "End Game: Save", JOptionPane.YES_NO_OPTION);
+                if(saveGame == JOptionPane.YES_OPTION) saveGame();
+                exit(0);
+            }
+        });
         this.setIconImage((new ImageIcon("./GameAssets/Pictures/S_Logo.png")).getImage()); // Add icon / game logo
         this.setResizable(false);
         this.setSize(new Dimension(925, 825));
@@ -102,8 +113,50 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         //for(int r = 0; r < Board.BOARD_SIZE; r++) for(int c = 0; c < Board.BOARD_SIZE; c++) System.out.println(String.format("Squares: %d", model.getBoard().getSqAtIndex(r,c).getLetterScore()));
     }
     public void saveGame(){
-        if(gameFile.isBlank()) gameFile = JOptionPane.showInputDialog("Enter name to save game as: ");
+        if(gameFile.isBlank()){
+            String fileName = getValidFileName();
+            if(fileName == null) return;
+            gameFile = fileName;
+        }
         save(gameFile, model);
+    }
+
+    private String getValidFileName(){
+        // Get current file names. Don't want duplicates.
+        File path = new File("./GameAssets/SavedGames");
+        String[] savedGames = path.list();
+        String fileName = "";
+        boolean invalidName = true;
+        StringBuilder message = new StringBuilder("Enter name to save game as: ");
+        while(invalidName){
+            fileName = JOptionPane.showInputDialog(message);
+            if(fileName == null) return null;
+            for(int i = 0; i < fileName.length(); i++){
+                int c = (int) fileName.charAt(i);
+                if(!((c >= 65 && c <= 90) || (c >= 97 && c <= 122) || (c >= 48 && c <= 57) || c == 45 || c == 46 || c == 95)){
+                    invalidName = true;
+                    break;
+                }
+                else invalidName = false;
+            }
+
+            if(!invalidName){
+                for(String f : savedGames){
+                    if(fileName.equals(f.replace(".bin", ""))){
+                        int replaceGame = JOptionPane.showConfirmDialog(null, "A previously saved game has the same name.\nReplace previously saved game?", "Warning", JOptionPane.YES_NO_OPTION);
+                        if(replaceGame != JOptionPane.YES_OPTION){
+                            invalidName = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if(invalidName){
+                message.setLength(0);
+                message.append(String.format("Invalid name entered.\nValid name characters: \n%5s- Letters: a-z and A-Z\n%5s- Numbers: 0-9\n%5s- Characters: '_', '-', '.'\n\nEnter name to save game as: ", "", "", ""));
+            }
+        }
+        return fileName;
     }
     static ScrabbleModel load(String fileName){
         fileName = String.format("./GameAssets/SavedGames/%s.bin", fileName);
@@ -141,7 +194,11 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         // NEED TO FIGURE OUT IF NEW GAME OR LOADING OLD GAME
         if(playerGameLoadChoice != 0){
             String[] playerGameOptions = {"New Game", "Load Game"};
-            playerGameLoadChoice = JOptionPane.showOptionDialog(null, "Would you like to start a new game or load a previously saved one?", "Scrabble", 0, 2, new ImageIcon("./GameAssets/Pictures/S_Icon.png"), playerGameOptions, playerGameOptions[0]);
+            playerGameLoadChoice = JOptionPane.showOptionDialog(null, "Welcome to Scrabble!\nWould you like to start a new game or load a previously saved one?", "Scrabble", 0, 2, new ImageIcon("./GameAssets/Pictures/S_Icon.png"), playerGameOptions, playerGameOptions[0]);
+        }
+        else{
+            String[] playerGameOptions = {"New Game"};
+            playerGameLoadChoice = JOptionPane.showOptionDialog(null, "Welcome to Scrabble!\nReady to play?", "Scrabble", 0, 2, new ImageIcon("./GameAssets/Pictures/S_Icon.png"), playerGameOptions, playerGameOptions[0]);
         }
 
         switch(playerGameLoadChoice){
@@ -157,7 +214,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
                 loadGame();
                 break;
             default:
-                System.exit(0);
+                exit(0);
                 break;
         }
     }
@@ -220,19 +277,27 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
             tileHolder[i].setLayout(new GridLayout(3, 1));
             tileHolder[i].addActionListener(sc);
             tileHolder[i].setActionCommand(String.format("U,%d", i));
-            tileHolder[i].setBackground(new Color(0xc69f77));
             tileHolder[i].setFocusable(false);
 
-            tileLabels[i][0] = new JLabel(model.getCurrentPlayer().getTile(i).getChar());
-            tileLabels[i][1] = new JLabel(String.format("             %d", model.getCurrentPlayer().getTile(i).getValue()));
+            if(model.getCurrentPlayer().getTile(i) != null){
+                tileHolder[i].setBackground(new Color(0xc69f77));
+                tileLabels[i][0] = new JLabel(model.getCurrentPlayer().getTile(i).getChar());
+                tileLabels[i][1] = new JLabel(String.format("             %d", model.getCurrentPlayer().getTile(i).getValue()));
+            }
+            else{
+                tileHolder[i].setBackground(new Color(0x444343));
+                tileLabels[i][0] = new JLabel("");
+                tileLabels[i][1] = new JLabel("");
+            }
+
             tileLabels[i][0].setHorizontalAlignment(JTextField.CENTER);
             tileLabels[i][1].setHorizontalAlignment(JTextField.CENTER);
             tileLabels[i][0].setPreferredSize(new Dimension(23,23));
             tileLabels[i][1].setPreferredSize(new Dimension(23,23));
 
             tileHolder[i].add(new JLabel(""));
-            tileHolder[i].add( tileLabels[i][0]);
-            tileHolder[i].add( tileLabels[i][1]);
+            tileHolder[i].add(tileLabels[i][0]);
+            tileHolder[i].add(tileLabels[i][1]);
 
             userPanel.add(tileHolder[i]);
         }
@@ -382,7 +447,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
             String input = "";
             while(input.isBlank()){
                 input = JOptionPane.showInputDialog(String.format("Enter human player %d's name.", i+1));
-                if(input == null) System.exit(0); // User pressed cancel.
+                if(input == null) exit(0); // User pressed cancel.
                 else input = input.trim();
                 if(input.isBlank()) JOptionPane.showMessageDialog(this, "Can't enter a blank name!");
                 for(String name : playerNames) if(name.equalsIgnoreCase(input)){
@@ -408,7 +473,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         // Get number of players
         while(num < min || num > max){
             String input = JOptionPane.showInputDialog(message); // Get user input
-            if(input == null) System.exit(0); // User pressed cancel
+            if(input == null) exit(0); // User pressed cancel
             try{ num = Integer.parseInt(input); } // User entered something that might be valid. Try to parse as int.
             catch (Exception e){ JOptionPane.showMessageDialog(this, String.format("Enter an integer value between %d and %d.", min, max)); }
         }
@@ -421,7 +486,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
      */
     public static void fileReadError(String message){
         JOptionPane.showMessageDialog(null, message, "File Error", JOptionPane.ERROR_MESSAGE);
-        System.exit(0);
+        exit(0);
     }
     /**
      * Prompts and gets user input for a blank tile that has been placed.
@@ -452,10 +517,10 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         if(abruptEnding && !gameFile.isBlank()){
             int endingChoice = JOptionPane.showConfirmDialog(null, "Are you sure? Terminating the game will delete previously saved progress.", "End Game Confirmation", JOptionPane.YES_NO_OPTION);
             if(endingChoice != JOptionPane.YES_OPTION) return;
-            else{
-                File fileToDelete = new File(String.format("./GameAssets/SavedGames/%s.bin", gameFile));
-                deleted = fileToDelete.delete();
-            }
+        }
+        if(!gameFile.isBlank()){
+            File fileToDelete = new File(String.format("./GameAssets/SavedGames/%s.bin", gameFile));
+            deleted = fileToDelete.delete();
         }
 
         JOptionPane.showMessageDialog(this, model.gameResults(deleted));
