@@ -23,7 +23,7 @@ public class ScrabbleModel implements Serializable {
     public static final int MAX_PLAYERS = 4;
     public static final int MIN_PLAYERS = 2;
     // List of observers
-    ArrayList<ScrabbleModelView> views;
+    private final ArrayList<ScrabbleModelView> views;
     // Class attributes
     private final Board board; // The scrabble game board
     private Status status; // The scrabble game status
@@ -56,6 +56,7 @@ public class ScrabbleModel implements Serializable {
         // Initialize game status
         status = Status.ONGOING;
     }
+
     /**
      * Accessor method for the game's board.
      *

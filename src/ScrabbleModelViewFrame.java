@@ -42,8 +42,8 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
 
     // Attributes of the menu bars for loading/saving games and for iterating through turns
     private JMenuBar menuBar;
-    private JMenu game, buddies;
-    private JMenuItem save, load, add, remove;
+    private JMenu game, undo;
+    private JMenuItem save, load;
     /**
      * Constructor method for ScrabbleModelViewFrame()
      * Initializes the games UI and an instance of ScrabbleModel.
@@ -58,56 +58,56 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         this.setSize(new Dimension(925, 825));
         this.setLocationRelativeTo(null); // Center on screen
 
-        // NEED TO FIGURE OUT IF NEW GAME OR LOADING OLD GAME
-        String[] playerGameOptions = {"New Game", "Load Game"};
-        int playerGameLoadChoice = JOptionPane.showOptionDialog(null, "Would you like to start a new game or load a previously saved one?", "Scrabble", 0, 2, new ImageIcon("./GameAssets/Pictures/S_Icon.png"), playerGameOptions, playerGameOptions[0]);
-        System.out.println(playerGameLoadChoice); //TODO: remove
-
         // Initialize model
         model = new ScrabbleModel();
-        model.addScrabbleView(this);
-        switch(playerGameLoadChoice){
-            // Player decides to start a new game or has to start new game. No old games to load.
-            case 0:
-                Object[] options = {"Traditional", "New Wave", "No Bonus"};
-                String bonusSelection = JOptionPane.showInputDialog(null, "Choose", "Menu", JOptionPane.PLAIN_MESSAGE, null, options, options[0]).toString();
-                if(!bonusSelection.equals(options[2])) model.getBoard().initBoard(bonusSelection.replace(" ", ""));
-                // Initialize players
-                initPlayers();
-                break;
-            case 1:
 
-                break;
-
-            default:
-                System.exit(0);
-                break;
-        }
-
+        // Must initialize the game. Old game / new game and game options.
+        initGame();
         // Initialize controller
         sc = new ScrabbleController(model);
-
+        // Add view
+        model.addScrabbleView(this);
         // Initialize board buttons and add them to their panel. Once that's finished, draw them.
         initBoardButtons();
         drawBoardButtons();
-
         // Initialize current player button panel
         drawButtonPanel();
 
         // Initialize players panel
         drawPlayerInfo();
 
+        initMenuBar();
+
         // Finish frame initialization. Add content to the frame. Set as visible
         this.add(boardPanel, BorderLayout.CENTER);
         this.add(userPanel, BorderLayout.SOUTH);
         this.add(playersPanel, BorderLayout.EAST);
+        this.setJMenuBar(menuBar);
         this.setVisible(true);
 
         while(model.checkAI()) sc.playAI();
     }
 
-    public void loadGame(String fileName){ model = load(fileName); }
-    public void saveGame(String fileName){
+    public void loadGame(){
+        File path = new File("./GameAssets/SavedGames");
+        String[] savedGames = path.list();
+        for(int i = 0; i < savedGames.length; i++) savedGames[i] = savedGames[i].replace(".bin", "");
+        String fileName = JOptionPane.showInputDialog(null, "Choose", "Menu", JOptionPane.PLAIN_MESSAGE, null, savedGames, savedGames[0]).toString();
+        model = load(fileName);
+        // If player loads game during an ongoing game
+        if(numPlayers != 0) {
+            System.out.println("HERE!!!");
+            numPlayers = model.getPlayers().size();
+            for(Player p : model.getPlayers()) System.out.println(p.getName());
+            this.remove(playersPanel);
+            drawPlayerInfo();
+            this.add(playersPanel, BorderLayout.EAST);
+            updateBoard();
+        }
+        //for(int r = 0; r < Board.BOARD_SIZE; r++) for(int c = 0; c < Board.BOARD_SIZE; c++) System.out.println(String.format("Squares: %d", model.getBoard().getSqAtIndex(r,c).getLetterScore()));
+    }
+    public void saveGame(){
+        String fileName = JOptionPane.showInputDialog("Enter name to save game as: ");
         save(fileName, model);
     }
     static ScrabbleModel load(String fileName){
@@ -130,6 +130,57 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void initGame(){
+        int playerGameLoadChoice = -1;
+        // Need to figure out if there are any saved games
+        File path = new File("./GameAssets/SavedGames");
+        String[] savedGames = path.list();
+        // There are no saved games, so have to start a new game.
+        if(savedGames != null) if(savedGames.length == 0) playerGameLoadChoice = 0;
+
+        // NEED TO FIGURE OUT IF NEW GAME OR LOADING OLD GAME
+        if(playerGameLoadChoice != 0){
+            String[] playerGameOptions = {"New Game", "Load Game"};
+            playerGameLoadChoice = JOptionPane.showOptionDialog(null, "Would you like to start a new game or load a previously saved one?", "Scrabble", 0, 2, new ImageIcon("./GameAssets/Pictures/S_Icon.png"), playerGameOptions, playerGameOptions[0]);
+        }
+
+        switch(playerGameLoadChoice){
+            // Player decides to start a new game or has to start new game. No old games to load.
+            case 0:
+                Object[] options = {"Traditional", "New Wave", "No Bonus"};
+                String bonusSelection = JOptionPane.showInputDialog(null, "Choose", "Menu", JOptionPane.PLAIN_MESSAGE, null, options, options[0]).toString();
+                if(!bonusSelection.equals(options[2])) model.getBoard().initBoard(bonusSelection.replace(" ", ""));
+                // Initialize players
+                initPlayers();
+                break;
+            case 1:
+                loadGame();
+                numPlayers = model.getPlayers().size();
+                break;
+            default:
+                System.exit(0);
+                break;
+        }
+    }
+
+    private void initMenuBar(){
+        menuBar = new JMenuBar();
+        game = new JMenu("Game");
+        undo = new JMenu("Undo Turn"); // TODO: Go back to previous human player state?
+        save = new JMenuItem("Save Game");
+        load = new JMenuItem("Load Game");
+
+        save.addActionListener(e -> saveGame());
+        load.addActionListener(e -> loadGame());
+        undo.addActionListener(sc);
+
+        game.add(save);
+        game.add(load);
+
+        menuBar.add(game);
+        menuBar.add(undo);
     }
 
     /**

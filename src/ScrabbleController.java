@@ -1,5 +1,6 @@
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -17,7 +18,7 @@ import java.util.HashSet;
  *
  * @version 11-24-2024
  */
-public class ScrabbleController implements ActionListener {
+public class ScrabbleController implements ActionListener, Serializable {
     ScrabbleModel model;
     HashSet<int []> playCoordinates;
     /**

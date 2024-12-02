@@ -23,6 +23,7 @@ public class Tile implements Serializable {
         this.character = character;
         this.value = value;
     }
+
     /**
      * Accessor for the tile's letter.
      *

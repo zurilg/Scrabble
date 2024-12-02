@@ -31,7 +31,6 @@ public class Player implements Serializable {
             tileHolder[i] = null; // Initialize tile holders as empty initially.
             prevTiles[i] = null;
         }
-
     }
 
     /**
