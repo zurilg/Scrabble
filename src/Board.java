@@ -88,6 +88,6 @@ public class Board implements Serializable {
                 }
             }
         }
-        catch(Exception e){ ScrabbleModelViewFrame.fileReadError("Error occurred when trying to read from 'BoardSquareInfo.xml'."); }
+        catch(Exception e){ ScrabbleModelViewFrame.fileReadError("Error occurred when trying to read from './GameAssets/BoardLayouts/'."); }
     }
 }

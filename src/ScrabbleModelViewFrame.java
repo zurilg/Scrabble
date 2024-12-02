@@ -43,7 +43,10 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
     // Attributes of the menu bars for loading/saving games and for iterating through turns
     private JMenuBar menuBar;
     private JMenu game, undo;
-    private JMenuItem save, load;
+    private JMenuItem save, end;
+
+    // The gameFile. Not empty if game was loaded.
+    private String gameFile;
     /**
      * Constructor method for ScrabbleModelViewFrame()
      * Initializes the games UI and an instance of ScrabbleModel.
@@ -62,6 +65,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         model = new ScrabbleModel();
 
         // Must initialize the game. Old game / new game and game options.
+        gameFile = "";
         initGame();
         // Initialize controller
         sc = new ScrabbleController(model);
@@ -92,29 +96,23 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         File path = new File("./GameAssets/SavedGames");
         String[] savedGames = path.list();
         for(int i = 0; i < savedGames.length; i++) savedGames[i] = savedGames[i].replace(".bin", "");
-        String fileName = JOptionPane.showInputDialog(null, "Choose", "Menu", JOptionPane.PLAIN_MESSAGE, null, savedGames, savedGames[0]).toString();
-        model = load(fileName);
-        // If player loads game during an ongoing game
-        if(numPlayers != 0) {
-            System.out.println("HERE!!!");
-            numPlayers = model.getPlayers().size();
-            for(Player p : model.getPlayers()) System.out.println(p.getName());
-            this.remove(playersPanel);
-            drawPlayerInfo();
-            this.add(playersPanel, BorderLayout.EAST);
-            updateBoard();
-        }
+        gameFile = JOptionPane.showInputDialog(null, "Which game would you like to load?", "Saved Games", JOptionPane.PLAIN_MESSAGE, null, savedGames, savedGames[0]).toString();
+        model = load(gameFile);
+        numPlayers = model.getPlayers().size();
         //for(int r = 0; r < Board.BOARD_SIZE; r++) for(int c = 0; c < Board.BOARD_SIZE; c++) System.out.println(String.format("Squares: %d", model.getBoard().getSqAtIndex(r,c).getLetterScore()));
     }
     public void saveGame(){
-        String fileName = JOptionPane.showInputDialog("Enter name to save game as: ");
-        save(fileName, model);
+        if(gameFile.isBlank()) gameFile = JOptionPane.showInputDialog("Enter name to save game as: ");
+        save(gameFile, model);
     }
     static ScrabbleModel load(String fileName){
         fileName = String.format("./GameAssets/SavedGames/%s.bin", fileName);
         try{
-            ObjectInputStream is = new ObjectInputStream(new FileInputStream(fileName));
+            FileInputStream fis = new FileInputStream(fileName);
+            ObjectInputStream is = new ObjectInputStream(fis);
             Object o = is.readObject();
+            fis.close();
+            is.close();
             return (ScrabbleModel) o;
         } catch (ClassNotFoundException | IOException e) {
             throw new RuntimeException(e);
@@ -149,15 +147,14 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         switch(playerGameLoadChoice){
             // Player decides to start a new game or has to start new game. No old games to load.
             case 0:
-                Object[] options = {"Traditional", "New Wave", "No Bonus"};
-                String bonusSelection = JOptionPane.showInputDialog(null, "Choose", "Menu", JOptionPane.PLAIN_MESSAGE, null, options, options[0]).toString();
+                Object[] options = {"Classic", "New Wave", "No Bonus"};
+                String bonusSelection = JOptionPane.showInputDialog(null, "Select Premium Square Layout", "New Game: Board Style Selection", JOptionPane.PLAIN_MESSAGE, null, options, options[0]).toString();
                 if(!bonusSelection.equals(options[2])) model.getBoard().initBoard(bonusSelection.replace(" ", ""));
                 // Initialize players
                 initPlayers();
                 break;
             case 1:
                 loadGame();
-                numPlayers = model.getPlayers().size();
                 break;
             default:
                 System.exit(0);
@@ -170,14 +167,14 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         game = new JMenu("Game");
         undo = new JMenu("Undo Turn"); // TODO: Go back to previous human player state?
         save = new JMenuItem("Save Game");
-        load = new JMenuItem("Load Game");
+        end = new JMenuItem("End Game");
 
         save.addActionListener(e -> saveGame());
-        load.addActionListener(e -> loadGame());
+        end.addActionListener(e -> endGame(true));
         undo.addActionListener(sc);
 
         game.add(save);
-        game.add(load);
+        game.add(end);
 
         menuBar.add(game);
         menuBar.add(undo);
@@ -450,6 +447,20 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         tileHolder[e.getSelectedTile()].setBackground(new Color(0x444343));
         tileHolder[e.getSelectedTile()].setEnabled(false);
     }
+    private void endGame(boolean abruptEnding){
+        boolean deleted = false;
+        if(abruptEnding && !gameFile.isBlank()){
+            int endingChoice = JOptionPane.showConfirmDialog(null, "Are you sure? Terminating the game will delete previously saved progress.", "End Game Confirmation", JOptionPane.YES_NO_OPTION);
+            if(endingChoice != JOptionPane.YES_OPTION) return;
+            else{
+                File fileToDelete = new File(String.format("./GameAssets/SavedGames/%s.bin", gameFile));
+                deleted = fileToDelete.delete();
+            }
+        }
+
+        JOptionPane.showMessageDialog(this, model.gameResults(deleted));
+        exit(0);
+    }
     /**
      * Method used to update the board after a players turn.
      * Ends the game if game status is over. Initiates end of game process and displays game results.
@@ -457,8 +468,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
     @Override
     public void updateBoard(){
         if(model.getStatus() == ScrabbleModel.Status.OVER) {
-            JOptionPane.showMessageDialog(this, model.gameResults());
-            exit(0);
+            endGame(false);
         }
         drawBoardButtons();
         redrawTileHolder();

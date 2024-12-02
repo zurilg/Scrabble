@@ -394,7 +394,7 @@ public class ScrabbleModel implements Serializable {
      *
      * @return A string representation of the game's results.
      */
-    public String gameResults(){
+    public String gameResults(boolean gameFileDeleted){
         boolean[] playedOut = new boolean[players.size()];
         int[] remainingTilesSum = new int[players.size()];
 
@@ -409,11 +409,12 @@ public class ScrabbleModel implements Serializable {
         for(int i = 0; i < players.size(); i++) if(playedOut[i]) players.get(i).addToScore(Arrays.stream(remainingTilesSum).sum());
 
         StringBuilder results = new StringBuilder();
-        results.append(String.format("%30s%30s%30s%30s", "Name", "Tile Remainder", "Bonus", "Final Score\n"));
+        results.append("<html><body>GAME RESULTS:<table border='1' style='border-collapse:collapse;'>");
+        results.append("<tr><th>Name</th><th>Tile Remainder</th><th>Bonus</th><th>Final Score</th></tr>");
         for(int i = 0; i < players.size(); i++){
-            results.append(String.format("%30s%30s%30s%30s\n", players.get(i).getName(), remainingTilesSum[i], playedOut[i] ? Arrays.stream(remainingTilesSum).sum() : 0, players.get(i).getScore()));
+            results.append(String.format("<tr><td>%s</td><td>%d</td><td>%d</td><td>%d</td></tr>", players.get(i).getName(), remainingTilesSum[i], playedOut[i] ? Arrays.stream(remainingTilesSum).sum() : 0, players.get(i).getScore()));
         }
-
+        results.append(String.format("</table>\n\n%s</body></html>", gameFileDeleted ? "Note: Game file deleted." : ""));
         return results.toString();
     }
 }
