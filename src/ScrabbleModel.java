@@ -63,13 +63,19 @@ public class ScrabbleModel implements Serializable {
         undoStack = new Stack<>();
         redoStack = new Stack<>();
     }
-
+    /**
+     * Sets game state in a temporary ScrabbleGameState object.
+     */
     public void setTempState(){
         if(!checkAI()){
             System.out.println("SETTING TEMP STATE!!@!@#@");
             tempState = new ScrabbleGameState(board, players, tileBag, playerTurn);
         }
     }
+
+    /**
+     * Saves the current game state by pushing onto the undo stack.
+     */
     public void saveGameState(){
         if(tempState != null){
             undoStack.push(tempState);
@@ -78,7 +84,10 @@ public class ScrabbleModel implements Serializable {
         }
         redoStack.clear();
     }
-
+    /**
+     * Undoes the most recently made turns of moves of each player by popping the undoStack.
+     * Pushes onto the redo stack before restoring the game stack.
+     */
     public void undo(){
         if(!undoStack.isEmpty() && !firstTurn()){
             redoStack.push(new ScrabbleGameState(board, players, tileBag, playerTurn));
@@ -88,6 +97,10 @@ public class ScrabbleModel implements Serializable {
         }
     }
 
+    /**
+     * Redoes the last undone game action by restoring the game to the state from the redo stack.
+     * Pushes onto the redo stack before restoring the game stack.
+     */
     public void redo(){
         if(!redoStack.isEmpty() && !firstTurn()){
             undoStack.push(new ScrabbleGameState(board, players, tileBag, playerTurn));
@@ -96,7 +109,10 @@ public class ScrabbleModel implements Serializable {
             System.out.println("REDO STACK POP: " + undoStack.toString());
         }
     }
-
+    /**
+     * Restores the game to the provided game state
+     * @param s ScrabbleGameState that we restore the board to
+     */
     private void restoreState(ScrabbleGameState s){
         System.out.println("RESTORING STATE>???!@");
         board = s.getBoard();

@@ -106,7 +106,9 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         }
         model.setTempState();
     }
-
+    /**
+     * Loads a saved game from a file.
+     */
     public void loadGame(){
         File path = new File("./GameAssets/SavedGames");
         String[] savedGames = path.list();
@@ -116,6 +118,10 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         numPlayers = model.getPlayers().size();
         //for(int r = 0; r < Board.BOARD_SIZE; r++) for(int c = 0; c < Board.BOARD_SIZE; c++) System.out.println(String.format("Squares: %d", model.getBoard().getSqAtIndex(r,c).getLetterScore()));
     }
+
+    /**
+     * Saves the game in its current state into a file
+     */
     public void saveGame(){
         if(gameFile.isBlank()){
             String fileName = getValidFileName();
@@ -125,6 +131,11 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         save(gameFile, model);
     }
 
+    /**
+     * Prompts the user to enter a valid file name for saving the game.
+     *
+     * @return the file name entered by the user
+     */
     private String getValidFileName(){
         // Get current file names. Don't want duplicates.
         File path = new File("./GameAssets/SavedGames");
@@ -164,6 +175,13 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         }
         return fileName;
     }
+
+    /**
+     * Loads a previously saved game from a file.
+     *
+     * @param fileName the name of the file to load the game from
+     * @return the loaded Scrabble model
+     */
     static ScrabbleModel load(String fileName){
         fileName = String.format("./GameAssets/SavedGames/%s.bin", fileName);
         try{
@@ -177,7 +195,13 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
             throw new RuntimeException(e);
         }
     }
-
+    /**
+     * Saves the current Scrabble game state to a file.
+     *
+     * @param fileName The name of the file where the game will be saved.
+     * @param m The current Scrabble game model object to be saved.
+     * @throws RuntimeException If an error occurs while writing the game object to the file.
+     */
     static void save(String fileName, ScrabbleModel m){
         fileName = String.format("./GameAssets/SavedGames/%s.bin", fileName);
         try{
@@ -189,6 +213,12 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         }
     }
 
+    /**
+     * Initializes the game by either starting a new game or loading an existing saved game file.
+     * Displays a dialog for the user to choose whether to start a new game or load an old one.
+     * If no saved games are available, a new game is started.
+     * Display a dialog that prompts the user to select the board they would like to play the game with.
+     */
     private void initGame(){
         int playerGameLoadChoice = -1;
         // Need to figure out if there are any saved games
@@ -225,7 +255,10 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
                 break;
         }
     }
-
+    /**
+     * Initializes the menu bar of game-related options for player as a GUI.
+     * Sets option buttons for saving a game, and undoing and redoing a move.
+     */
     private void initMenuBar(){
         menuBar = new JMenuBar();
         game = new JMenu("Game");
