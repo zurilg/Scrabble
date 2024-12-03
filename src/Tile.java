@@ -24,6 +24,11 @@ public class Tile implements Serializable {
         this.value = value;
     }
 
+    /**
+     * Constructor for Tile that is used to create a copy of a Tile object.
+     * Used for game saving purposes.
+     * @param t Tile object that is to be copied.
+     */
     public Tile(Tile t){
         this.character = t.getChar();
         this.value = t.getValue();

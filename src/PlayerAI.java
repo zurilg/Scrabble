@@ -22,6 +22,11 @@ public class PlayerAI extends Player implements Serializable {
         super(name);
     }
 
+    /**
+     * Player constructor used to create a copy of a PlayerAI object for game saving purposes.
+     *
+     * @param pAI PlayerAI object that has the attributes we copy.
+     */
     public PlayerAI(PlayerAI pAI) { super(pAI.getName(), pAI.getScore(), pAI.getTileHolder(), pAI.getPrevTiles()); }
 
     /**

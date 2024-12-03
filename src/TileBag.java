@@ -27,7 +27,11 @@ public class TileBag implements Serializable {
         bag = new ArrayList<>();
         fillBag();
     }
-
+    /**
+     * Constructor for TileBag that is used to create a copy of a Tile object.
+     * Used for game saving purposes.
+     * @param tb TileBag object that is to be copied.
+     */
     public TileBag(TileBag tb){
         bag = new ArrayList<>();
         for(Tile t : tb.bag) bag.add(new Tile(t));

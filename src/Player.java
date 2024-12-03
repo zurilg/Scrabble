@@ -32,7 +32,11 @@ public class Player implements Serializable {
             prevTiles[i] = null;
         }
     }
-
+    /**
+     * Player constructor used to create a copy of a Player object.
+     * Used for game saving purposes.
+     * @param p Player object that is to be copied
+     */
     public Player(Player p){
         tileHolder = new Tile[TILE_HOLDER_SIZE];
         prevTiles = new Tile[TILE_HOLDER_SIZE];
@@ -41,7 +45,15 @@ public class Player implements Serializable {
         for(int i = 0; i < TILE_HOLDER_SIZE; i++) this.tileHolder[i] = new Tile(p.getTile(i));
         for(int i = 0; i < TILE_HOLDER_SIZE; i++) this.prevTiles[i] = new Tile(p.prevTiles[i]);
     }
-
+    /**
+     * Player constructor used to create a copy of a Player object.
+     * Used for game saving purposes.
+     *
+     * @param name The name of the player.
+     * @param score The current score of the player.
+     * @param th The array of Tile objects representing the player's current tile holder.
+     * @param pt The array of Tile objects representing the player's previous tiles.
+     */
     public Player(String name, int score, Tile[] th, Tile[] pt){
         System.out.println("SAVING AI PLAYER SCORE AND STUFF");
         tileHolder = new Tile[TILE_HOLDER_SIZE];
@@ -58,7 +70,17 @@ public class Player implements Serializable {
         }
     }
 
+    /**
+     * Getter method that returns an array of tile objects that represents the tile holder
+     * @return array of Tile objects that represents the tile holder
+     */
     public Tile[] getTileHolder(){ return tileHolder; }
+
+    /**
+     * Getter method that returns an array represting the player's previous tiles.
+     *
+     * @return array of Tile objects that represents the player's previous tiles.
+     */
     public Tile[] getPrevTiles(){ return prevTiles; }
 
     /**

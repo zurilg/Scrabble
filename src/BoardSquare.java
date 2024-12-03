@@ -25,7 +25,10 @@ public class BoardSquare implements Serializable {
         this.letterScore = letterScore;
         this.wordScore = wordScore;
     }
-
+    /**
+     * BoardSquare constructor used to create a copy of the model to save the game
+     * @param bs BoardSquare object that is to be copied
+     */
     public BoardSquare(BoardSquare bs){
         if(bs.getTile() != null) this.t = new Tile(bs.getTile());
         this.letterScore = bs.getLetterScore();

@@ -37,6 +37,10 @@ public class Board implements Serializable {
         }
     }
 
+    /**
+     * Board constructor used to create a copy of the model to save the game
+     * @param b Board object that is to be copied
+     */
     public Board(Board b){
         board = new BoardSquare[BOARD_SIZE][BOARD_SIZE];
         prevState = new BoardSquare[BOARD_SIZE][BOARD_SIZE];
