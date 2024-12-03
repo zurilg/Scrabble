@@ -1,22 +1,33 @@
->November 24, 2024\
+>December 06, 2024\
 Scrabble, Version 2.0, *License*: MIT (see bottom of README for full license description)
 
 ## Description
 - A GUI-based version of the popular board game Scrabble.
-- User may choose how many players they wish to play with. Players can be human or AI.
+- User is prompted to start a new game. If user has a previous game saved, they have the option to load that game and continue playing it in its most recent state.
+- If they wish to load a saved game, they are first prompted to enter the file name of the saved game. The file must exist in order to load the saved game.
+- If there are no saved games then the user must start a new game to begin playing.
+- After choosing to start a new game, the user must choose the board they wish to play with from the three options available:
+  1. Classic
+  2. New Wave
+  3. No bonuses
+- Upon choosing the board, teh user may choose how many players they wish to play with. Players can be human or AI.
 - The game functions by allowing the player to place a word on the board using the randomly assigned tiles at their disposal. Once the player makes the move, the inner game logic ensures that it is valid. The game decides the validity of the move by checking whether or not the placed word is in the database of valid words and by checking if the placed word is connected to existing tiles on the board and is not isolated. If valid, the points gained from that move are added to the player's score. If the move is not valid, the placed tiles are returned to the player, and they must make another move. Players also have the option to skip their turn if they choose to. 
 - The AI players follow the simple strategy of playing the highest scoring move. It does this by reading the entire dictionary and checking the entire board for valid moves. Once it finds the valid moves the controller will sort the moves based on their score and play the one with the highest score.
+-Throughout the game, users have the option to undo a round of moves or redo a round after undoing. This allows players to revert their actions if they make a mistake or change their minds about a move. They can do this by simply opening the "Turns" menu and clicking either the "Undo" menu option or the "Redo" menu option.
+- Players can also save their current game during the game, or before exiting. If they wish to do so during the game they must open the "Game" menu and click the "Save" menu option, where they are prompted to enter the name they wish to save the game as. Players must enter a valid name format.
+- When exiting the game the players are asked if they wish to save the game or not.
+- The "Game" menu also has an "End Game" menu option that terminates the game and displays the stats of all the player.
 - The game adheres to a majority of the original Scrabble rules.
-- This project is made up of 4 different milestones. Milestone 3, described here, focuses on implementing AI players, blank tiles, and premium squares. 
+- This project is made up of 4 different milestones. Milestone 4, described here, focuses on undo/redo buttons, saving & loading games, and custom boards.
   
 ## Roadmap Ahead
-- Milestone 3 uses much of the logic from the previous milestone, including the MVC design pattern in its implementation. 
-- For milestone 3, we implemented blank tiles, premium squares and "AI" players. 
-- AI players will be managed through an "AI Player" class, a subclass of the player class. The game will maintain a list of the players playing and iterate through it to determine whose turn it is. If the player is an "AI" player, the AI class will handle the logistics of the "AI" making a move, including placing tiles on the board.
-- Premium squares were implemented using an XML file that indicates the coordinates of each premium square and the bonuses they contain.
-- Blank tiles prompt the user to specify which letter the blank tile represents, then validate the turn using the chosen letter.
-- Milestone 4 will require us to customize our boards using XML or JSON. XML is already used in milestone 3 to create the premium squares on the board so custom boards should be straightforward to implement.
-- Milestone 4 will also require us to save and load the state of the board using serialization along with a multi-level undo option for players. 
+- Milestone 4 uses much of the logic from the previous milestone, including the MVC design pattern in its implementation. 
+- For milestone 3, we implemented custom board, save and load game options, and undo/redo a turn options.
+- Saving and loading the game were implemented using JAVAs Seriliazation API.
+- The custom boards were implmented by creating new XML documents that provide different premium square placements.
+- The no bonuses board simply does not have an XML document.
+- Undo/redo were implemented by creating stacks that would pop the most recently made set of moves, so we can access them by popping the stacks/
+- Mlestone 4 is the last milestone.
   
 ## Dependencies
 
@@ -36,7 +47,6 @@ Must include the dictionary text file in the same directory as the JAR file.
 - Due to the nature of Scrabble and the limited dictionary, the game may occasionally reach a deadlock state. This occurs when no valid moves are possible with the remaining tiles, making it impossible to complete the game. This can happen early on due to how AI and human players make their moves.
 - Currently players cannot redraw the tiles in their tile holder. 
 - This may be a cosmetic issue to some people, but we find the game is as playable without them. But the game does not currently have coordinates for the rows and columns. Although, the bonus square colors already help guide a player.
-- Another cosmetic issue is that the end of game stats messages are not lined up perfectly.
 ## Credits
 
 - Mohammad Ahmadi (101267874)
