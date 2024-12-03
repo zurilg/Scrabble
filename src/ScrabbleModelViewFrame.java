@@ -144,12 +144,14 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
             }
 
             if(!invalidName){
-                for(String f : savedGames){
-                    if(fileName.equals(f.replace(".bin", ""))){
-                        int replaceGame = JOptionPane.showConfirmDialog(null, "A previously saved game has the same name.\nReplace previously saved game?", "Warning", JOptionPane.YES_NO_OPTION);
-                        if(replaceGame != JOptionPane.YES_OPTION){
-                            invalidName = true;
-                            break;
+                if(savedGames != null){
+                    for(String f : savedGames){
+                        if(fileName.equals(f.replace(".bin", ""))){
+                            int replaceGame = JOptionPane.showConfirmDialog(null, "A previously saved game has the same name.\nReplace previously saved game?", "Warning", JOptionPane.YES_NO_OPTION);
+                            if(replaceGame != JOptionPane.YES_OPTION){
+                                invalidName = true;
+                                break;
+                            }
                         }
                     }
                 }
