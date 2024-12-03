@@ -4,7 +4,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
 import java.util.ArrayList;
-
 import static java.lang.System.exit;
 /**
  * ScrabbleModelViewFrame class and main class of the Scrabble game.
@@ -45,8 +44,8 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
 
     // Attributes of the menu bars for loading/saving games and for iterating through turns
     private JMenuBar menuBar;
-    private JMenu game, undo;
-    private JMenuItem save, end;
+    private JMenu game, turns;
+    private JMenuItem save, end, undo, redo;
 
     // The gameFile. Not empty if game was loaded.
     private String gameFile;
@@ -100,7 +99,11 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         this.setJMenuBar(menuBar);
         this.setVisible(true);
 
-        while(model.checkAI()) sc.playAI();
+        while(model.checkAI()){
+            System.out.println("AI TURN");
+            sc.playAI();
+        }
+        model.setTempState();
     }
 
     public void loadGame(){
@@ -222,19 +225,28 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
     private void initMenuBar(){
         menuBar = new JMenuBar();
         game = new JMenu("Game");
-        undo = new JMenu("Undo Turn"); // TODO: Go back to previous human player state?
+        turns = new JMenu("Turns");
+
+        undo = new JMenuItem("Undo"); // TODO: Go back to previous human player state?
+        redo = new JMenuItem("Redo");
         save = new JMenuItem("Save Game");
         end = new JMenuItem("End Game");
 
         save.addActionListener(e -> saveGame());
         end.addActionListener(e -> endGame(true));
         undo.addActionListener(sc);
+        undo.setActionCommand("X");
+        redo.addActionListener(sc);
+        redo.setActionCommand("Y");
 
         game.add(save);
         game.add(end);
 
+        turns.add(undo);
+        turns.add(redo);
+
         menuBar.add(game);
-        menuBar.add(undo);
+        menuBar.add(turns);
     }
 
     /**
@@ -361,15 +373,12 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
      * Updates elements of the player info (name, scores, turn) panel.
      */
     private void redrawPlayerInfo(){
+        for(int i = 0; i < playerInfo.length; i++){
+            playerInfo[i][0].setForeground(new Color(0x000000));
+            playerInfo[i][1].setText(String.format("Score: %d", model.getPlayers().get(i).getScore()));
+        }
         // Set current player's name to bright color
         playerInfo[model.getPlayerTurn()][0].setForeground(new Color(0xFF0000));
-        // Find index of previous player
-        int prevTurn;
-        if(model.getPlayerTurn() == 0) prevTurn = numPlayers - 1;
-        else prevTurn = model.getPlayerTurn() - 1;
-        // Update previous player's visuals
-        playerInfo[prevTurn][0].setForeground(new Color(0x000000));
-        playerInfo[prevTurn][1].setText(String.format("Score: %d", model.getPlayers().get(prevTurn).getScore()));
     }
     /**
      * Initializes elements of the board square button panel.

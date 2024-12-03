@@ -33,6 +33,34 @@ public class Player implements Serializable {
         }
     }
 
+    public Player(Player p){
+        tileHolder = new Tile[TILE_HOLDER_SIZE];
+        prevTiles = new Tile[TILE_HOLDER_SIZE];
+        this.name = p.getName();
+        this.score = p.getScore();
+        for(int i = 0; i < TILE_HOLDER_SIZE; i++) this.tileHolder[i] = new Tile(p.getTile(i));
+        for(int i = 0; i < TILE_HOLDER_SIZE; i++) this.prevTiles[i] = new Tile(p.prevTiles[i]);
+    }
+
+    public Player(String name, int score, Tile[] th, Tile[] pt){
+        System.out.println("SAVING AI PLAYER SCORE AND STUFF");
+        tileHolder = new Tile[TILE_HOLDER_SIZE];
+        prevTiles = new Tile[TILE_HOLDER_SIZE];
+        this.name = String.format("%s",name);
+        this.score = score;
+        for(int i = 0; i < TILE_HOLDER_SIZE; i++) {
+            if(th[i] != null) this.tileHolder[i] = new Tile(th[i]);
+            else this.tileHolder[i] = null;
+        }
+        for(int i = 0; i < TILE_HOLDER_SIZE; i++) {
+            if(th[i] != null) this.prevTiles[i] = new Tile(pt[i]);
+            else this.tileHolder[i] = null;
+        }
+    }
+
+    public Tile[] getTileHolder(){ return tileHolder; }
+    public Tile[] getPrevTiles(){ return prevTiles; }
+
     /**
      * Returns tile in tile holder at specified index.
      *

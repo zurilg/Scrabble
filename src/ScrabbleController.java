@@ -55,13 +55,25 @@ public class ScrabbleController implements ActionListener, Serializable {
                 playCoordinates.clear();
                 while(model.checkAI()) playAI();
                 break;
+            // Replace tiles in tile holder (not implemented yet)
             case "R":
                 break;
+            // Skip Turn
             case "S":
                 playCoordinates.clear();
+                model.saveGameState();
                 model.skipTurn();
                 while(model.checkAI()) playAI();
                 break;
+            // Undo
+            case "X":
+                model.undo();
+                break;
+            // Redo
+            case "Y":
+                model.redo();
+                break;
+
         }
     }
     /**

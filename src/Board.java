@@ -36,6 +36,17 @@ public class Board implements Serializable {
             }
         }
     }
+
+    public Board(Board b){
+        board = new BoardSquare[BOARD_SIZE][BOARD_SIZE];
+        prevState = new BoardSquare[BOARD_SIZE][BOARD_SIZE];
+        for(int r = 0; r < BOARD_SIZE; r+=1){
+            for(int c = 0; c < BOARD_SIZE; c+=1){
+                board[r][c] = new BoardSquare(b.getSqAtIndex(r, c)); // Empty board square
+                prevState[r][c] = new BoardSquare(b.getSqAtIndex(r, c));
+            }
+        }
+    }
     /**
      * Accessor method to get the board square at a specified index.
      *

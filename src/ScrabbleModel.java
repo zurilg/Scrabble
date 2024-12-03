@@ -25,14 +25,18 @@ public class ScrabbleModel implements Serializable {
     // List of observers
     private final ArrayList<ScrabbleModelView> views;
     // Class attributes
-    private final Board board; // The scrabble game board
+    private Board board; // The scrabble game board
     private Status status; // The scrabble game status
     private int playerTurn; // Index of player in players whose turn it is
-    private final TileBag tileBag; // The scrabble game tile bag
+    private TileBag tileBag; // The scrabble game tile bag
     private int scorelessTurns; // The number of scoreless turns to help update game status.
     private int selectedUserTile; //
     private final ArrayList<Player> players;
     private final HashSet<String> dictionary; // All valid words. Read from a .txt file.
+
+    private Stack<ScrabbleGameState> undoStack;
+    private Stack<ScrabbleGameState> redoStack;
+    private ScrabbleGameState tempState;
     /**
      * Constructor method for ScrabbleModel
      * Initializes the board, the tile bag, dictionary of valid words, HashMaps of words on the board
@@ -55,6 +59,55 @@ public class ScrabbleModel implements Serializable {
         board = new Board();
         // Initialize game status
         status = Status.ONGOING;
+
+        undoStack = new Stack<>();
+        redoStack = new Stack<>();
+    }
+
+    public void setTempState(){
+        if(!checkAI()){
+            System.out.println("SETTING TEMP STATE!!@!@#@");
+            tempState = new ScrabbleGameState(board, players, tileBag, playerTurn);
+        }
+    }
+    public void saveGameState(){
+        if(tempState != null){
+            undoStack.push(tempState);
+            System.out.println("UNDO STACK SAVE GAME STATE: " + undoStack.toString());
+            tempState = null;
+        }
+        redoStack.clear();
+    }
+
+    public void undo(){
+        if(!undoStack.isEmpty() && !firstTurn()){
+            redoStack.push(new ScrabbleGameState(board, players, tileBag, playerTurn));
+            System.out.println("REDO STACK: " + redoStack.toString());
+            restoreState(undoStack.pop());
+            System.out.println("UNDO STACK POP: " + undoStack.toString());
+        }
+    }
+
+    public void redo(){
+        if(!redoStack.isEmpty() && !firstTurn()){
+            undoStack.push(new ScrabbleGameState(board, players, tileBag, playerTurn));
+            System.out.println("UNDO STACK PUSH: " + undoStack.toString());
+            restoreState(redoStack.pop());
+            System.out.println("REDO STACK POP: " + undoStack.toString());
+        }
+    }
+
+    private void restoreState(ScrabbleGameState s){
+        System.out.println("RESTORING STATE>???!@");
+        board = s.getBoard();
+        players.clear();
+        for(Player p : s.getPlayers()) {
+            if(p instanceof PlayerAI) players.add(new PlayerAI((PlayerAI) p));
+            else players.add(new Player(p));
+        }
+        tileBag = s.getTileBag();
+        playerTurn = s.getPlayerTurn();
+        update();
     }
 
     /**
@@ -122,6 +175,14 @@ public class ScrabbleModel implements Serializable {
     private void changePlayer(){
         if(playerTurn == players.size()-1) playerTurn = 0; // Wrap around
         else playerTurn++; // Next player
+        if (!(getCurrentPlayer() instanceof PlayerAI)) {
+            System.out.println("HUMAN TURN, SAVING TEMP STATE");
+            setTempState();
+        }
+        else{
+            System.out.println("AI TURN, MODEL");
+        }
+        System.out.println("\n---\n");
     }
     /**
      * Determines whether the current turn is the first turn.
@@ -204,13 +265,21 @@ public class ScrabbleModel implements Serializable {
      * @return The player's turn score (0 if invalid, 1 or more if valid).
      */
     public int validateAndScoreBoard(HashSet<int []> playCoordinates){
-        if(getCurrentPlayer() instanceof PlayerAI) if(!allValid()) return 0;
+        if(getCurrentPlayer() instanceof PlayerAI){
+            if(!allValid()){
+                //System.out.println("ENTIRE BOARD INVALID FOR AI");
+                return 0;
+            }
+        }
 
         int turnScore = 0;
         ArrayList<String> wordsPlayed = new ArrayList<>(){};
         // Make sure that the coordinates provided are valid and that the center square is filled
         int coordCheckResult = checkCoordinates(playCoordinates);
-        if(coordCheckResult == 0 || board.getSqAtIndex(7, 7).getTile() == null) return turnScore;
+        if(coordCheckResult == 0 || board.getSqAtIndex(7, 7).getTile() == null){
+            //System.out.println("INVALID DUE TO PLAY COORDINATES");
+            return turnScore;
+        }
 
 
         // Hunt all solo letters. If a coordinate placed doesn't have any neighbors, illegal placement.
@@ -230,7 +299,10 @@ public class ScrabbleModel implements Serializable {
             neighborCheck.add(c);
         }
         // If there is a single coordinate placed with no neighbors, invalid.
-        if(neighborCheck.contains(new boolean[]{false, false, false, false})) return turnScore;
+        if(neighborCheck.contains(new boolean[]{false, false, false, false})){
+            //System.out.println("INVALID DUE TO NEIGHBOR CHECK");
+            return turnScore;
+        }
 
         // Must iterate through this entire process twice. Once for row word(s) and once for column word(s).
         for(int j = 0; j < 2; j++) {
@@ -270,7 +342,10 @@ public class ScrabbleModel implements Serializable {
                     playedCoord = false;
                 }
                 // Check if word is valid (in the dictionary). If not, return a score of 0.
-                if (!dictionary.contains(word.toString())) return turnScore;
+                if (!dictionary.contains(word.toString())){
+                    //System.out.println("INVALID DUE TO NOT IN DICTIONARY");
+                    return turnScore;
+                }
 
 
                 // If length of word is greater than 1 (not just a letter), then score it
@@ -284,6 +359,7 @@ public class ScrabbleModel implements Serializable {
 
         // Check that word play makes sense. If it's the first turn, then amount of tiles played should equal the largest word played. Otherwise, largest word played should be larger than number of tiles played.
         if((firstTurn() && (getLargestWordLength(wordsPlayed) != playCoordinates.size())) || (!firstTurn() && (getLargestWordLength(wordsPlayed) <= playCoordinates.size()))){
+            //("INVALID DUE TO WORD PLAY");
             return 0;
         }
 
@@ -295,6 +371,7 @@ public class ScrabbleModel implements Serializable {
      * Skip the current players turn.
      */
     public void skipTurn(){
+        saveGameState();
         scorelessTurns += 1;
         invalidTurn(); // Invalidate current player's turn.
         changePlayer(); // Change player turns.
@@ -316,6 +393,7 @@ public class ScrabbleModel implements Serializable {
      * @param score Player's turn score to be added to their game score.
      */
     public void validTurn(int score){
+        saveGameState();
         getCurrentPlayer().addToScore(score); // Add the turn score to the current player
         if(getCurrentPlayer().numTiles() == 0 && tileBag.size() >= 7) getCurrentPlayer().addToScore(50); // If they played 7 tiles, reward with bonus 50 points.
         board.saveState(); // Correct, so set new board prev state for possible future reset

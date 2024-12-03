@@ -22,6 +22,8 @@ public class PlayerAI extends Player implements Serializable {
         super(name);
     }
 
+    public PlayerAI(PlayerAI pAI) { super(pAI.getName(), pAI.getScore(), pAI.getTileHolder(), pAI.getPrevTiles()); }
+
     /**
      * Determines valid plays (if any) for the AI player according to their tile holder and provided game elements.
      *

@@ -25,6 +25,12 @@ public class BoardSquare implements Serializable {
         this.letterScore = letterScore;
         this.wordScore = wordScore;
     }
+
+    public BoardSquare(BoardSquare bs){
+        if(bs.getTile() != null) this.t = new Tile(bs.getTile());
+        this.letterScore = bs.getLetterScore();
+        this.wordScore = bs.getWordScore();
+    }
     /**
      * Show what tile is on the board square.
      *

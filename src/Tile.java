@@ -24,6 +24,11 @@ public class Tile implements Serializable {
         this.value = value;
     }
 
+    public Tile(Tile t){
+        this.character = t.getChar();
+        this.value = t.getValue();
+    }
+
     /**
      * Accessor for the tile's letter.
      *

@@ -27,6 +27,11 @@ public class TileBag implements Serializable {
         bag = new ArrayList<>();
         fillBag();
     }
+
+    public TileBag(TileBag tb){
+        bag = new ArrayList<>();
+        for(Tile t : tb.bag) bag.add(new Tile(t));
+    }
     /**
      * Remove a random tile from the bag and return it.
      *
