@@ -193,7 +193,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         int playerGameLoadChoice = -1;
         // Need to figure out if there are any saved games
         File path = new File("./GameAssets/SavedGames");
-        path.mkdirs(); // Must be sure to create directory if not present. Otherwise, doesn't work correctly. We don't care about result...
+        path.mkdirs(); //Must be sure to create directory if not present. Otherwise, doesn't work correctly. We don't care about result...
         String[] savedGames = path.list();
         // There are no saved games, so have to start a new game.
         if(savedGames != null) if(savedGames.length == 0) playerGameLoadChoice = 0;
