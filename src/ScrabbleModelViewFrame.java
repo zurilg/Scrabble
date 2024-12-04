@@ -47,7 +47,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
     private JMenu game, turns;
     private JMenuItem save, end, undo, redo;
 
-    // The gameFile. Not empty if game was loaded.
+    // The gameFile name. Not empty if game was loaded.
     private String gameFile;
     /**
      * Constructor method for ScrabbleModelViewFrame()
@@ -56,7 +56,8 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
     public ScrabbleModelViewFrame(){
         // Initialize basic frame aspects
         super("Scrabble"); // Call super class (JFrame)
-        this.setLayout(new BorderLayout());
+        this.setLayout(new BorderLayout()); // Set frame layout
+        // Prompts user to save their game before exiting the application
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -67,8 +68,8 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
             }
         });
         this.setIconImage((new ImageIcon("./GameAssets/Pictures/S_Logo.png")).getImage()); // Add icon / game logo
-        this.setResizable(false);
-        this.setSize(new Dimension(925, 825));
+        this.setResizable(false); // Don't allow user to resize the game.
+        this.setSize(new Dimension(925, 825)); // Game window dimensions
         this.setLocationRelativeTo(null); // Center on screen
 
         // Initialize model
@@ -192,6 +193,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         int playerGameLoadChoice = -1;
         // Need to figure out if there are any saved games
         File path = new File("./GameAssets/SavedGames");
+        path.mkdirs(); // Must be sure to create directory if not present. Otherwise, doesn't work correctly. We don't care about result...
         String[] savedGames = path.list();
         // There are no saved games, so have to start a new game.
         if(savedGames != null) if(savedGames.length == 0) playerGameLoadChoice = 0;
