@@ -30,12 +30,8 @@ public class ScrabbleGameState implements Serializable {
         this.board = new Board(board);
         this.players = new ArrayList<>();
         for (Player player : players) {
-            System.out.println(player.getName());
             if (player instanceof PlayerAI) this.players.add(new PlayerAI((PlayerAI) player));
-            else {
-                this.players.add(new Player(player));
-                System.out.println("SAVING HUMAN PLAYER SCORE AND STUFF");
-            }
+            else this.players.add(new Player(player));
         }
         this.tileBag = new TileBag(tileBag);
         this.playerTurnIndex = index;

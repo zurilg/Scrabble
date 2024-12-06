@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author Abdul Aziz Al-Sibakhi (101246056)
  * @author Redah Eliwa (101273466)
  *
- * @version 11-24-2024
+ * @version 12-06-2024
  */
 public class BoardSquare implements Serializable {
     private Tile t;

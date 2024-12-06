@@ -13,7 +13,7 @@ import java.util.HashSet;
  * @author Abdul Aziz Al-Sibakhi (101246056)
  * @author Redah Eliwa (101273466)
  *
- * @version 11-12-2024
+ * @version 12-06-2024
  */
 public class ScrabbleModelTest {
 

@@ -21,7 +21,7 @@ import static java.lang.System.exit;
  * @author Abdul Aziz Al-Sibakhi (101246056)
  * @author Redah Eliwa (101273466)
  *
- * @version 11-24-2024
+ * @version 12-06-2024
  */
 public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView {
     private ScrabbleModel model;
@@ -57,7 +57,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         // Initialize basic frame aspects
         super("Scrabble"); // Call super class (JFrame)
         this.setLayout(new BorderLayout()); // Set frame layout
-        // Prompts user to save their game before exiting the application
+        // Prompts user to save their game before exiting the application.
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -74,7 +74,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
 
         // Initialize model
         model = new ScrabbleModel();
-
         // Must initialize the game. Old game / new game and game options.
         gameFile = "";
         initGame();
@@ -87,10 +86,9 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         drawBoardButtons();
         // Initialize current player button panel
         drawButtonPanel();
-
         // Initialize players panel
         drawPlayerInfo();
-
+        // Initialize
         initMenuBar();
 
         // Finish frame initialization. Add content to the frame. Set as visible
@@ -100,10 +98,10 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         this.setJMenuBar(menuBar);
         this.setVisible(true);
 
-        while(model.checkAI()){
-            System.out.println("AI TURN");
-            sc.playAI();
-        }
+        // Play all AI turns before starting.
+        while(model.checkAI()) sc.playAI();
+
+        // Set undo/redo state for the player
         model.setTempState();
     }
     /**
@@ -116,7 +114,6 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
         gameFile = JOptionPane.showInputDialog(null, "Which game would you like to load?", "Saved Games", JOptionPane.PLAIN_MESSAGE, null, savedGames, savedGames[0]).toString();
         model = load(gameFile);
         numPlayers = model.getPlayers().size();
-        //for(int r = 0; r < Board.BOARD_SIZE; r++) for(int c = 0; c < Board.BOARD_SIZE; c++) System.out.println(String.format("Squares: %d", model.getBoard().getSqAtIndex(r,c).getLetterScore()));
     }
 
     /**
@@ -137,8 +134,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
      * @return the file name entered by the user
      */
     private String getValidFileName(){
-        // Get current file names. Don't want duplicates.
-        File path = new File("./GameAssets/SavedGames");
+        File path = new File("./GameAssets/SavedGames"); // Get current file names. Don't want duplicates.
         String[] savedGames = path.list();
         String fileName = "";
         boolean invalidName = true;
@@ -148,6 +144,7 @@ public class ScrabbleModelViewFrame extends JFrame implements ScrabbleModelView 
             if(fileName == null) return null;
             for(int i = 0; i < fileName.length(); i++){
                 int c = (int) fileName.charAt(i);
+                // Check that all characters given in file name are valid characters.
                 if(!((c >= 65 && c <= 90) || (c >= 97 && c <= 122) || (c >= 48 && c <= 57) || c == 45 || c == 46 || c == 95)){
                     invalidName = true;
                     break;

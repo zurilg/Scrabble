@@ -15,7 +15,7 @@ import java.util.*;
  * @author Abdul Aziz Al-Sibakhi (101246056)
  * @author Redah Eliwa (101273466)
  *
- * @version 11-24-2024
+ * @version 12-06-2024
  */
 public class ScrabbleModel implements Serializable {
     // Constants and enumerations
@@ -67,10 +67,7 @@ public class ScrabbleModel implements Serializable {
      * Sets game state in a temporary ScrabbleGameState object.
      */
     public void setTempState(){
-        if(!checkAI()){
-            System.out.println("SETTING TEMP STATE!!@!@#@");
-            tempState = new ScrabbleGameState(board, players, tileBag, playerTurn);
-        }
+        if(!checkAI()) tempState = new ScrabbleGameState(board, players, tileBag, playerTurn);
     }
 
     /**
@@ -79,7 +76,6 @@ public class ScrabbleModel implements Serializable {
     public void saveGameState(){
         if(tempState != null){
             undoStack.push(tempState);
-            System.out.println("UNDO STACK SAVE GAME STATE: " + undoStack.toString());
             tempState = null;
         }
         redoStack.clear();
@@ -91,9 +87,7 @@ public class ScrabbleModel implements Serializable {
     public void undo(){
         if(!undoStack.isEmpty() && !firstTurn()){
             redoStack.push(new ScrabbleGameState(board, players, tileBag, playerTurn));
-            System.out.println("REDO STACK: " + redoStack.toString());
             restoreState(undoStack.pop());
-            System.out.println("UNDO STACK POP: " + undoStack.toString());
         }
     }
 
@@ -104,9 +98,7 @@ public class ScrabbleModel implements Serializable {
     public void redo(){
         if(!redoStack.isEmpty() && !firstTurn()){
             undoStack.push(new ScrabbleGameState(board, players, tileBag, playerTurn));
-            System.out.println("UNDO STACK PUSH: " + undoStack.toString());
             restoreState(redoStack.pop());
-            System.out.println("REDO STACK POP: " + undoStack.toString());
         }
     }
     /**
@@ -114,7 +106,6 @@ public class ScrabbleModel implements Serializable {
      * @param s ScrabbleGameState that we restore the board to
      */
     private void restoreState(ScrabbleGameState s){
-        System.out.println("RESTORING STATE>???!@");
         board = s.getBoard();
         players.clear();
         for(Player p : s.getPlayers()) {
@@ -191,14 +182,7 @@ public class ScrabbleModel implements Serializable {
     private void changePlayer(){
         if(playerTurn == players.size()-1) playerTurn = 0; // Wrap around
         else playerTurn++; // Next player
-        if (!(getCurrentPlayer() instanceof PlayerAI)) {
-            System.out.println("HUMAN TURN, SAVING TEMP STATE");
-            setTempState();
-        }
-        else{
-            System.out.println("AI TURN, MODEL");
-        }
-        System.out.println("\n---\n");
+        if (!(getCurrentPlayer() instanceof PlayerAI)) setTempState();
     }
     /**
      * Determines whether the current turn is the first turn.
@@ -281,22 +265,13 @@ public class ScrabbleModel implements Serializable {
      * @return The player's turn score (0 if invalid, 1 or more if valid).
      */
     public int validateAndScoreBoard(HashSet<int []> playCoordinates){
-        if(getCurrentPlayer() instanceof PlayerAI){
-            if(!allValid()){
-                //System.out.println("ENTIRE BOARD INVALID FOR AI");
-                return 0;
-            }
-        }
+        if(getCurrentPlayer() instanceof PlayerAI)if(!allValid()) return 0;
 
         int turnScore = 0;
         ArrayList<String> wordsPlayed = new ArrayList<>(){};
         // Make sure that the coordinates provided are valid and that the center square is filled
         int coordCheckResult = checkCoordinates(playCoordinates);
-        if(coordCheckResult == 0 || board.getSqAtIndex(7, 7).getTile() == null){
-            //System.out.println("INVALID DUE TO PLAY COORDINATES");
-            return turnScore;
-        }
-
+        if(coordCheckResult == 0 || board.getSqAtIndex(7, 7).getTile() == null) return turnScore;
 
         // Hunt all solo letters. If a coordinate placed doesn't have any neighbors, illegal placement.
         HashSet<boolean[]> neighborCheck = new HashSet<>();
@@ -315,10 +290,7 @@ public class ScrabbleModel implements Serializable {
             neighborCheck.add(c);
         }
         // If there is a single coordinate placed with no neighbors, invalid.
-        if(neighborCheck.contains(new boolean[]{false, false, false, false})){
-            //System.out.println("INVALID DUE TO NEIGHBOR CHECK");
-            return turnScore;
-        }
+        if(neighborCheck.contains(new boolean[]{false, false, false, false})) return turnScore;
 
         // Must iterate through this entire process twice. Once for row word(s) and once for column word(s).
         for(int j = 0; j < 2; j++) {
@@ -358,11 +330,7 @@ public class ScrabbleModel implements Serializable {
                     playedCoord = false;
                 }
                 // Check if word is valid (in the dictionary). If not, return a score of 0.
-                if (!dictionary.contains(word.toString())){
-                    //System.out.println("INVALID DUE TO NOT IN DICTIONARY");
-                    return turnScore;
-                }
-
+                if (!dictionary.contains(word.toString())) return turnScore;
 
                 // If length of word is greater than 1 (not just a letter), then score it
                 if(word.length() > 1){
@@ -503,10 +471,19 @@ public class ScrabbleModel implements Serializable {
             }
         }
 
+        // Give bonus to players who played all of their tiles.
         for(int i = 0; i < players.size(); i++) if(playedOut[i]) players.get(i).addToScore(Arrays.stream(remainingTilesSum).sum());
 
+        // Figure out who winner is, if there is one.
+        boolean winner = true;
+        Player w = players.getFirst();
+        for(Player p : players) if(p.getScore() > w.getScore()) w = p;
+        for(Player p : players) if(!w.equals(p)) if(p.getScore() > w.getScore()) winner = false;
+
+        // Initialize result string to be printed. Used HTML for clean. formatting.
+        String win = winner ? String.format("%s won the game with a score of %d points!", w.getName(), w.getScore()) : "Tied game! Best of 3?";
         StringBuilder results = new StringBuilder();
-        results.append("<html><body>GAME RESULTS:<table border='1' style='border-collapse:collapse;'>");
+        results.append(String.format("<html><body>GAME RESULTS: <b>%s</b><table border='1' style='border-collapse:collapse;'>", win));
         results.append("<tr><th>Name</th><th>Score</th><th>Tile Remainder</th><th>Bonus</th><th>Final Score</th></tr>");
         for(int i = 0; i < players.size(); i++){
             results.append(String.format("<tr><td>%s</td><td align=\"right\">%d</td><td align=\"right\">-%d</td><td align=\"right\">%d</td><td align=\"right\">%d</td></tr>", players.get(i).getName(), ogScores[i], remainingTilesSum[i], playedOut[i] ? Arrays.stream(remainingTilesSum).sum() : 0, players.get(i).getScore()));

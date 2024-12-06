@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author Abdul Aziz Al-Sibakhi (101246056)
  * @author Redah Eliwa (101273466)
  *
- * @version 11-24-2024
+ * @version 12-06-2024
  */
 public class Player implements Serializable {
     public static final int TILE_HOLDER_SIZE = 7;
@@ -55,7 +55,6 @@ public class Player implements Serializable {
      * @param pt The array of Tile objects representing the player's previous tiles.
      */
     public Player(String name, int score, Tile[] th, Tile[] pt){
-        System.out.println("SAVING AI PLAYER SCORE AND STUFF");
         tileHolder = new Tile[TILE_HOLDER_SIZE];
         prevTiles = new Tile[TILE_HOLDER_SIZE];
         this.name = String.format("%s",name);
