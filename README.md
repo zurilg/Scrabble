@@ -17,17 +17,15 @@ Scrabble, Version 2.0, *License*: MIT (see bottom of README for full license des
 - Players can also save their current game during the game, or before exiting. If they wish to do so during the game they must open the "Game" menu and click the "Save" menu option, where they are prompted to enter the name they wish to save the game as. Players must enter a valid name format.
 - When exiting the game the players are asked if they wish to save the game or not.
 - The "Game" menu also has an "End Game" menu option that terminates the game and displays the stats of all the player.
+- ### BONUS: Once the game has ended, a message displaying the player game stats and the winner.
 - The game adheres to a majority of the original Scrabble rules.
-- This project is made up of 4 different milestones. Milestone 4, described here, focuses on undo/redo buttons, saving & loading games, and custom boards.
-  
+- This project is made up of 4 different milestones.
+- ### BONUS: Milestone 5, described here, focuses on the Game Statics Display.
+  
 ## Roadmap Ahead
-- Milestone 4 uses much of the logic from the previous milestone, including the MVC design pattern in its implementation. 
-- For milestone 3, we implemented custom board, save and load game options, and undo/redo a turn options.
-- Saving and loading the game were implemented using JAVAs Seriliazation API.
-- The custom boards were implmented by creating new XML documents that provide different premium square placements.
-- The no bonuses board simply does not have an XML document.
-- Undo/redo were implemented by creating stacks that would pop the most recently made set of moves, so we can access them by popping the stacks/
-- Mlestone 4 is the last milestone.
+- Milestone 5 uses much of the logic from the previous milestone, including the MVC design pattern in its implementation. 
+- For milestone 5, the program maintains the player stats in the Player Class throughout the game, when a game is ended and its file is deleted, the end game stats of the player are displayed.
+- The plan is to use the code for this game in the future as inspiration for future projects, such as university assignments or personal projects.
   
 ## Dependencies
 
@@ -47,12 +45,11 @@ Must include the dictionary text file in the same directory as the JAR file.
 - Due to the nature of Scrabble and the limited dictionary, the game may occasionally reach a deadlock state. This occurs when no valid moves are possible with the remaining tiles, making it impossible to complete the game. This can happen early on due to how AI and human players make their moves.
 - Currently players cannot redraw the tiles in their tile holder. 
 - This may be a cosmetic issue to some people, but we find the game is as playable without them. But the game does not currently have coordinates for the rows and columns. Although, the bonus square colors already help guide a player.
+- Small behaviorual bug: There is a small chance of a correct move not working, player must play the move again for it work.
 ## Credits
 
 - Mohammad Ahmadi (101267874)
 - Zuri Lane-Griffore (101241678)
-- Abdul Aziz Al-Sibakhi (101246056)
-- Redah Eliwa (101273466)
 
 ## License
 
