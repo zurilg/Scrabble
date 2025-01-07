@@ -1,9 +1,13 @@
->December 06, 2024\
-Scrabble, Version 2.0, *License*: MIT (see bottom of README for full license description)
+>January 06, 2024\
+Scrabble, Version 4.0, *License*: MIT (see bottom of README for full license description)
+
+## Disclaimer
+This project is an educational, non-commercial implementation inspired by the popular (and fantastically fun) board game Scrabble. It was created solely as a class assignment to demonstrate the process of software development and the implementation of popular design patterns. The game name "Scrabble" and associated trademarks are owned by Hasbro (in the U.S. and Canada) and Mattel (outside the U.S. and Canada). This project is not affiliated with, endorsed by, or connected to the official Scrabble brand in any way. All rights to the original game and its intellectual property remain with their respective owners.
+
 
 ## Description
 - A GUI-based version of the popular board game Scrabble.
-- User is prompted to start a new game. If user has a previous game saved, they have the option to load that game and continue playing it in its most recent state.
+- The user is prompted to start a new game. If user has a previous game saved, they have the option to load that game and continue playing it in its most recent state.
 - If they wish to load a saved game, they are first prompted to enter the file name of the saved game. The file must exist in order to load the saved game.
 - If there are no saved games then the user must start a new game to begin playing.
 - After choosing to start a new game, the user must choose the board they wish to play with from the three options available:
@@ -17,45 +21,45 @@ Scrabble, Version 2.0, *License*: MIT (see bottom of README for full license des
 - Players can also save their current game during the game, or before exiting. If they wish to do so during the game they must open the "Game" menu and click the "Save" menu option, where they are prompted to enter the name they wish to save the game as. Players must enter a valid name format.
 - When exiting the game the players are asked if they wish to save the game or not.
 - The "Game" menu also has an "End Game" menu option that terminates the game and displays the stats of all the player.
-- ### BONUS: Once the game has ended, a message displaying the player game stats and the winner.
+- Once the game has ended, a message appears displaying the player game stats and the winner.
 - The game adheres to a majority of the original Scrabble rules.
 - This project is made up of 4 different milestones.
-- ### BONUS: Milestone 5, described here, focuses on the Game Statics Display.
   
 ## Roadmap Ahead
 - Milestone 5 uses much of the logic from the previous milestone, including the MVC design pattern in its implementation. 
-- For milestone 5, the program maintains the player stats in the Player Class throughout the game, when a game is ended and its file is deleted, the end game stats of the player are displayed.
-- The plan is to use the code for this game in the future as inspiration for future projects, such as university assignments or personal projects.
+- For milestone 5, the program maintains the player stats in the Player Class throughout the game, when a game is concluded and its file is deleted, the end game stats of the player are displayed.
+- Looking forward, each team member will most likely use the code for this game as inspiration for future projects, such as university assignments or personal projects.
   
 ## Dependencies
-
 To execute Scrabble, the following must be installed:
 - [x] Oracle OpenJDK version 22 (or higher)
 
-Must include the dictionary text file in the same directory as the JAR file.
+Must include the GameAssets folder in the same directory as the JAR file.
 
 ## Usage
-1. Download the zip file containing the source code and executable file of Scrabble.
-2. Extract the zip file containing the source code and executable file of Scrabble.
-3. Run the JAR file.
+1. Download the Scrabble JAR file and GameAssets folder and be sure they're contained within the same directory.
+2. Use appropriate shell (command prompt or terminal) and navigate to corresponding directory.
+3. Run the JAR file using the following command: **java -jar Scrabble.jar**
+4. Enjoy playing!
 
 ## Known Issues
-
-- The database of available words is very limited and contains a ton of nouns and names. This can potentially lead to frustrating gameplay experiences. It is hoped that our team will be able to compile a larger database consisting of commonly used words for the next milestone for a better user experience.
-- Due to the nature of Scrabble and the limited dictionary, the game may occasionally reach a deadlock state. This occurs when no valid moves are possible with the remaining tiles, making it impossible to complete the game. This can happen early on due to how AI and human players make their moves.
-- Currently players cannot redraw the tiles in their tile holder. 
-- This may be a cosmetic issue to some people, but we find the game is as playable without them. But the game does not currently have coordinates for the rows and columns. Although, the bonus square colors already help guide a player.
+- Currently players cannot replace the tiles in their tile holder.
 - Small behaviorual bug: There is a small chance of a correct move not working, player must play the move again for it work.
+- The database of available words is very limited and contains a ton of nouns and names. This can potentially lead to frustrating gameplay experiences. It is hoped that our team will be able to compile a larger database consisting of commonly used words for the next milestone for a better user experience.
+- Due to the nature of Scrabble and the limited dictionary, the game may occasionally reach a deadlock state. This occurs when no valid moves are possible with the remaining tiles, making it impossible to complete the game. This can happen early on due to how AI and human players make their moves. 
+- This may be a cosmetic issue to some people, but we find the game is as playable without them. But the game does not currently have coordinates for the rows and columns. Although, the bonus square colors already help guide a player.
+  
 ## Credits
-
-- Mohammad Ahmadi (101267874)
-- Zuri Lane-Griffore (101241678)
+- Zuri Lane-Griffore
+- Mohammad Ahmadi
+- Abdul Aziz Al-Sibakhi
+- Redah Eliwa
 
 ## License
 
 MIT License
 
-Copyright (c) [2024] [Group 35]
+Copyright (c) [2024]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
