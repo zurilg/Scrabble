@@ -2,7 +2,7 @@
 Scrabble, Version 4.0, *License*: MIT (see bottom of README for full license description)
 
 ## Disclaimer
-This project is an educational, non-commercial implementation inspired by the popular (and fantastically fun) board game Scrabble. It was created solely as a class assignment to demonstrate the process of software development and the implementation of popular design patterns. The game name "Scrabble" and associated trademarks are owned by Hasbro (in the U.S. and Canada) and Mattel (outside the U.S. and Canada). This project is not affiliated with, endorsed by, or connected to the official Scrabble brand in any way. All rights to the original game and its intellectual property remain with their respective owners.
+This project is an educational, non-commercial implementation of the popular (and fantastically fun) board game Scrabble. It was created solely as a class assignment to demonstrate the process of software development and the implementation of popular design patterns. The game name "Scrabble" and associated trademarks are owned by Hasbro (in the U.S. and Canada) and Mattel (outside the U.S. and Canada). This project is not affiliated with, endorsed by, or connected to the official Scrabble brand in any way. All rights to the original game and its intellectual property remain with their respective owners.
 
 
 ## Description
