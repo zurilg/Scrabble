@@ -26,8 +26,8 @@ This project is an educational, non-commercial implementation inspired by the po
 - This project is made up of 4 different milestones.
   
 ## Roadmap Ahead
-- Milestone 4 uses much of the logic from the previous milestone, including the MVC design pattern in its implementation. 
-- For milestone 4, the program maintains the player stats in the Player Class throughout the game, when a game is concluded and its file is deleted, the end game stats of the player are displayed.
+- Milestone 5 uses much of the logic from the previous milestone, including the MVC design pattern in its implementation. 
+- For milestone 5, the program maintains the player stats in the Player Class throughout the game, when a game is concluded and its file is deleted, the end game stats of the player are displayed.
 - Looking forward, each team member will most likely use the code for this game as inspiration for future projects, such as university assignments or personal projects.
   
 ## Dependencies
@@ -59,7 +59,7 @@ Must include the GameAssets folder in the same directory as the JAR file.
 
 MIT License
 
-Copyright (c) [2024] [Group 35]
+Copyright (c) [2024]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
