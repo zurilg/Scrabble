@@ -14,7 +14,7 @@ This project is an educational, non-commercial implementation of the popular (an
   1. Classic
   2. New Wave
   3. No bonuses
-- Upon choosing the board, teh user may choose how many players they wish to play with. Players can be human or AI.
+- Upon choosing the board, the user may choose how many players they wish to play with. Players can be human or AI.
 - The game functions by allowing the player to place a word on the board using the randomly assigned tiles at their disposal. Once the player makes the move, the inner game logic ensures that it is valid. The game decides the validity of the move by checking whether or not the placed word is in the database of valid words and by checking if the placed word is connected to existing tiles on the board and is not isolated. If valid, the points gained from that move are added to the player's score. If the move is not valid, the placed tiles are returned to the player, and they must make another move. Players also have the option to skip their turn if they choose to. 
 - The AI players follow the simple strategy of playing the highest scoring move. It does this by reading the entire dictionary and checking the entire board for valid moves. Once it finds the valid moves the controller will sort the moves based on their score and play the one with the highest score.
 -Throughout the game, users have the option to undo a round of moves or redo a round after undoing. This allows players to revert their actions if they make a mistake or change their minds about a move. They can do this by simply opening the "Turns" menu and clicking either the "Undo" menu option or the "Redo" menu option.
